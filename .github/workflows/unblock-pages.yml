@@ -1,4 +1,4 @@
-name: Recover stuck Day Zero Pages deployment
+name: Release old Day Zero deployment lock
 on:
   push:
     paths:
@@ -6,27 +6,28 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
-  actions: write
   pages: write
+  deployments: write
 jobs:
-  unblock:
+  cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: Force-cancel old queued workflow
+      - name: Inspect and delete only stalled deployment record
         env:
           GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          STUCK_SHA: 0959ebcd5fdb86200336cbeb1610e502955981f1
         run: |
-          set -u
-          gh api --method POST "repos/${{ github.repository }}/actions/runs/38594096889/force-cancel" && echo "Cancelled old queued workflow." || echo "Old run may already have completed; continuing."
-      - name: Cancel stalled Pages deployment and diagnose
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -u
-          echo "Status before cancellation:"
-          gh api "repos/${{ github.repository }}/pages/deployments/0959ebcd5fdb86200336cbeb1610e502955981f1" || true
-          echo "Requesting cancellation:"
-          gh api --method POST "repos/${{ github.repository }}/pages/deployments/0959ebcd5fdb86200336cbeb1610e502955981f1/cancel" && echo "Cancellation accepted." || true
-          sleep 15
-          echo "Status after cancellation:"
-          gh api "repos/${{ github.repository }}/pages/deployments/0959ebcd5fdb86200336cbeb1610e502955981f1" || true
+          set -euo pipefail
+          echo "Looking for Deployment API records tied to known failed commit."
+          DEPLOYMENTS="$(gh api "repos/$REPO/deployments?sha=$STUCK_SHA" --jq '.[] | select(.sha == env.STUCK_SHA and .environment == "github-pages") | .id')" || exit 1
+          if [ -z "$DEPLOYMENTS" ]; then
+            echo "No matching GitHub Deployments API records. Stale Pages service state needs GitHub support."
+            exit 0
+          fi
+          while read -r ID; do
+            [ -z "$ID" ] && continue
+            echo "Cleaning only github-pages deployment ID $ID on commit $STUCK_SHA"
+            gh api --method POST "repos/$REPO/deployments/$ID/statuses" -f state=inactive -f description="Cancel orphaned failed Pages deployment" || true
+            gh api --method DELETE "repos/$REPO/deployments/$ID"
+          done <<< "$DEPLOYMENTS"
