@@ -1,0 +1,44 @@
+name: Verify Day Zero 2.4 public site
+on:
+  push:
+    paths:
+      - '.github/workflows/verify-dayzero24.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify live game, QR library and mobile briefing
+        run: |
+          set -euo pipefail
+          BASE="https://nneyt.github.io/dayzero"
+          for attempt in $(seq 1 40); do
+            echo "Live check $attempt"
+            if curl -fsSL --max-time 10 "$BASE/dayzero24.html?t=$attempt" -o /tmp/game.html &&
+               grep -q 'Day Zero 2.4' /tmp/game.html &&
+               grep -q 'dz24-patch.js' /tmp/game.html &&
+               curl -fsSL --max-time 10 "$BASE/dayzero24-phone.html" -o /tmp/phone.html &&
+               grep -q 'DAY ZERO · PRIVATE BRIEFING' /tmp/phone.html &&
+               grep -q 'const IN=' /tmp/phone.html &&
+               curl -fsSL --max-time 10 "$BASE/dz24.js" -o /tmp/dz24.js &&
+               grep -q 'dz24PhoneUrl' /tmp/dz24.js &&
+               curl -fsSL --max-time 10 "$BASE/dz24-patch.js" -o /tmp/patch.js &&
+               grep -q 'dz24Mode' /tmp/patch.js &&
+               curl -fsSL --max-time 10 "$BASE/qr24.min.js" -o /tmp/qr.js &&
+               grep -q 'QRCode' /tmp/qr.js &&
+               curl -fsSL --max-time 10 "$BASE/dz24.css" -o /tmp/style.css &&
+               curl -fsSL --max-time 10 "$BASE/story21.js" -o /tmp/story21.js &&
+               curl -fsSL --max-time 10 "$BASE/story23.js" -o /tmp/story23.js &&
+               curl -fsSL --max-time 10 "$BASE/art/dz23/receiver.svg" -o /tmp/receiver.svg &&
+               grep -q '<svg' /tmp/receiver.svg; then
+              echo "DAY_ZERO_24_PUBLIC_SITE_VERIFIED"
+              wc -c /tmp/game.html /tmp/phone.html /tmp/dz24.js /tmp/qr.js /tmp/patch.js /tmp/style.css
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "DAY_ZERO_24_PUBLIC_SITE_NOT_AVAILABLE"
+          exit 1
