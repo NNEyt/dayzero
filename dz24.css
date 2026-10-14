@@ -1,0 +1,38 @@
+
+/* Day Zero 2.4 — TV-first and mobile-friendly dual presentation */
+.dz24-mode-select{display:block;font-size:18px;font-weight:800;color:#ffdc86}.dz24-mode-select select{margin-top:7px;background:#e8ecfc;color:#17223d}
+.dz24-lead{max-width:1000px;margin:20px auto;text-align:center;background:linear-gradient(125deg,#15274d,#10162c);border:2px solid #495e96;border-radius:15px;padding:19px 25px}
+.dz24-eyebrow{color:#ffc675;font-size:15px;font-weight:850;letter-spacing:.15em}.dz24-lead h2{margin:5px auto}
+.dz24-lead p{max-width:780px;margin:9px auto 0;font-size:19px;color:#dce3f8}
+.dz24-role-section{max-width:1100px;margin:20px auto 30px}
+.dz24-role-line{display:flex;align-items:center;gap:14px;padding:13px 18px;border:2px solid var(--dz24-role);border-radius:13px;background:#121d39}
+.dz24-role-icon{font-size:32px}.dz24-role-name{font:italic 800 28px 'Barlow Condensed',Impact,sans-serif;color:#ffe091}
+.dz24-role-mechanic{font-size:15px;color:#c5d1eb}
+.dz24-intel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:15px;margin-top:14px}
+.dz24-intel-card{background:#f0e4cb;border:2px solid #0c1427;border-radius:12px;overflow:hidden;box-shadow:4px 5px #0008;color:#17223a}
+.dz24-artwrap{height:155px;background:#182647}.dz24-artwrap img{width:100%;height:100%;object-fit:cover;display:block}
+.dz24-card-copy{padding:11px 13px 15px}.dz24-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.dz24-state{border:2px solid #16253c;background:#ecc56d;border-radius:7px;font-weight:900;font-size:12px;padding:3px 8px}
+.dz24-intel-card.verified .dz24-state{background:#36895e;color:#fff}.dz24-intel-card.rumour .dz24-state{background:#bdc0c9;border-style:dashed}
+.dz24-mark{font-size:11px;border:1px solid #96836e;border-radius:6px;padding:3px 7px}
+.dz24-card-copy p{font-size:19px;line-height:1.46;margin:9px 0 0}
+.dz24-qr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:16px;margin:16px auto;max-width:1100px}
+.dz24-qr-person{padding:14px 12px;text-align:center;border:2px solid #6481c2;background:#151e3c;border-radius:15px;box-shadow:4px 5px #0008}
+.dz24-player-number{font-weight:800;color:#b8c8f4;font-size:12px;letter-spacing:.13em}
+.dz24-qr-person h3{margin:6px 0;color:#ffdf91;font:italic 800 30px 'Barlow Condensed',Impact,sans-serif}
+.dz24-player-roles{font-size:14px;min-height:39px;color:#cbd6ed}
+.dz24-qr{background:white;padding:8px;border-radius:9px;max-width:196px;min-height:194px;display:flex;align-items:center;justify-content:center;margin:8px auto}
+.dz24-qr img,.dz24-qr canvas{width:178px!important;height:178px!important}
+.dz24-qr-caption{margin:7px 0;color:#d3e1ff;font-size:14px}
+.dz24-openlink{color:#ffe095;font-size:14px}.dz24-linkbtn{cursor:pointer;background:none;border:0;text-decoration:underline;color:#ffe095;font-size:15px}
+.dz24-order-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px}
+.dz24-order-player{background:#151f3c;border:2px solid #5268a1;border-radius:13px;padding:13px}
+.dz24-order-player h3{margin:0 0 13px;color:#ffda83;font:italic 800 31px 'Barlow Condensed',Impact,sans-serif}
+.dz24-order-role{margin:10px 0 18px;padding:10px 12px;background:#233059;border-left:5px solid var(--dz24-role);border-radius:0 9px 9px 0}
+.dz24-order-role-head{color:#ffe5a5;font-size:17px;font-weight:800;margin-bottom:5px}
+.dz24-order-label{display:block;color:#f3c47d;font-weight:800;font-size:13px;margin-top:13px}
+.dz24-order-role select{margin:3px 0;font-size:15px;color:#152136}
+@media(min-width:1150px){.w{max-width:1270px}}
+@media(max-width:575px){.dz24-lead{padding:15px}.dz24-lead p{font-size:16px}.dz24-intel-card{display:grid;grid-template-columns:112px minmax(0,1fr)}.dz24-artwrap{height:100%;min-height:142px}.dz24-card-copy p{font-size:16px}
+.dz24-qr-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.dz24-qr-person{padding:8px 5px}.dz24-player-roles{font-size:12px}
+.dz24-qr{width:100%;max-width:156px;min-height:145px;padding:4px}.dz24-qr img,.dz24-qr canvas{width:135px!important;height:135px!important}}
