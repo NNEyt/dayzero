@@ -1,4 +1,4 @@
-name: Repair Day Zero Pages source
+name: Rebuild Day Zero Pages
 on:
   push:
     paths:
@@ -7,29 +7,26 @@ on:
 permissions:
   contents: read
   pages: write
-  actions: write
 jobs:
-  repair:
+  rebuild:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect current Pages source and permissions
+      - name: Request fresh Pages build
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          set -u
-          echo "Current Pages site configuration:"
-          gh api "repos/$REPO/pages" --jq '{url, status, build_type, source}' || true
-          echo "Try switching to branch deployment, retaining main and root:"
-          if gh api -X PUT "repos/$REPO/pages" \
-               -f build_type=legacy \
-               -f 'source[branch]=main' \
-               -f 'source[path]=/'; then
-            echo "CHANGE_ACCEPTED"
-            gh api "repos/$REPO/pages" --jq '{url, status, build_type, source}' || true
-            echo "Requesting new Pages build:"
-            gh api -X POST "repos/$REPO/pages/builds" || true
+          set -uo pipefail
+          echo "Pages status before build request"
+          gh api "repos/$REPO/pages" --jq '{status,build_type,source,html_url}' || true
+          echo "Requesting a new build on the current source branch"
+          if gh api -X POST "repos/$REPO/pages/builds"; then
+            echo "BUILD_REQUEST_ACCEPTED"
           else
-            echo "CHANGE_REFUSED_OR_UNAVAILABLE"
-            gh api "repos/$REPO/pages" --jq '{url, status, build_type, source}' || true
+            echo "BUILD_REQUEST_REFUSED"
           fi
+          sleep 5
+          echo "Latest Pages build"
+          gh api "repos/$REPO/pages/builds/latest" --jq '{status,error,commit,created_at}' || true
+          echo "Current Pages status"
+          gh api "repos/$REPO/pages" --jq '{status,build_type,source}' || true
