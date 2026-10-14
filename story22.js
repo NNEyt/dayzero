@@ -32,26 +32,22 @@ function dz22Record(action,status,raw,before){
  raw:String(raw||""),changes:dz22Changes(before,after),found};
 }
 function dz22Artwork(id,found){
- if(found?.length){
-  const x=found[0];return {batteries:"r_SIG",receiver:"r_SIG",route:"dl5",blankets:"ev6",log:"t1",worklight:"t10"}[x]||"teach";
- }
- if(["fill","cw","cwV","t4w","t4p","t4u"].includes(id))return "t4";
- if(["gTest","gN","gS","gST","gMH","wood","woodV"].includes(id))return "ev6";
- if(["info","iMid","iArm","iEva","iWat","iTan","iBrk","iSab","bA","bB","bC","bT","fR","cR","useReceiver"].includes(id))return "r_SIG";
- if(["osei","aldT","aldW","aldV","aldC"].includes(id))return "t2";
- if(["fW","fE","useLogSIG","useLogLOC"].includes(id))return "t1";
- if(["lind","frz"].includes(id))return "o1";
- if(["had","dep","depV"].includes(id))return id==="had"?"t6":"o2";
- if(["fH"].includes(id))return "t8";
- if(["wat","wel","welM"].includes(id))return "t9";
- if(["gM","gW","gE","cF","calm","useRoute"].includes(id))return "t10";
- if(["trt","useBlankets"].includes(id))return "r_MED";
- if(id==="cmf")return "teach";
- if(id==="exTower")return "t4";
- if(id==="exClinic")return "t1";
- if(id==="exHall")return "teach";
+ if(found?.length)return "dz23/"+found[0]+".svg";
+ if(["fill","cw","cwV","t4w","t4p","t4u"].includes(id))return "dz23/water.svg";
+ if(["gTest","g","gN","gS","gST","gMH","wood","woodV"].includes(id))return "dz23/generator.svg";
+ if(["info","iMid","iArm","iEva","iWat","iTan","iBrk","iSab","bA","bB","bC","bT","fR","cR","useReceiver"].includes(id))return "dz23/receiver.svg";
+ if(["osei","aldT","aldW","aldV","aldC"].includes(id))return "dz23/access.svg";
+ if(["fW","fE","useLogSIG","useLogLOC"].includes(id))return "dz23/log.svg";
+ if(["lind","frz"].includes(id))return "dz23/food.svg";
+ if(["had","dep","depV","cF"].includes(id))return "dz23/fuel.svg";
+ if(["gM","gW","gE","calm","useRoute"].includes(id))return "dz23/route.svg";
+ if(id==="useBlankets")return "dz23/blankets.svg";
+ if(id==="exTower")return "dz23/route.svg";
+ if(id==="exClinic")return "dz23/log.svg";
+ if(id==="exHall")return "dz23/batteries.svg";
  return "ev"+S.round;
 }
+
 function dz22Plain(s){
  return String(s||"").replace(/<[^>]*>/g,"").replace(/^[\s✖✅◐✚🔧🔥🪵💧🏛️📻🔑🫁🧳🩺⛽🌊🛒🚰📢🛢️🚨🧭🤗🔎🎒🧣📋📡🏃🧗☑️]+/u,"").trim();
 }
@@ -117,16 +113,17 @@ function dz22Moment(){
 }
 function dz22ResultCards(){
  const reports=Array.isArray(S.report)?S.report:[];
- if(!reports.length)return '<div class="pn"><p>No recorded actions this round.</p></div>';
+ if(!reports.length)return '<div class="pn"><p>No orders were completed this round.</p></div>';
  return '<div class="dz22-grid">'+reports.map(r=>{
- const role=RL[r.role]||{ch:"Neighbour",n:"Team",c:"#ffd166",i:"🎒"};
- const status=r.status==="blocked"?"BLOCKED":"ACTION COMPLETED";
- const color=r.status==="blocked"?"#d9855f":role.c;
- const chips=r.changes?.length?'<div class="dz22-chips">'+r.changes.map(t=>'<span>'+esc(t)+'</span>').join("")+'</div>':(r.status==="done"?'<div class="dz22-chips"><span>Progress made · no resource spent or gained</span></div>':"");
- return '<article class="dz22-result" style="--dz22:'+color+'"><div class="dz22-art">'+art(dz22Artwork(r.id,r.found),role.i)+'</div>'+
- '<div class="dz22-details"><div class="dz22-kicker">'+esc(role.ch)+" · "+status+'</div><h4>'+esc(r.label)+'</h4><p>'+esc(dz22ResultText(r))+'</p>'+chips+'</div></article>';
+ const role=RL[r.role]||{ch:"Neighbour",c:"#ffd166",i:"🎒"};
+ const blocked=r.status==="blocked",color=blocked?"#d9855f":role.c;
+ const title=r.found?.length?DZ_ITEMS[r.found[0]]?.name:r.id==="gTest"?"Generator Tested":r.id==="info"?"Radio Point Ready":r.id==="fill"&&r.changes?.some(c=>c.includes("Water running"))?"Water Reserve Ready":r.id==="osei"?"Access Secured":r.id==="frz"?"Food Collected":blocked?"Plan Blocked":r.label;
+ const changes=r.changes?.length?'<div class="dz22-chips">'+r.changes.map(t=>'<span>'+esc(t)+'</span>').join("")+'</div>':"";
+ return '<article class="dz22-result dz23-result" style="--dz22:'+color+'"><div class="dz22-art">'+art(dz22Artwork(r.id,r.found),role.i)+'</div>'+
+ '<div class="dz22-details"><div class="dz22-kicker">'+esc(role.ch)+' · '+(blocked?"COULD NOT COMPLETE":"COMPLETED")+'</div><h4>'+esc(title||r.label)+'</h4><p>'+esc(dz22ResultText(r))+'</p>'+changes+'</div></article>';
  }).join("")+'</div>';
 }
+
 function dz22CouncilScene(){
  const r=S.round;const scenes={
  1:"Four neighbours sit around a table in the community hall. A man in the tower block needs help, and the hall itself is not ready for a long outage. Your time is limited. Who speaks to the caretaker, who reaches the patient, and what should be prepared for everyone else?",
@@ -143,17 +140,17 @@ function dz22CouncilScene(){
  if(!S.f.gTest&&!S.hub.warmth)advice.push("Warmth: someone needs to test the generator before it can be set up safely outdoors. Firewood is another option, but Bram must first agree to help.");
  if(S.a.signal<=1&&S.round>=2)advice.push("Radio capacity is low. An operating hall radio point restores 1 Signal at the beginning of later rounds; spare batteries and the receiver offer a separate one-time boost.");
  if(act("T10"))advice.push("Grid crew: the repair needs a guide, fuel and radio coordination. These can involve different roles during the same round.");
- return '<div class="dz22-story dz22-council"><div class="dz22-scene-image">'+art("teach","🕯️")+'</div><div class="dz22-story-prose"><div class="dz22-kicker">THE COUNCIL · ROUND '+r+'</div><h3>What Will Your Team Do?</h3><div class="dz22-read">📖 '+dz21Attribution()+'</div><p>'+esc(scenes[r])+'</p><p><b>Each player now shares everything they learned.</b> Read ordinary information cards aloud. Cards marked DESCRIBE ONLY must be explained in your own words. Discuss and agree on a plan before choosing orders.</p></div></div>'+
- (advice.length?'<div class="pn dz22-teamwork"><b>🤝 Ways to work together</b>'+advice.slice(0,3).map(x=>'<p>'+esc(x)+'</p>').join("")+'</div>':"");
+ return '<div class="dz22-story dz22-council"><div class="dz22-scene-image">'+art("teach","🕯️")+'</div><div class="dz22-story-prose"><div class="dz22-kicker">THE COUNCIL · ROUND '+r+'</div><h3>What Will Your Team Do?</h3><div class="dz22-read">📖 '+dz21Attribution()+'</div><p>'+esc(scenes[r])+'</p><p><b>Each player now shares everything they learned.</b> Read ordinary information cards aloud. Use the VERIFIED, UNCONFIRMED and RUMOUR labels to judge information. Discuss and agree on a plan before choosing orders.</p></div></div>'+
+ (advice.length?'<details class="pn dz22-teamwork"><summary>💡 Need a hint? (optional)</summary><p>Only open this if your team is stuck.</p><details class="dz23-hint"><summary>Small hint</summary><p>Several tasks depend on access, resources or another role acting first. Compare what each player knows before choosing.</p></details><details class="dz23-hint"><summary>Stronger hint</summary>'+advice.slice(0,3).map(x=>'<p>'+esc(x)+'</p>').join("")+'</details></details>':"");
 }
 function dz22RolePrompt(role){
- const names={
- SIG:"Theo listens to the radio while everybody waits for news. You cannot spend Signal everywhere. Which warning is worth investigating, and what needs to be communicated?",
- QM:"Ines has the keys, the van and responsibility for the hall. Journeys cost fuel. Which delivery must happen first—and who needs to arrange access?",
- MED:"Pavel understands what delay means for the sick and vulnerable. Who needs attention right now, and can the team clear the route before you go?",
- LOC:"Marta knows Kelderwick's people, shortcuts and old promises. Often, someone must earn permission before another role can complete the job."
+ const notes={
+ SIG:"You control radio investigations and broadcasts. Signal is limited; each radio action has a cost.",
+ QM:"You control the van, fuel deliveries and equipment setup. Journeys use fuel.",
+ MED:"You control medical actions. Medkits are limited, and some locations require access.",
+ LOC:"You manage local contacts and favours, including permissions and routes. Contacts are limited."
  };
- return '<div class="dz22-role-cue"><b>In the story:</b> '+esc(names[role]||"Discuss the team's plan.")+'</div>';
+ return '<div class="dz22-role-cue"><b>Role mechanics:</b> '+esc(notes[role]||"Choose your available actions.")+'</div>';
 }
 
 function dz22TimePassage(){
