@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Day Zero</title>
@@ -62,7 +61,6 @@ T9:["Break-in Rumour","Mill Lane",2,"People are scared. Some talk about guarding
 T7:["Cold Snap","Whole town",0,"WARNING: Below freezing from tomorrow night. Without Warmth, people suffer.","Each round without Warmth: Health −1"],
 T10:["Grid Crew","Council point → substation",2,"The crew needs: a guide on a safe route, 1 Fuel at the substation, and radio coordination.","No power this weekend. Health −1."]};
 const IC={T2:"🫁",T1:"🏥",O1:"🧊",T3:"💧",T4:"🏢",T6:"⛽",O2:"🛢️",T8:"🔥",T9:"🚨",T7:"🥶",T10:"⚡"};
-// Intel: [rel, text, describeOnly]
 const IN={1:{SIG:[["V","Radio: the grid operator confirms a major fault. No time for repairs yet."],["R","Social media post: “Power back by midnight! My cousin works at the power station.” (2,000 shares)"],["V","Phones still work, but messages take minutes."]],
 QM:[["V","Hall inventory: 3 Fuel · the van · 1 generator in the storeroom (not tested for 2 years) · 20 empty water containers · 1 box of batteries · an old wood stove (no wood)."],["V","Van trips cost Fuel. Delivering fuel also costs the fuel you deliver."]],
 MED:[["V","Mr Aldous uses a breathing machine. Its battery lasts about 6 hours."],["V","Generators make carbon monoxide. You can't see or smell it. A generator must NEVER run inside a building."],["V","Home oxygen users usually keep a backup cylinder. Mr Aldous may have one."]],
@@ -91,7 +89,6 @@ LOC:[["V","Sketch: the old mill path, down through Hillside and over a wooden fo
 QM:[["V","Final check: make sure Warmth, Water and Information are running."]],
 MED:[["V","Tower block: babies and older people on the top floors. Power there means water and the lift."]],
 LOC:[["V","Marta counted: 120 people in the tower block, 40 on the clinic street, 60 at the hall."]]}};
-// Tasks
 const T=[];const TI={};
 function K(id,who,step,label,av,run,o={}){const t=Object.assign({id,who,step,label,av,run},o);t.ix=T.length;T.push(t);TI[id]=t}
 const inv=(id,l,av,txt,f)=>K(id,"SIG",2,"Investigate: "+l,()=>av()&&!S.f[id],()=>{S.f[id]=1;if(f)S.f[f]=1;return "🔎 "+txt},{cost:{signal:1}});
@@ -150,7 +147,6 @@ const CN={fuel:"Fuel",signal:"Signal",supplies:"Supplies",medkits:"Medkit",conta
 const ctx=c=>{const k=Object.keys(c);return k.length?" ("+k.map(x=>c[x]+" "+CN[x]).join(", ")+")":""};
 const have=c=>Object.keys(c).every(k=>(k==="supplies"?S.t.supplies:S.a[k])>=c[k]);
 const pay=c=>{for(const k in c)k==="supplies"?tr("supplies",-c[k]):S.a[k]-=c[k]};
-// Dilemmas: [id,label,effect,run,coda,ok]
 const DL={DL1:["QM","Open the Stores?","🥫","Neighbours at the door: “The hall has food. Will you share it now?” Some are scared. Some are angry.",[["open","Open to the street","Supplies −1, Cohesion +1, Trust +1",()=>{tr("supplies",-1);tr("cohesion",1);tr("trust",1);S.f.e3=1},"People still talk about the night the hall opened its doors."],["keep","Keep for the Hub","No immediate effect",()=>{S.f.e4=1},"The Hub had enough. Not everyone understood why."]]],
 DL2:[0,"Hillside Water","🚱","Hillside residents with empty bottles: “Our tank is broken. Our children need water. Can you share?”",[["share","Share our water","Supplies −1, Trust +2",()=>{tr("supplies",-1);tr("trust",2);S.f.e1=1},"Hillside still talks about the water you shared."],["cont","Give containers only","Trust +1",()=>tr("trust",1),"You gave Hillside a way to help themselves."],["ref","Refuse","No immediate effect",()=>{S.f.e2s=1},"Hillside remembers the door that stayed closed."]]],
 DL3:["MED","One Bed","🛏️","The clinic radios: “One bed left. Who gets it?” Mr Aldous needs oxygen. Mrs Petrova is 88, alone and freezing.",[["aldous","Mr Aldous","He can be driven to the clinic (van + Medic together). Mrs Petrova moves to the hall and needs Warmth by tomorrow night.",()=>{S.f.petH=1},"Mr Aldous's daughter flew home on Monday. She brought Pavel a card."],["petrova","Mrs Petrova","The clinic collects her. On the coldest night, the Medic must climb to Mr Aldous with a medkit.",()=>{S.th.T2.res=true;S.f.care=1},"Mrs Petrova slept warm at the clinic. Pavel climbed nine floors twice more."]]],
@@ -169,7 +165,6 @@ return `<div class="pn c">${tk("Supplies","supplies","🥫")}${tk("Health","heal
 <div>HUB: <span class="hb ${S.hub.warmth?"on":""}">🔥 Warmth</span><span class="hb ${S.hub.water?"on":""}">💧 Water</span><span class="hb ${S.hub.info?"on":""}">📻 Information</span></div><div>${th}</div>
 <div class="s">Round ${S.round}/7 · Coordinator: <b>${esc(S.pl[S.co].n)}</b></div></div>`}
 function add(id){S.th[id]={clock:id==="T1"?1:0};S.nw.push(id)}
-```html
 const TEACH1="<b>Each round:</b> Event → private cards → Council → secret orders → results.<br>Your cards are private. Read words aloud if you like, but <b>DESCRIBE ONLY</b> cards must be explained in your own words.<br>Each role chooses <b>1 action</b> this round.<br>Threats have clocks. If a clock fills, something bad happens.<br><b>Mission:</b> get Warmth, Water and Information running at the hall.";
 const TEACH2="From now on each role chooses <b>2 actions</b>.<br>Some actions need another role to act first, or in the same round. Plan together!<br><b>Dilemmas</b> have no right answer. A role dilemma is decided by that role. A group dilemma: everyone speaks once, the Coordinator speaks last, then vote.";
 const FOOL=[["“Power back by midnight” (R1)","False."],["“Army generators” (R2)","False."],["Marta: “The East Bridge floods” (R2)","True this time."],["Clinic: “Fuel until morning” (R2)","True."],["Water board: “until Saturday” (R3)","Roughly right, but the message was old."],["“The clinic is evacuating” (R3)","False."],["“A fuel tanker is coming” (R4)","False."],["“Thieves on Mill Lane” (R5)","False: a video game."],["“It was sabotage” (R5)","Unknown. Nobody could prove it."]];
@@ -273,7 +268,7 @@ if(S.dl){const d=DL[S.dl];h+=`<div class="row">${card({t:d[1],a:S.dl.toLowerCase
 return h+board()+`<div class="row">${Object.keys(S.th).filter(act).map(thC).join("")}</div><div class="c"><button class="btn" ${S.dl&&!S.dc?"disabled":""} onclick="S.ph='ord';S.pi=0;S.show=false;sv();R()">Go to secret orders</button></div>`}
 function vRes(){return `<h2>Results · Round ${S.round}</h2><div class="pn"><b>Orders revealed:</b><br>${(S.rev||[]).map(esc).join("<br>")||"None"}</div><div class="pn lg">${S.log.map(x=>"<p>"+x+"</p>").join("")}</div>${board()}<div class="c"><button class="btn" onclick="escal()">End of round</button></div>`}
 function vEsc(){return `<h2>End of Round ${S.round}</h2><div class="pn lg">${S.esc.map(x=>"<p>"+x+"</p>").join("")}</div>${board()}<div class="c"><button class="btn" onclick="nextRound()">${S.round>=7?"See the ending":"Next round"}</button></div>`}
-  function vEnd(){const z=ending(),st=n=>"★".repeat(n)+"☆".repeat(3-n),cod=[...S.codas];if(S.d6)cod.push(S.f.d6?DL.DL6[4].find(x=>x[0]===S.d6)[4]:"The council decided without you. The power came later.");
+function vEnd(){const z=ending(),st=n=>"★".repeat(n)+"☆".repeat(3-n),cod=[...S.codas];if(S.d6)cod.push(S.f.d6?DL.DL6[4].find(x=>x[0]===S.d6)[4]:"The council decided without you. The power came later.");
 return `<h1 style="font-size:56px">${z.e[0]}</h1><div class="row">${card({t:z.e[0],a:"end",i:"🏁",f:z.e[1]+z.x,g:"YOUR ENDING"})}</div>
 <div class="pn c"><div class="st">Mission ${st(z.m)} · People ${st(z.p)} · Community ${st(z.c)}</div></div>
 <div class="pn"><h2>Your Story</h2>${outc().concat(cod).filter(x=>x).map(x=>"<p>• "+x+"</p>").join("")}</div>
