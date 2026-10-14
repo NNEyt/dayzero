@@ -1,4 +1,4 @@
-name: Release old Day Zero deployment lock
+name: Repair Day Zero Pages source
 on:
   push:
     paths:
@@ -7,27 +7,29 @@ on:
 permissions:
   contents: read
   pages: write
-  deployments: write
+  actions: write
 jobs:
-  cleanup:
+  repair:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect and delete only stalled deployment record
+      - name: Inspect current Pages source and permissions
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          STUCK_SHA: 0959ebcd5fdb86200336cbeb1610e502955981f1
         run: |
-          set -euo pipefail
-          echo "Looking for Deployment API records tied to known failed commit."
-          DEPLOYMENTS="$(gh api "repos/$REPO/deployments?sha=$STUCK_SHA" --jq '.[] | select(.sha == env.STUCK_SHA and .environment == "github-pages") | .id')" || exit 1
-          if [ -z "$DEPLOYMENTS" ]; then
-            echo "No matching GitHub Deployments API records. Stale Pages service state needs GitHub support."
-            exit 0
+          set -u
+          echo "Current Pages site configuration:"
+          gh api "repos/$REPO/pages" --jq '{url, status, build_type, source}' || true
+          echo "Try switching to branch deployment, retaining main and root:"
+          if gh api -X PUT "repos/$REPO/pages" \
+               -f build_type=legacy \
+               -f 'source[branch]=main' \
+               -f 'source[path]=/'; then
+            echo "CHANGE_ACCEPTED"
+            gh api "repos/$REPO/pages" --jq '{url, status, build_type, source}' || true
+            echo "Requesting new Pages build:"
+            gh api -X POST "repos/$REPO/pages/builds" || true
+          else
+            echo "CHANGE_REFUSED_OR_UNAVAILABLE"
+            gh api "repos/$REPO/pages" --jq '{url, status, build_type, source}' || true
           fi
-          while read -r ID; do
-            [ -z "$ID" ] && continue
-            echo "Cleaning only github-pages deployment ID $ID on commit $STUCK_SHA"
-            gh api --method POST "repos/$REPO/deployments/$ID/statuses" -f state=inactive -f description="Cancel orphaned failed Pages deployment" || true
-            gh api --method DELETE "repos/$REPO/deployments/$ID"
-          done <<< "$DEPLOYMENTS"
