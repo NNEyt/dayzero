@@ -41,6 +41,15 @@ background:repeating-linear-gradient(-35deg,#0f1630 0 13px,#1a2550 13px 15px,#0f
 .opt div{font:16px 'Atkinson Hyperlegible';font-style:normal;margin-top:3px}
 select,input{font-size:18px;padding:8px;border-radius:8px;border:2px solid #000;width:100%;margin:4px 0}
 .st{font-size:34px;color:#ffd166}.s{font-size:15px;color:#bbb}
+
+/* Day Zero 2.0: inventory and exploration */
+.dx-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:10px}
+.dx-item{background:#20294f;border:2px solid #070a15;border-radius:11px;padding:10px;box-shadow:inset 0 0 0 1px #5666a6}
+.dx-item b{color:#ffe08a}.dx-item small{color:#cbd2ec;display:block;line-height:1.35;margin-top:4px}
+.dx-item .dx-icon{font-size:28px;display:inline-block;margin-right:6px}
+.dx-place{border-left:4px solid #2fd09c}.dx-place.locked{border-left-color:#7c7e97;opacity:.83}.dx-place.done{border-left-color:#f0a500}
+.dx-label{font-size:13px;font-weight:bold;letter-spacing:.035em;color:#ffca69}
+.dx-note{font-size:15px;color:#dee4fa}
 </style></head><body><div class="w" id="app"></div>
 <script>
 const RL={SIG:{n:"Signal",ch:"Theo",c:"#4aa3ff",i:"📻"},QM:{n:"Quartermaster",ch:"Ines",c:"#f0a500",i:"📦"},MED:{n:"Medic",ch:"Pavel",c:"#e07ac0",i:"✚"},LOC:{n:"Local",ch:"Marta",c:"#2fd09c",i:"🏠"}};
@@ -113,6 +122,118 @@ const tr=(k,n)=>{S.t[k]=Math.max(0,Math.min(6,S.t[k]+n))};
 const act=id=>{const x=S.th[id];return !!x&&!x.res&&!x.fail};
 const esc=s=>String(s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
 const T=[];const TI={};
+
+// --- Day Zero 2.0: discoveries and inventory. No change to core round/action economy. ---
+const DZ_ITEMS={
+ batteries:{name:"Spare Batteries",icon:"🔋",kind:"CONSUMABLE",use:"Combine with the Emergency Receiver to improve communications."},
+ receiver:{name:"Emergency Receiver",icon:"📡",kind:"EQUIPMENT",use:"Theo can tune this using batteries to uncover a dated message."},
+ route:{name:"Caretaker's Route Sketch",icon:"🗺️",kind:"INTELLIGENCE",use:"Combine with a worklight to examine the old mill route."},
+ blankets:{name:"Thermal Blankets",icon:"🧣",kind:"CONSUMABLE",use:"Pavel can protect the vulnerable from one later cold-related health loss."},
+ log:{name:"Clinic Service Log",icon:"📋",kind:"EVIDENCE",use:"Theo or Marta can examine its unusual maintenance timestamp."},
+ worklight:{name:"Portable Worklight",icon:"🔦",kind:"EQUIPMENT",use:"Marta can use this with the route sketch to guide the crew."}
+};
+const DZ_LOC={
+ hall:{name:"Community Hall Storeroom",icon:"🏠",ids:["batteries","receiver"],help:"Available immediately. Searching competes with urgent community work."},
+ tower:{name:"Tower Block Cupboard",icon:"🏢",ids:["route","blankets"],help:"Mr Osei must first unlock the stairs. Blankets become available from Round 3."},
+ clinic:{name:"Riverside Clinic Maintenance",icon:"🏥",ids:["log","worklight"],help:"Available once the clinic generator has been refuelled."}
+};
+function dzInit(){
+ if(!S)return null;
+ if(!S.dx||typeof S.dx!=="object")S.dx={};
+ const d=S.dx;
+ if(!Array.isArray(d.inventory))d.inventory=[];
+ if(!d.searched||typeof d.searched!=="object")d.searched={};
+ for(const id of Object.keys(DZ_LOC))if(!Number.isSafeInteger(d.searched[id])||d.searched[id]<0)d.searched[id]=0;
+ if(!d.used||typeof d.used!=="object")d.used={};
+ if(!d.clues||typeof d.clues!=="object")d.clues={};
+ if(!Array.isArray(d.history))d.history=[];
+ if(!Number.isInteger(d.coldShield)||d.coldShield<0)d.coldShield=0;
+ return d;
+}
+function dzHas(id){return dzInit().inventory.includes(id)}
+function dzOpen(id){
+ if(id==="hall")return S.round>=1;
+ if(id==="tower")return !!S.f.acc;
+ if(id==="clinic")return S.round>=2&&!!(S.th.T1&&S.th.T1.res);
+ return false;
+}
+function dzNext(id){
+ const d=dzInit(),loc=DZ_LOC[id];if(!loc||!dzOpen(id))return null;
+ const item=loc.ids[d.searched[id]];
+ if(!item||dzHas(item))return null;
+ if(item==="blankets"&&S.round<3)return null;
+ return item;
+}
+function dzFind(id){
+ const item=dzNext(id),d=dzInit();if(!item)return "✖ Nothing else can be found here right now.";
+ d.inventory.push(item);d.searched[id]++;
+ d.history.push({round:S.round,action:"found",item:item,place:id});
+ return "🎒 Discovered "+DZ_ITEMS[item].icon+" "+DZ_ITEMS[item].name+" at "+DZ_LOC[id].name+". Added to the team's shared inventory.";
+}
+function dzRemove(id){const d=dzInit(),i=d.inventory.indexOf(id);if(i>=0)d.inventory.splice(i,1)}
+function dzCan(id){
+ const d=dzInit();if(d.used[id])return false;
+ if(id==="receiver")return S.round>=2&&dzHas("batteries")&&dzHas("receiver");
+ if(id==="blankets")return S.round>=3&&dzHas("blankets")&&!d.coldShield;
+ if(id==="log")return S.round>=2&&dzHas("log");
+ if(id==="route")return S.round>=6&&dzHas("route")&&dzHas("worklight")&&!S.f.e2&&act("T10")&&!S.f.guide;
+ return false;
+}
+function dzUse(id){
+ if(!dzCan(id))return "✖ Required equipment or conditions are missing.";
+ const d=dzInit();let result="";
+ if(id==="receiver"){
+  dzRemove("batteries");S.a.signal=Math.min(6,S.a.signal+1);d.clues.dispatch=1;
+  result="📡 Theo tunes the receiver. Signal +1 (maximum 6). An earlier-dated grid-crew transmission is recorded in the evidence journal. It does not prove sabotage.";
+ }else if(id==="blankets"){
+  dzRemove("blankets");d.coldShield=1;
+  result="🧣 Pavel distributes thermal blankets. The next eligible cold-related Health loss will be reduced by 1.";
+ }else if(id==="log"){
+  d.clues.service=1;
+  result="📋 The clinic service log contains a maintenance work order dated before the blackout. Its significance is unclear. Evidence added to the journal.";
+ }else if(id==="route"){
+  S.f.guide=1;
+  result="🗺️ Marta uses the sketch and worklight to locate a service route. The grid crew still needs fuel and radio coordination.";
+ }
+ d.used[id]=1;d.history.push({round:S.round,action:"used",item:id});
+ return result;
+}
+function dzCold(n,E){
+ const d=dzInit();let penalty=n;
+ if(n>0&&d.coldShield){penalty=Math.max(0,n-1);d.coldShield=0;E.push("🧣 Thermal blankets prevent 1 point of cold-related Health loss.");}
+ tr("health",-penalty);return penalty;
+}
+function dzJournal(){
+ const d=dzInit(),arr=[];
+ if(d.clues.service)arr.push("📋 The clinic work order was dated before the blackout, but the reason is unknown.");
+ if(d.clues.dispatch)arr.push("📡 An earlier-dated repair transmission suggests grid work was discussed in advance.");
+ return arr;
+}
+function dzPanel(){
+ const d=dzInit(),ids=d.inventory,ev=dzJournal();
+ const possessions=ids.length?ids.map(id=>{
+  const x=DZ_ITEMS[id];return '<div class="dx-item"><span class="dx-icon">'+(x?x.icon:"📦")+'</span><b>'+esc(x?x.name:id)+'</b><div class="dx-label">'+(x?x.kind:"ITEM")+'</div><small>'+esc(x?x.use:"")+'</small></div>';
+ }).join(""):'<p class="dx-note">Nothing found yet. Explore locations using your normal action slots; you do not need to collect everything.</p>';
+ const locs=Object.keys(DZ_LOC).map(id=>{
+  const x=DZ_LOC[id],left=dzNext(id),open=dzOpen(id),done=d.searched[id]>=x.ids.length;
+  const status=done?"CLEARED":left?"SEARCHABLE":open?"NOTHING AVAILABLE YET":"LOCKED";
+  const cls=done?"done":open?"":"locked";
+  return '<div class="dx-item dx-place '+cls+'"><b>'+x.icon+" "+x.name+'</b><div class="dx-label">'+status+'</div><small>'+esc(x.help)+'</small></div>';
+ }).join("");
+ return '<div class="sec">🎒 Discovered equipment</div><div class="pn"><div class="dx-grid">'+possessions+'</div>'+
+ (d.coldShield?'<p class="dx-note">🧣 Thermal protection ready: next cold-related Health loss −1.</p>':"")+'</div>'+
+ '<div class="sec">🗺️ Explore Kelderwick</div><div class="pn"><p class="dx-note">Each search uses one normal role action. Roles may share what they find. Not every item can be obtained in one playthrough.</p><div class="dx-grid">'+locs+'</div></div>'+
+ '<div class="sec">🔎 Evidence journal</div><div class="pn">'+(ev.length?ev.map(e=>'<p>'+esc(e)+'</p>').join(""):'<p class="dx-note">No physical evidence investigated yet. Rumours and official reports are not automatically proof.</p>')+'</div>';
+}
+function dzEpilogue(){
+ const d=dzInit(),a=!!d.clues.service,b=!!d.clues.dispatch;
+ if(a&&b)return "You found both an early maintenance work order and a dated repair transmission. They raise further questions about the timing, but neither proves sabotage. The team decides to keep investigating.";
+ if(a)return "The clinic's unusually dated work order remains unexplained. Without more evidence, you cannot say whether it relates to the blackout.";
+ if(b)return "The old grid-crew transmission hints that maintenance was discussed earlier than expected, but it does not establish what caused the failure.";
+ return "You kept the town going, but found no further documentary evidence about the cause of the failure.";
+}
+// --- end Day Zero 2.0 shared-inventory rules ---
+
 function K(id,who,step,label,av,run,o={}){const t=Object.assign({id,who,step,label,av,run},o);t.ix=T.length;T.push(t);TI[id]=t}
 const inv=(id,l,av,txt,f)=>K(id,"SIG",2,"Investigate: "+l,()=>av()&&!S.f[id],()=>{S.f[id]=1;if(f)S.f[f]=1;return "🔎 "+txt},{cost:{signal:1}});
 inv("iMid","the “power back by midnight” post",()=>S.round<=3,"No official source. The account was created today. Probably false.");
@@ -165,12 +286,22 @@ K("cR","SIG",2,"Coordinate the crew by radio",()=>act("T10")&&!S.f.cR,()=>{S.f.c
 K("calm","ANY",2,"Calm the crowd at the substation",()=>act("T10")&&S.f.e6&&!S.f.calm,()=>{S.f.calm=1;return "🤝 The crowd calms."},{sh:()=>act("T10")&&S.f.e6});
 K("trt","MED",3,"Treat sick neighbours at the hall",()=>S.t.health<6,()=>{tr("health",1);return "🩹 Health +1."},{cost:{medkits:1}});
 K("cmf","ANY",2,"Comfort scared neighbours at the hall",()=>!S.r.cmf,()=>{S.r.cmf=1;tr("cohesion",1);return "🤗 Cohesion +1."},{no:"Someone is already doing this."});
+
+// Day Zero 2.0: discoveries (step 1) and item uses (step 2).
+K("exHall","ANY",1,"Search community hall storeroom",()=>!!dzNext("hall"),()=>dzFind("hall"),{no:"Nothing is currently searchable at the hall."});
+K("exTower","ANY",1,"Search tower block caretaker cupboard",()=>!!dzNext("tower"),()=>dzFind("tower"),{no:"Tower access is locked or nothing is ready to find."});
+K("exClinic","ANY",1,"Search clinic maintenance room",()=>!!dzNext("clinic"),()=>dzFind("clinic"),{no:"The clinic must be safe and accessible before searching."});
+K("useReceiver","SIG",2,"Combine receiver and batteries",()=>dzCan("receiver"),()=>dzUse("receiver"),{no:"Theo needs both the receiver and batteries (Round 2 or later)."});
+K("useBlankets","MED",2,"Distribute thermal blankets",()=>dzCan("blankets"),()=>dzUse("blankets"),{no:"Pavel needs blankets (Round 3 or later)."});
+K("useLogSIG","SIG",2,"Examine clinic maintenance record",()=>dzCan("log"),()=>dzUse("log"),{no:"You need the clinic service log first."});
+K("useLogLOC","LOC",2,"Examine clinic maintenance record",()=>dzCan("log"),()=>dzUse("log"),{no:"You need the clinic service log first."});
+K("useRoute","LOC",2,"Survey old mill service route with worklight",()=>dzCan("route"),()=>dzUse("route"),{no:"Marta needs both items, an active grid-crew crisis, and an open route."});
 const cost=t=>typeof t.cost==="function"?t.cost():(t.cost||{});
 const CN={fuel:"Fuel",signal:"Signal",supplies:"Supplies",medkits:"Medkit",contacts:"Contact"};
 const ctx=c=>{const k=Object.keys(c);return k.length?" ("+k.map(x=>c[x]+" "+CN[x]).join(", ")+")":""};
 const have=c=>Object.keys(c).every(k=>(k==="supplies"?S.t.supplies:S.a[k])>=c[k]);
 const pay=c=>{for(const k in c)k==="supplies"?tr("supplies",-c[k]):S.a[k]-=c[k]};
-const GRP={"🏠 Build the Hub":["gTest","gN","gS","gST","gMH","wood","woodV","fill","cw","cwV","info"],"🫁 Mr Aldous":["osei","aldT","aldW","aldV","aldC"],"🏥 Clinic":["fW","fE"],"🧊 Freezer food":["lind","frz"],"🏢 Tower block water":["t4w","t4p","t4u"],"⛽ Petrol crowd":["iTan","bA","bB","bC","had"],"🛢️ Fuel reserve":["dep","depV"],"🔥 Candle fire":["fR","fH"],"🚨 Break-in rumour":["iBrk","bT","wat","wel","welM"],"⚡ Grid crew":["gM","gW","gE","cF","cR","calm"],"🔎 Check rumours":["iMid","iArm","iEva","iWat","iSab"],"❤️ Look after people":["trt","cmf"]};
+const GRP={"🏠 Build the Hub":["gTest","gN","gS","gST","gMH","wood","woodV","fill","cw","cwV","info"],"🫁 Mr Aldous":["osei","aldT","aldW","aldV","aldC"],"🏥 Clinic":["fW","fE"],"🧊 Freezer food":["lind","frz"],"🏢 Tower block water":["t4w","t4p","t4u"],"⛽ Petrol crowd":["iTan","bA","bB","bC","had"],"🛢️ Fuel reserve":["dep","depV"],"🔥 Candle fire":["fR","fH"],"🚨 Break-in rumour":["iBrk","bT","wat","wel","welM"],"⚡ Grid crew":["gM","gW","gE","cF","cR","calm"],"🔎 Check rumours":["iMid","iArm","iEva","iWat","iSab"],"❤️ Look after people":["trt","cmf"],"🎒 Search for equipment":["exHall","exTower","exClinic"],"🧩 Combine & use items":["useReceiver","useBlankets","useLogSIG","useLogLOC","useRoute"]};
 const DL={DL1:["QM","Open the Stores?","🥫","Neighbours at the door: “The hall has food. Will you share it now?” Some are scared. Some are angry.",[["open","Open to the street","Supplies −1, Cohesion +1, Trust +1",()=>{tr("supplies",-1);tr("cohesion",1);tr("trust",1);S.f.e3=1},"People still talk about the night the hall opened its doors.","A crowd may come to the hall (calmer if Information is running)."],["keep","Keep for the Hub","No change",()=>{S.f.e4=1},"The Hub had enough. Not everyone understood why.","Some people may say the hall is hoarding."]]],
 DL2:[0,"Hillside Water","🚱","Hillside residents with empty bottles: “Our tank is broken. Our children need water. Can you share?”",[["share","Share our water","Supplies −1, Trust +2",()=>{tr("supplies",-1);tr("trust",2);S.f.e1=1},"Hillside still talks about the water you shared.","Hillside may return the favour."],["cont","Give containers only","Trust +1",()=>tr("trust",1),"You gave Hillside a way to help themselves.","Nothing special."],["ref","Refuse","No change",()=>{S.f.e2s=1},"Hillside remembers the door that stayed closed.","Hillside may not forget this."]]],
 DL3:["MED","One Bed","🛏️","The clinic radios: “One bed left. Who gets it?” Mr Aldous needs oxygen. Mrs Petrova is 88, alone and freezing.",[["aldous","Mr Aldous","Mrs Petrova moves to the hall",()=>{S.f.petH=1},"Mr Aldous's daughter flew home on Monday. She brought Pavel a card.","Drive him to the clinic (Medic travels + Quartermaster drives). Mrs Petrova needs Warmth at the hall tomorrow night."],["petrova","Mrs Petrova","The clinic collects her",()=>{S.th.T2.res=true;S.f.care=1},"Mrs Petrova slept warm at the clinic. Pavel climbed nine floors twice more.","On the coldest night, the Medic must climb to Mr Aldous with a medkit."]]],
@@ -197,7 +328,7 @@ return `<div class="pn c">${tk("Supplies","supplies","🥫")}${tk("Health","heal
 <div>MISSION: <span class="hb ${S.hub.warmth?"on":""}">🔥 Warmth</span><span class="hb ${S.hub.water?"on":""}">💧 Water</span><span class="hb ${S.hub.info?"on":""}">📻 Information</span></div>
 <div class="s">Round ${S.round}/7 · Coordinator: <b>${esc(S.pl[S.co].n)}</b></div><button class="btn b sm2" onclick="S.g=!S.g;R()">${S.g?"Hide help":"❓ What do these mean?"}</button></div>${S.g?guideH():""}`}
 function add(id){S.th[id]={clock:id==="T1"?1:0};S.nw.push(id)}
-function start(names){S={pl:names.map(n=>({n,r:[]})),round:1,co:0,t:{supplies:names.length<=2?5:4,health:5,cohesion:4,trust:3},a:{fuel:3,signal:3,medkits:2,contacts:3},hub:{warmth:false,water:false,info:false},wt:null,f:{},th:{},dec:{},codas:[],crisis:0,ph:"team",nw:[],r:{},br:[],log:[],ord:{},pi:0,show:false,esc:[]};
+function start(names){S={dx:{inventory:[],searched:{hall:0,tower:0,clinic:0},used:{},clues:{},coldShield:0,history:[]},pl:names.map(n=>({n,r:[]})),round:1,co:0,t:{supplies:names.length<=2?5:4,health:5,cohesion:4,trust:3},a:{fuel:3,signal:3,medkits:2,contacts:3},hub:{warmth:false,water:false,info:false},wt:null,f:{},th:{},dec:{},codas:[],crisis:0,ph:"team",nw:[],r:{},br:[],log:[],ord:{},pi:0,show:false,esc:[]};
 RO.forEach((r,i)=>S.pl[i%names.length].r.push(r));sv();R()}
 function chk(){if(S.t.health<=0)S.broke="h";else if(S.t.cohesion<=0)S.broke="c";if(S.broke)S.ph="end"}
 function startRound(){const r=S.round;S.r={};S.nw=[];S.br=[];S.ord={};S.co=(r-1)%S.pl.length;S.dc=null;
@@ -220,6 +351,8 @@ if(r===4){if(S.th.T1.fail)d="DL3A";else if(act("T2"))d="DL3";else{S.codas.push("
 if(r===5)d="DL4";
 if(r===6){if(S.f.e2){S.dec.DL5="wait";S.codas.push("The Hillside barrier blocked the old mill path.")}else d="DL5"}
 if(r===7)d="DL6";
+if(r===5&&dzInit().clues.service)B("The Mismatched Timestamp","A clinic work order predates the blackout. It could be routine work—or an important clue. Nobody knows yet.","Because you examined the clinic service log.");
+if(r===6&&dzInit().clues.dispatch)B("A Broadcast Remembered","Theo compares the repair message with the unfolding crisis. The dates deserve checking, but do not identify who caused the failure.","Because you tuned the emergency receiver.");
 S.dl=d;S.ph="brief";chk();sv();R()}
 function choose(id){const o=DL[S.dl][4].find(x=>x[0]===id);if(id==="share"&&S.t.supplies<1){alert("Not enough Supplies.");return}
 S.dec[S.dl]=id;S.dc=id;
@@ -252,8 +385,8 @@ if(act("T3")){tk("T3");if(act("T3"))E.push("💧 The water tower level drops…"
 tk("T4",S.r.t4);tk("T6",S.r.t6);tk("O2");tk("T8",S.r.fire);tk("T9");tk("T10");
 if(S.hub.warmth&&S.wt==="gen"&&S.f.gPos==="S"){S.hub.warmth=false;E.push("✖ 🌧️ Rain soaks the generator in the open yard. It stops. (Set it up again somewhere sheltered, no fuel cost.)")}
 if(r===2&&S.hub.warmth){tr("cohesion",1);E.push("✅ 🔥 The hall is warm. People relax. Cohesion +1.")}
-if(r>=6&&!(r===7&&S.f.pw===6)&&!S.hub.warmth){const d=S.t.supplies<=1?2:1;tr("health",-d);E.push("✖ 🥶 Bitter cold and no Warmth at the hall. Health −"+d+".")}
-if(r===6){if(S.f.petH&&!S.hub.warmth){tr("health",-1);E.push("✖ 🥶 Mrs Petrova shivers in the cold hall. Health −1.")}if(S.f.hC&&!S.hub.warmth){tr("health",-2);E.push("✖ 🥶 The patients at the hall are freezing. Health −2.")}if(S.f.care&&!S.f.cared){tr("health",-2);E.push("✖ 🫁 Nobody climbed to Mr Aldous tonight. Health −2.")}}
+if(r>=6&&!(r===7&&S.f.pw===6)&&!S.hub.warmth){const d=S.t.supplies<=1?2:1,loss=dzCold(d,E);E.push("✖ 🥶 Bitter cold and no Warmth at the hall. Health −"+loss+".")}
+if(r===6){if(S.f.petH&&!S.hub.warmth){const loss=dzCold(1,E);E.push("✖ 🥶 Mrs Petrova shivers in the cold hall. Health −"+loss+".")}if(S.f.hC&&!S.hub.warmth){const loss=dzCold(2,E);E.push("✖ 🥶 The patients at the hall are freezing. Health −"+loss+".")}if(S.f.care&&!S.f.cared){tr("health",-2);E.push("✖ 🫁 Nobody climbed to Mr Aldous tonight. Health −2.")}}
 if(r===7&&S.f.pw===7&&S.d6&&!S.f.d6){DL.DL6[4].find(x=>x[0]===S.d6)[3]();S.f.d6=1;E.push("✅ 💡 The lights come back on, in the order you chose.")}
 if(!E.length)E.push("A quiet hour. Nothing new goes wrong.");
 S.esc=E;S.ph="esc";chk();sv();R()}
@@ -277,7 +410,7 @@ const goal=()=>`<div class="goal">🎯 <b>This round:</b> ${GOAL[S.round]}</div>
 const foot=()=>`<p class="c"><button class="btn b sm2" onclick="restart()">New game</button></p>`;
 function title(){const s0=localStorage.getItem("dz2");return `<h1>DAY ZERO</h1><p class="c" style="color:#c9c3ad"><i>The lights go out. Nobody has the whole picture.</i></p><div class="row">${card({t:"Lights Out",a:"ev1",i:"🌑",f:"A town goes dark. Your neighbours need you.",b:"1–4 players · about 75 minutes · pass this device around for private cards.",g:"A CRISIS ADVENTURE"})}</div><div class="pn"><h2>Who is playing?</h2>${[0,1,2,3].map(i=>`<input id="n${i}" placeholder="Player ${i+1} name${i?" (optional)":""}">`).join("")}<p class="s">Four roles are shared between players. Best with 3–4. One player = practice mode.</p><div class="c"><button class="btn" onclick="go()">Start</button>${s0?'<button class="btn b" onclick="cont()">Continue saved game</button>':""}</div></div>`}
 function go(){const n=[0,1,2,3].map(i=>document.getElementById("n"+i).value.trim()).filter(x=>x);if(!n.length)n.push("Player 1");start(n)}
-function cont(){S=JSON.parse(localStorage.getItem("dz2"));R()}
+function cont(){S=JSON.parse(localStorage.getItem("dz2"));dzInit();R()}
 function restart(){if(confirm("Start a new game? The saved game will be deleted.")){localStorage.removeItem("dz2");S=null;R()}}
 function vTeam(){const own=r=>S.pl.find(p=>p.r.includes(r)).n;
 return `<h2>The Story</h2><div class="pn" style="font-size:20px">Kelderwick is a small town. It's a cold Thursday evening in November. Suddenly, <b>the power goes out across the whole town</b>, and nobody knows for how long.<br><br>You are neighbours who meet at the <b>Mill Lane community hall</b>. People are scared. Someone has to organise things. That's you.<br><br><b>Your mission:</b> keep Mill Lane going for 3 days until the power returns, and turn the hall into a <b>Community Hub</b> with 🔥 Warmth, 💧 Water and 📻 Information.</div>
@@ -296,16 +429,16 @@ if(!S.show)return `<div class="pn c"><h2>${S.ph==="intel"?"Private cards":"Secre
 if(S.ph==="intel"){let h=`<h2>${esc(p.n)}'s private cards</h2><p class="c s">Remember what matters, then share it during planning. DESCRIBE ONLY cards: explain in your own words.</p>`;
 p.r.forEach(r=>{h+=roleBox(r)+`<div class="row">`;(IN[S.round][r]||[]).forEach(x=>{h+=card({t:RL[r].i+" "+RL[r].n,a:"r_"+r,i:RL[r].i,c:RL[r].c,sm:1,b:`<span class="rel ${x[0]}">${{V:"✔ VERIFIED",U:"? UNCONFIRMED",R:"~ RUMOUR"}[x[0]]}</span><div class="${x[2]?"sk":""}">${x[1]}</div>`,g:x[2]?"👁 DESCRIBE ONLY":RL[r].ch})});h+="</div>"});
 return h+`<div class="c"><button class="btn" onclick="next()">Hide my cards</button></div>`}
-let h=`<h2>${esc(p.n)}: choose secretly</h2>`;
+let h=`<h2>${esc(p.n)}: choose secretly</h2>`+dzPanel();
 p.r.forEach(r=>{const op=opts(r),n=nA(r);let o='<option value="">— No action —</option>';for(const g in GRP){const l=op.filter(t=>GRP[g].includes(t.id));if(l.length)o+=`<optgroup label="${g}">${l.map(t=>`<option value="${t.id}">${esc(t.label+ctx(cost(t)))}</option>`).join("")}</optgroup>`}
 h+=roleBox(r)+`<div class="pn"><b>${n} action${n>1?"s":""}:</b>`;for(let i=0;i<n;i++)h+=`<select id="o_${r}_${i}">${o}</select>`;h+="</div>"});
 return h+`<p class="c s">Actions are grouped by problem. Costs are paid when the action happens. Some actions need another role to act first or in the same round.</p><div class="c"><button class="btn" onclick="lock()">Lock in &amp; hide</button></div>`}
 function vCouncil(){let h=`<h2>Plan Together · Round ${S.round}</h2>${goal()}<div class="sec">📋 How to plan</div><div class="pn"><b>1. Share:</b> each player says the most important thing on their private cards.<br><b>2. Plan:</b> which problems first? Who does what? Which rumours do you trust?<br><b>3.</b> ${S.dl?"Make the decision below.":"When ready, go to secret orders."}<br><span class="s">Coordinator: ${esc(S.pl[S.co].n)}. Reads aloud, speaks last, breaks ties.</span></div>`;
 if(S.dl){const d=DL[S.dl];h+=`<div class="sec">⚖️ Decision</div><div class="row">${card({t:d[1],a:S.dl.toLowerCase(),i:d[2],f:d[3],b:d[0]?`<b>Decided by the ${RL[d[0]].n}</b> after listening to everyone.`:"<b>Group decision:</b> everyone speaks once, the Coordinator speaks last, then vote.",g:"DILEMMA"})}<div class="pn" style="max-width:460px">${d[4].map((o,i)=>`<button class="btn opt ${S.dc===o[0]?"":"b"}" ${S.dc?"disabled":""} onclick="choose('${o[0]}')">Option ${"ABC"[i]}: ${o[1]}<div>⚡ <b>Now:</b> ${o[2]}</div><div>🔮 <b>Later:</b> ${o[5]}</div></button>`).join("")}${S.dc?"<p>✔ Decided.</p>":""}</div></div>`}
 const A=Object.keys(S.th).filter(act);if(A.length)h+=`<div class="sec">⚠️ Problems right now</div><div class="row">${A.map(thC).join("")}</div>`;
-return h+`<div class="sec">🏘️ Your town</div>`+board()+`<div class="c"><button class="btn" ${S.dl&&!S.dc?"disabled":""} onclick="S.ph='ord';S.pi=0;S.show=false;sv();R()">Go to secret orders</button></div>`}
+return h+`<div class="sec">🏘️ Your town</div>`+board()+dzPanel()+`<div class="c"><button class="btn" ${S.dl&&!S.dc?"disabled":""} onclick="S.ph='ord';S.pi=0;S.show=false;sv();R()">Go to secret orders</button></div>`}
 const lg=a=>`<div class="pn lg">${a.map(x=>`<p class="${x.includes("✖")?"no":x.includes("✅")?"ok":""}">${x}</p>`).join("")}</div>`;
-function vRes(){return `<h2>Results · Round ${S.round}</h2><div class="sec">🗣️ Orders revealed</div><div class="pn">${(S.rev||[]).map(esc).join("<br>")||"None"}</div><div class="sec">🎬 What happened</div>${lg(S.log)}${dif(S.pre)}<div class="sec">🏘️ Your town</div>${board()}<div class="c"><button class="btn" onclick="escal()">End of round</button></div>`}
+function vRes(){return `<h2>Results · Round ${S.round}</h2><div class="sec">🗣️ Orders revealed</div><div class="pn">${(S.rev||[]).map(esc).join("<br>")||"None"}</div><div class="sec">🎬 What happened</div>${lg(S.log)}${dif(S.pre)}${dzPanel()}<div class="sec">🏘️ Your town</div>${board()}<div class="c"><button class="btn" onclick="escal()">End of round</button></div>`}
 function vEsc(){const nx=S.round<7?`<div class="goal">🔜 <b>Coming next:</b> Round ${S.round+1}: ${EV[S.round+1][0]}</div>`:"";return `<h2>End of Round ${S.round}</h2><div class="sec">⏰ Time passes…</div>${lg(S.esc)}${dif(S.pre)}${nx}<div class="sec">🏘️ Your town</div>${board()}<div class="c"><button class="btn" onclick="nextRound()">${S.round>=7?"See the ending":"Next round"}</button></div>`}
 function vEnd(){const z=ending(),st=n=>"★".repeat(n)+"☆".repeat(3-n),cod=[...S.codas];if(S.d6)cod.push(S.f.d6?DL.DL6[4].find(x=>x[0]===S.d6)[4]:"The council decided without you. The power came later.");
 return `<h1 style="font-size:56px">${z.e[0]}</h1><div class="row">${card({t:z.e[0],a:"end",i:"🏁",f:z.e[1]+z.x,g:"YOUR ENDING"})}</div>
@@ -314,8 +447,8 @@ return `<h1 style="font-size:56px">${z.e[0]}</h1><div class="row">${card({t:z.e[
 <div class="pn"><h2>What Fooled You?</h2>${FOOL.map(f=>`<p><b>${f[0]}</b>: ${f[1]}</p>`).join("")}<p><i>Rumours spread fastest when people are scared. Always ask: how do we know?</i></p></div>
 <div class="pn"><h2>Field Notes</h2>${NOTES.map(n=>`<p><span class="rel ${n[0]==="Real"?"V":"U"}">${n[0]}</span> ${n[1]}</p>`).join("")}<p class="s">General guidance only. Check your local official advice.</p></div>
 <div class="pn"><h2>Talk About It</h2><p>1. Which rumour fooled you, and why?</p><p>2. What would our household need for 72 hours?</p><p>3. Who in our street might need help in a blackout?</p><p>4. Which decision would you change?</p><p>5. When is it right to share something you can't prove?</p></div>
-<div class="pn"><h2>What Happens Next?</h2><p><i>Two weeks later, the grid operator's report blames “equipment failure.” But one photo still bothers you: the substation lock wasn't forced. Someone had a key. To be continued…</i></p></div>
+<div class="pn"><h2>What Happens Next?</h2><p><i>Two weeks later, the grid operator's report blames “equipment failure.” But one photo still bothers you: the substation lock wasn't forced. Someone had a key. To be continued…</i></p><p>${esc(dzEpilogue())}</p></div>
 <div class="c"><button class="btn" onclick="localStorage.removeItem('dz2');S=null;R()">Play again</button></div>`}
-function R(){const A=document.getElementById("app");if(!S){A.innerHTML=title();return}A.innerHTML=({team:vTeam,brief:vBrief,intel:vPass,council:vCouncil,ord:vPass,res:vRes,esc:vEsc,end:vEnd}[S.ph])();window.scrollTo(0,0)}
+function R(){if(S)dzInit();const A=document.getElementById("app");if(!S){A.innerHTML=title();return}A.innerHTML=({team:vTeam,brief:vBrief,intel:vPass,council:vCouncil,ord:vPass,res:vRes,esc:vEsc,end:vEnd}[S.ph])();window.scrollTo(0,0)}
 R();
 </script></body></html>
