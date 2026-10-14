@@ -1,0 +1,23 @@
+name: Clear stalled Day Zero Pages deployment
+on:
+  push:
+    paths:
+      - '.github/workflows/unblock-pages.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+jobs:
+  unblock:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel stale Pages deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api --method POST "repos/${{ github.repository }}/pages/deployments/0959ebcd5fdb86200336cbeb1610e502955981f1/cancel" || {
+            echo "Cancellation endpoint returned error: investigate current Pages deployment state."
+            exit 1
+          }
+          echo "GitHub accepted cancellation of stale Pages deployment."
