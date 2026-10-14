@@ -1,4 +1,4 @@
-name: Clear stalled Day Zero Pages deployment
+name: Recover stuck Day Zero Pages deployment
 on:
   push:
     paths:
@@ -6,18 +6,27 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: write
   pages: write
 jobs:
   unblock:
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel stale Pages deployment
+      - name: Force-cancel old queued workflow
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          set -euo pipefail
-          gh api --method POST "repos/${{ github.repository }}/pages/deployments/0959ebcd5fdb86200336cbeb1610e502955981f1/cancel" || {
-            echo "Cancellation endpoint returned error: investigate current Pages deployment state."
-            exit 1
-          }
-          echo "GitHub accepted cancellation of stale Pages deployment."
+          set -u
+          gh api --method POST "repos/${{ github.repository }}/actions/runs/38594096889/force-cancel" && echo "Cancelled old queued workflow." || echo "Old run may already have completed; continuing."
+      - name: Cancel stalled Pages deployment and diagnose
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -u
+          echo "Status before cancellation:"
+          gh api "repos/${{ github.repository }}/pages/deployments/0959ebcd5fdb86200336cbeb1610e502955981f1" || true
+          echo "Requesting cancellation:"
+          gh api --method POST "repos/${{ github.repository }}/pages/deployments/0959ebcd5fdb86200336cbeb1610e502955981f1/cancel" && echo "Cancellation accepted." || true
+          sleep 15
+          echo "Status after cancellation:"
+          gh api "repos/${{ github.repository }}/pages/deployments/0959ebcd5fdb86200336cbeb1610e502955981f1" || true
