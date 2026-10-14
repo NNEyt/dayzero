@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Day Zero 2.2 — Story Edition</title>
+<title>Day Zero 2.3 — Illustrated Cards</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box}
@@ -85,7 +85,20 @@ select,input{font-size:18px;padding:8px;border-radius:8px;border:2px solid #000;
 .dz22-delta-list{display:flex;gap:7px;flex-wrap:wrap}.dz22-delta-list span{background:#293257;border:1px solid #7582b6;border-radius:9px;padding:7px 10px}
 .dz22-resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:10px}.dz22-resource{border:1px solid #404e83;border-radius:10px;background:#1c2448;padding:11px}.dz22-resource b{color:#ffdb8c}.dz22-resource p{margin:5px 0;font-size:15px}.dz22-resource small{font-size:13px;color:#d7d9ee}
 @media(max-width:620px){.dz22-story{grid-template-columns:1fr}.dz22-scene-image,.dz22-scene-image .art{min-height:185px;max-height:215px}.dz22-story-prose{padding:17px}.dz22-grid{grid-template-columns:1fr}.dz22-art{height:185px}}
-</style></head><body><div class="preview-banner">🧪 DAY ZERO 2.2 — STORY TEST BUILD · Separate save · <a href="./">Return to original game</a></div><div class="w" id="app"></div>
+
+/* Day Zero 2.3: illustrations are card art, game information stays outside the picture. */
+.dz23-item-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px}
+.dz23-item{background:#1b2547;border:2px solid #bd9655;border-radius:11px;overflow:hidden}
+.dz23-item-art .art{height:155px;border:0;border-radius:0}.dz23-item-art .art div{background-size:cover}
+.dz23-item-body{padding:10px 12px}.dz23-item-body strong{display:block;color:#ffd994;font:italic 800 22px 'Barlow Condensed',Impact,sans-serif}
+.dz23-item-body span{font-size:12px;color:#ebad53;font-weight:700}.dz23-item-body p{font-size:15px;margin:6px 0;color:#e8e5ef}
+.dz23-drawer summary,.dz23-teamwork summary{cursor:pointer;font-weight:700;color:#ffda87}
+.dz23-drawer[open] summary{margin-bottom:13px}.dz23-hint{padding:10px 12px;background:#252e54;border-radius:9px;margin:9px 0}
+.dz23-hint summary{color:#f1dfaa;cursor:pointer}.dz23-hint p{font-size:15px}
+.dz23-result .dz22-art{height:190px}.dz23-result .dz22-art .art{background:#1c2545}
+.dz23-result .dz22-details h4{font-size:25px}.dz23-result .dz22-details p{font:16px/1.5 Georgia,serif}
+@media(max-width:600px){.dz23-item-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dz23-item-art .art{height:120px}}
+</style></head><body><div class="preview-banner">🧪 DAY ZERO 2.3 — CARD TEST BUILD · Separate save · <a href="./">Return to original game</a></div><div class="w" id="app"></div>
 <script src="story21.js"></script>
 <script src="story22.js"></script>
 <script src="story22.js"></script>
@@ -155,7 +168,7 @@ QM:[["V","Final check: make sure Warmth, Water and Information are running."]],
 MED:[["V","Tower block: babies and older people on the top floors. Power there means water and the lift."]],
 LOC:[["V","Marta counted: 120 people in the tower block, 40 on the clinic street, 60 at the hall."]]}};
 let S=null;
-const sv=()=>localStorage.setItem("dz2_story22_livepreview",JSON.stringify(S));
+const sv=()=>localStorage.setItem("dz2_story23_preview",JSON.stringify(S));
 const tr=(k,n)=>{S.t[k]=Math.max(0,Math.min(6,S.t[k]+n))};
 const act=id=>{const x=S.th[id];return !!x&&!x.res&&!x.fail};
 const esc=s=>String(s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
@@ -250,19 +263,20 @@ function dzJournal(){
 function dzPanel(){
  const d=dzInit(),ids=d.inventory,ev=dzJournal();
  const possessions=ids.length?ids.map(id=>{
-  const x=DZ_ITEMS[id];return '<div class="dx-item"><span class="dx-icon">'+(x?x.icon:"📦")+'</span><b>'+esc(x?x.name:id)+'</b><div class="dx-label">'+(x?x.kind:"ITEM")+'</div><small>'+esc(x?x.use:"")+'</small></div>';
- }).join(""):'<p class="dx-note">Nothing found yet. Explore locations using your normal action slots; you do not need to collect everything.</p>';
+  const x=DZ_ITEMS[id];return '<article class="dz23-item"><div class="dz23-item-art">'+art("dz23/"+id+".svg",x.icon)+'</div><div class="dz23-item-body"><strong>'+esc(x.name)+'</strong><span>'+esc(x.kind)+'</span><p>'+esc(x.use)+'</p></div></article>';
+ }).join(""):'<p class="dx-note">No equipment discovered yet. Search locations using available actions, but remember that time is limited.</p>';
  const locs=Object.keys(DZ_LOC).map(id=>{
   const x=DZ_LOC[id],left=dzNext(id),open=dzOpen(id),done=d.searched[id]>=x.ids.length;
   const status=done?"CLEARED":left?"SEARCHABLE":open?"NOTHING AVAILABLE YET":"LOCKED";
   const cls=done?"done":open?"":"locked";
   return '<div class="dx-item dx-place '+cls+'"><b>'+x.icon+" "+x.name+'</b><div class="dx-label">'+status+'</div><small>'+esc(x.help)+'</small></div>';
  }).join("");
- return '<div class="sec">🎒 Discovered equipment</div><div class="pn"><div class="dx-grid">'+possessions+'</div>'+
- (d.coldShield?'<p class="dx-note">🧣 Thermal protection ready: next cold-related Health loss −1.</p>':"")+'</div>'+
- '<div class="sec">🗺️ Explore Kelderwick</div><div class="pn"><p class="dx-note">Each search uses one normal role action. Roles may share what they find. Not every item can be obtained in one playthrough.</p><div class="dx-grid">'+locs+'</div></div>'+
- '<div class="sec">🔎 Evidence journal</div><div class="pn">'+(ev.length?ev.map(e=>'<p>'+esc(e)+'</p>').join(""):'<p class="dx-note">No physical evidence investigated yet. Rumours and official reports are not automatically proof.</p>')+'</div>';
+ return '<div class="sec">🎒 Discovered equipment</div><div class="pn"><div class="dz23-item-grid">'+possessions+'</div>'+
+ (d.coldShield?'<p class="dx-note">🧣 Thermal protection ready: the next cold-related Health loss is reduced by one.</p>':"")+'</div>'+
+ '<details class="pn dz23-drawer"><summary>🗺️ Explore Kelderwick · view locations</summary><p class="dx-note">Searching uses one role action. Equipment found belongs to the whole team.</p><div class="dx-grid">'+locs+'</div></details>'+
+ '<details class="pn dz23-drawer"><summary>🔎 Evidence journal · '+ev.length+' clue'+(ev.length===1?"":"s")+'</summary>'+(ev.length?ev.map(e=>'<p>'+esc(e)+'</p>').join(""):'<p class="dx-note">No physical evidence investigated yet.</p>')+'</details>';
 }
+
 function dzEpilogue(){
  const d=dzInit(),a=!!d.clues.service,b=!!d.clues.dispatch;
  if(a&&b)return "You found both an early maintenance work order and a dated repair transmission. They raise further questions about the timing, but neither proves sabotage. The team decides to keep investigating.";
@@ -347,7 +361,7 @@ DL3A:["MED","The Clinic Is Closed","🏥","The clinic's generator stopped. Its p
 DL4:[0,"The Sabotage Claim","📡","Theo's contact says the blackout was sabotage. Theo: “People deserve to know!” Nobody can prove it.",[["claim","Broadcast the claim","Cohesion −1",()=>{tr("cohesion",-1);S.f.e6s=1},"The sabotage story spread faster than the facts.","Unproven claims can cause trouble later."],["known","Broadcast only what we know","Cohesion +1",()=>tr("cohesion",1),"Mill Lane trusted the hall's radio. It never said more than it knew.","Nothing special."],["sil","Stay silent","No change",()=>{},"You kept quiet. Some wondered what you knew.","Nothing special."]]],
 DL5:["LOC","The Old Mill Path","🌉","The crew could go tonight by the old mill path through Hillside, or wait for daylight and a bridge. Waiting means another freezing night.",[["tonight","Go tonight","The crew can be guided this round",()=>{},"The crew still tells the story of the night neighbours led them over the footbridge.","Power could come back a night early."],["wait","Wait for daylight","The crew waits",()=>{},"You chose the safe way. The town waited one more cold night.","The crew can only be guided in the final round."]]],
 DL6:[0,"Who Gets Power First?","⚡","The council asks where power goes first.",[["tower","The tower block","—",()=>{tr("health",1);tr("trust",1)},"When the lift started, the 9th floor cheered.","If the crew fixes the substation: Health +1, Trust +1."],["clinic","The clinic street","—",()=>{S.th.T1.fail?tr("health",2):tr("cohesion",1)},"The clinic lit up first, like the town's heart starting again.","If the crew fixes the substation: Health +2 if the clinic closed, otherwise Cohesion +1."],["hallp","Our hall","—",()=>{S.f.hb=1},"The hall lit up first. Some said that was fair.","If the crew fixes the substation: one missing Hub system counts as running."]]]};
-const TEACH1="<b>How the story works:</b> The narrator reads the chapter and new problem cards aloud. Each player privately receives their role cards. <b>At the council, share all your information with the team:</b> read ordinary cards aloud; explain DESCRIBE ONLY cards in your own words.<br><b>Then make a team plan</b> and each player chooses secret orders. This round each role gets <b>1 action</b>.<br>Some actions need another role to act first. If a threat clock fills, bad consequences follow. The narrator reads the illustrated results aloud.";
+const TEACH1="<b>How it works:</b> The narrator reads the chapter and new problems aloud. Every player sees private information, then shares it with the group. Cards are labelled VERIFIED, UNCONFIRMED or RUMOUR. <b>Read or explain your cards however you like.</b> Compare what you know before planning.<br>Choose actions as a team, then lock in each role\'s orders. Round 1 gives each role <b>one action</b>; later rounds give two.<br>Some actions depend on another role or scarce supplies. If a threat clock fills, consequences follow. The narrator can read the illustrated results aloud.";
 const TEACH2="From this chapter onwards, each role may choose <b>2 actions</b>. You are a team: talk first and plan who does what, then lock in the orders.<br><b>Example:</b> Marta can ask the caretaker to unlock the tower, while Pavel chooses to climb to Mr Aldous in the same round. If the unlocking does not happen, the climb cannot succeed.<br>Read important decisions aloud together before voting. Some consequences only become clear later.";
 const FOOL=[["“Power back by midnight” (R1)","False."],["“Army generators” (R2)","False."],["Marta: “The East Bridge floods” (R2)","True this time."],["Clinic: “Fuel until morning” (R2)","True."],["Water board: “until Saturday” (R3)","Roughly right, but the message was old."],["“The clinic is evacuating” (R3)","False."],["“A fuel tanker is coming” (R4)","False."],["“Thieves on Mill Lane” (R5)","False: a video game."],["“It was sabotage” (R5)","Unknown. Nobody could prove it."]];
 const NOTES=[["Real","Many water systems need electric pumps. In tall buildings, upper floors often lose water first."],["Real","Mobile masts often have backup batteries that may last only a few hours."],["Real","Card machines and cash machines usually need power. Some cash at home helps."],["Real","Most petrol pumps need electricity."],["Real","Generators make carbon monoxide, which you can't see or smell. Never use one indoors or in a garage."],["Real","Candles cause many house fires. Battery torches are safer. In a fire: get out, stay out, call for help."],["Real","A full freezer keeps food frozen about 48 hours (half-full, about 24)."],["Real","Many agencies suggest households can manage alone for at least 72 hours."],["Real","A battery or wind-up radio keeps you informed when phones fail."],["Invented","Kelderwick, Mill Lane, all characters and the substation mystery."]];
@@ -363,7 +377,7 @@ function dif(p){
  '</div>';
 }
 
-function art(k,ic){return `<div class="art">${ic}<div style="background-image:url(art/${k}.jpg)"></div></div>`}
+function art(k,ic){const url=k.endsWith(".svg")?`art/${k}`:`art/${k}.jpg`;return `<div class="art">${ic}<div style="background-image:url(${url})"></div></div>`}
 function card(o){return `<div class="card ${o.sm?"sm":""}" style="--r:${o.c||"#ffd166"}"><div class="ct">${o.t}</div>${art(o.a,o.i)}<div class="box">${o.f?`<div class="fl">${o.f}</div>`:""}${o.b||""}${o.h?`<div class="hint">💡 ${o.h}</div>`:""}</div><div class="tag">${o.g||""}</div></div>`}
 function thC(id){const d=TH[id],x=S.th[id];let cl="";if(d[2]){cl='<div class="clk">';for(let i=0;i<d[2];i++)cl+=id==="T3"?"<i>?</i>":`<i class="${i<x.clock?"on":""}"></i>`;cl+="</div>"}
 return card({t:d[0],a:id.toLowerCase(),i:IC[id],f:d[3],b:`<b>If the clock fills:</b> ${d[4]}${cl}`,h:HINT[id],g:(id[0]==="O"?"OPPORTUNITY":id==="T7"?"WARNING":"THREAT")+" · "+d[1],c:"#e4572e"})}
@@ -471,10 +485,10 @@ if(S.hub.water&&!S.f.dry)o.push("You filled the containers before the taps went 
 if(S.th.T9&&S.th.T9.res)o.push("The thieves story stopped with the hall's radio.");return o}
 const goal=()=>`<div class="goal">🎯 <b>This round:</b> ${GOAL[S.round]}</div>`;
 const foot=()=>`<p class="c"><button class="btn b sm2" onclick="restart()">New game</button></p>`;
-function title(){const s0=localStorage.getItem("dz2_story22_livepreview");return `<h1>DAY ZERO</h1><p class="c" style="color:#c9c3ad"><i>The lights go out. Nobody has the whole picture.</i></p><div class="row">${card({t:"Lights Out",a:"ev1",i:"🌑",f:"A town goes dark. Your neighbours need you.",b:"1–4 players · about 75 minutes · pass this device around for private cards.",g:"A CRISIS ADVENTURE"})}</div><div class="pn"><h2>Who is playing?</h2>${[0,1,2,3].map(i=>`<input id="n${i}" placeholder="Player ${i+1} name${i?" (optional)":""}">`).join("")}<p class="s">Four roles are shared between players. Best with 3–4. One player = practice mode.</p><div class="c"><button class="btn" onclick="go()">Start</button>${s0?'<button class="btn b" onclick="cont()">Continue saved game</button>':""}</div></div>`}
+function title(){const s0=localStorage.getItem("dz2_story23_preview");return `<h1>DAY ZERO</h1><p class="c" style="color:#c9c3ad"><i>The lights go out. Nobody has the whole picture.</i></p><div class="row">${card({t:"Lights Out",a:"ev1",i:"🌑",f:"A town goes dark. Your neighbours need you.",b:"1–4 players · about 75 minutes · pass this device around for private cards.",g:"A CRISIS ADVENTURE"})}</div><div class="pn"><h2>Who is playing?</h2>${[0,1,2,3].map(i=>`<input id="n${i}" placeholder="Player ${i+1} name${i?" (optional)":""}">`).join("")}<p class="s">Four roles are shared between players. Best with 3–4. One player = practice mode.</p><div class="c"><button class="btn" onclick="go()">Start</button>${s0?'<button class="btn b" onclick="cont()">Continue saved game</button>':""}</div></div>`}
 function go(){const n=[0,1,2,3].map(i=>document.getElementById("n"+i).value.trim()).filter(x=>x);if(!n.length)n.push("Player 1");start(n)}
-function cont(){S=JSON.parse(localStorage.getItem("dz2_story22_livepreview"));dzInit();dz21Init();R()}
-function restart(){if(confirm("Start a new game? The saved game will be deleted.")){localStorage.removeItem("dz2_story22_livepreview");S=null;R()}}
+function cont(){S=JSON.parse(localStorage.getItem("dz2_story23_preview"));dzInit();dz21Init();R()}
+function restart(){if(confirm("Start a new game? The saved game will be deleted.")){localStorage.removeItem("dz2_story23_preview");S=null;R()}}
 function vTeam(){const own=r=>S.pl.find(p=>p.r.includes(r)).n;
 return `<h2>The Story</h2><div class="pn" style="font-size:20px">Kelderwick is a small town. It's a cold Thursday evening in November. Suddenly, <b>the power goes out across the whole town</b>, and nobody knows for how long.<br><br>You are neighbours who meet at the <b>Mill Lane community hall</b>. People are scared. Someone has to organise things. That's you.<br><br><b>Your mission:</b> keep Mill Lane going for 3 days until the power returns, and turn the hall into a <b>Community Hub</b> with 🔥 Warmth, 💧 Water and 📻 Information.</div>
 <div class="sec">🏆 How you win</div><div class="pn">⭐ <b>Mission:</b> get all 3 Hub systems running by the end.<br>⭐ <b>People:</b> keep ❤️ Health high.<br>⭐ <b>Community:</b> keep 🤝 Cohesion and 🏘️ Trust high.<br>Up to 9 stars. Your choices decide which of 7 endings you get.</div>
@@ -489,8 +503,8 @@ return h+`<div class="sec">🏘️ Your town</div>`+board()+`<div class="c"><but
 function roleBox(r){return `<div class="rb" style="border-color:${RL[r].c}"><h3 style="color:${RL[r].c}">${RL[r].i} You are the ${RL[r].n} (${RL[r].ch})</h3><b>Your job:</b> ${ROLEX[r].does}<br><span class="s">${ROLEX[r].why}</span></div>`}
 function vPass(){const p=S.pl[S.pi],rs=p.r.map(r=>RL[r].i+" "+RL[r].n).join(" & ");
 if(!S.show)return `<div class="pn c"><h2>${S.ph==="intel"?"Private cards":"Secret orders"}</h2><p style="font-size:28px">Pass the device to<br><b style="color:#ffd166;font-size:44px">${esc(p.n)}</b><br>${rs}</p><p class="s">Everyone else, look away.</p><button class="btn" onclick="S.show=true;R()">I'm ${esc(p.n)}: show me</button></div>`;
-if(S.ph==="intel"){let h=`<h2>${esc(p.n)}'s private cards</h2><p class="c">Read these privately now. When everyone meets at the council, <b>share the information on every card.</b> You may read ordinary cards aloud, but explain DESCRIBE ONLY cards in your own words without showing their text.</p>`;
-p.r.forEach(r=>{h+=roleBox(r)+`<div class="row">`;(IN[S.round][r]||[]).forEach(x=>{h+=card({t:RL[r].i+" "+RL[r].n,a:"r_"+r,i:RL[r].i,c:RL[r].c,sm:1,b:`<span class="rel ${x[0]}">${{V:"✔ VERIFIED",U:"? UNCONFIRMED",R:"~ RUMOUR"}[x[0]]}</span><div class="${x[2]?"sk":""}">${x[1]}</div>`,g:x[2]?"👁 DESCRIBE ONLY":RL[r].ch})});h+="</div>"});
+if(S.ph==="intel"){let h=`<h2>${esc(p.n)}'s private cards</h2><p class="c">These cards give you information your teammates may not have. At the council, <b>share what you know</b> by reading or explaining it. Pay attention to whether a card is verified, unconfirmed or a rumour.</p>`;
+p.r.forEach(r=>{h+=roleBox(r)+`<div class="row">`;(IN[S.round][r]||[]).forEach(x=>{h+=card({t:RL[r].i+" "+RL[r].n,a:"r_"+r,i:RL[r].i,c:RL[r].c,sm:1,b:`<span class="rel ${x[0]}">${{V:"✔ VERIFIED",U:"? UNCONFIRMED",R:"~ RUMOUR"}[x[0]]}</span><div class="${x[2]?"sk":""}">${x[1]}</div>`,g:RL[r].ch})});h+="</div>"});
 return h+`<div class="c"><button class="btn" onclick="next()">Hide my cards</button></div>`}
 let h=`<h2>${esc(p.n)}: choose secretly</h2>`+dzPanel();
 p.r.forEach(r=>{const op=opts(r),n=nA(r);let o='<option value="">— No action —</option>';for(const g in GRP){const l=op.filter(t=>GRP[g].includes(t.id));if(l.length)o+=`<optgroup label="${g}">${l.map(t=>`<option value="${t.id}">${esc(t.label+ctx(cost(t)))}</option>`).join("")}</optgroup>`}
@@ -511,7 +525,7 @@ return `<h1 style="font-size:56px">${z.e[0]}</h1><div class="row">${card({t:z.e[
 <div class="pn"><h2>Field Notes</h2>${NOTES.map(n=>`<p><span class="rel ${n[0]==="Real"?"V":"U"}">${n[0]}</span> ${n[1]}</p>`).join("")}<p class="s">General guidance only. Check your local official advice.</p></div>
 <div class="pn"><h2>Talk About It</h2><p>1. Which rumour fooled you, and why?</p><p>2. What would our household need for 72 hours?</p><p>3. Who in our street might need help in a blackout?</p><p>4. Which decision would you change?</p><p>5. When is it right to share something you can't prove?</p></div>
 <div class="pn"><h2>What Happens Next?</h2><p><i>Two weeks later, the grid operator's report blames “equipment failure.” But one photo still bothers you: the substation lock wasn't forced. Someone had a key. To be continued…</i></p><p>${esc(dzEpilogue())}</p></div>
-<div class="c"><button class="btn" onclick="localStorage.removeItem('dz2_story22_livepreview');S=null;R()">Play again</button></div>`}
+<div class="c"><button class="btn" onclick="localStorage.removeItem('dz2_story23_preview');S=null;R()">Play again</button></div>`}
 function R(){if(S){dzInit();dz21Init()}const A=document.getElementById("app");if(!S){A.innerHTML=title();return}A.innerHTML=({team:vTeam,chapter:dz21Chapter,brief:vBrief,intel:vPass,break:dz21Break,council:vCouncil,ord:vPass,res:vRes,esc:vEsc,end:vEnd}[S.ph])();window.scrollTo(0,0)}
 R();
 </script></body></html>
