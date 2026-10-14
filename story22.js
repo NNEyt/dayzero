@@ -20,6 +20,11 @@ function dz22Changes(before,after){
  for(const id of before.items.filter(id=>!after.items.includes(id)))out.push("🎒 Used "+(DZ_ITEMS[id]?.name||id));
  return out;
 }
+function dz22Status(id,raw){
+ const x=String(raw||"");
+ if(/^🚪|^🌊/.test(x)||/don't know you|needs trust|don't know\. no sign/i.test(x))return "blocked";
+ return "done";
+}
 function dz22Record(action,status,raw,before){
  const after=dz22Frame();
  const found=after.items.filter(id=>!before.items.includes(id));
@@ -30,7 +35,7 @@ function dz22Artwork(id,found){
  if(found?.length){
   const x=found[0];return {batteries:"r_SIG",receiver:"r_SIG",route:"dl5",blankets:"ev6",log:"t1",worklight:"t10"}[x]||"teach";
  }
- if(["fill","cw","cwV","t4w","t4p","t4u"].includes(id))return id[0]==="t"?"t4":"t3";
+ if(["fill","cw","cwV","t4w","t4p","t4u"].includes(id))return "t4";
  if(["gTest","gN","gS","gST","gMH","wood","woodV"].includes(id))return "ev6";
  if(["info","iMid","iArm","iEva","iWat","iTan","iBrk","iSab","bA","bB","bC","bT","fR","cR","useReceiver"].includes(id))return "r_SIG";
  if(["osei","aldT","aldW","aldV","aldC"].includes(id))return "t2";
@@ -149,6 +154,23 @@ function dz22RolePrompt(role){
  LOC:"Marta knows Kelderwick's people, shortcuts and old promises. Often, someone must earn permission before another role can complete the job."
  };
  return '<div class="dz22-role-cue"><b>In the story:</b> '+esc(names[role]||"Discuss the team's plan.")+'</div>';
+}
+
+function dz22TimePassage(){
+ const notes=Array.isArray(S.esc)?S.esc:[];
+ const artFor=(x)=>/cold|freezing|shiver|bitter|frost/i.test(x)?"ev6":
+ /water|tap|tower/i.test(x)?"t3":
+ /fire|smoke/i.test(x)?"t8":
+ /generator|fuel/i.test(x)?"t1":
+ /rumour|trust|neighbour/i.test(x)?"ev5":
+ /repair|substation|power|grid/i.test(x)?"t10":
+ "echo";
+ if(!notes.length)return '<div class="pn">The night passes without further news.</div>';
+ return '<div class="dz22-grid">'+notes.map(note=>{
+  const msg=dz22Plain(note),good=/✅/.test(note),warn=/✖/.test(note);
+  const heading=good?"A welcome development":warn?"Trouble in Kelderwick":"The hours pass";
+  return '<article class="dz22-result" style="--dz22:'+(good?"#6bd59f":warn?"#e39b75":"#9bb4df")+'"><div class="dz22-art">'+art(artFor(note),"⏳")+'</div><div class="dz22-details"><div class="dz22-kicker">TIME PASSES · ROUND '+S.round+'</div><h4>'+heading+'</h4><p>'+esc(msg)+'</p></div></article>';
+ }).join("")+'</div>';
 }
 function dz22Results(){
  return '<h2>What Happened · Chapter '+S.round+'</h2>'+dz22Moment()+
