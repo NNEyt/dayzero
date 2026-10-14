@@ -6,11 +6,13 @@
 *{box-sizing:border-box}
 body{margin:0;color:#eee;font:18px/1.45 'Atkinson Hyperlegible',sans-serif;background:radial-gradient(circle at 50% -10%,#26326a,#05060c 65%);min-height:100vh}
 .w{max-width:1100px;margin:auto;padding:14px}
-.T,h1,h2,.btn,.ct{font-family:'Barlow Condensed',Impact,sans-serif;font-style:italic;font-weight:800}
+h1,h2,.btn,.ct,.sec{font-family:'Barlow Condensed',Impact,sans-serif;font-style:italic;font-weight:800}
 h1{font-size:76px;color:#ffd166;text-align:center;margin:10px 0 0;text-shadow:4px 4px 0 #000,0 0 30px #ffd16688}
-h2{font-size:38px;color:#ffd166;margin:8px 0;text-shadow:2px 2px 0 #000;text-align:center}
+h2{font-size:40px;color:#ffd166;margin:8px 0;text-shadow:2px 2px 0 #000;text-align:center}
+.sec{font-size:30px;color:#ffd166;border-bottom:3px solid #ffd16655;margin:26px 0 12px;text-shadow:2px 2px 0 #000}
+.goal{background:linear-gradient(90deg,#c43d1f,#6a24a8);border:3px solid #000;border-radius:12px;padding:10px 16px;font-size:21px;margin:10px auto;max-width:900px;text-align:center;box-shadow:4px 4px 0 #000}
 .btn{background:linear-gradient(#ffe08a,#e0a020);color:#1a1200;border:3px solid #000;border-radius:12px;padding:10px 24px;font-size:24px;cursor:pointer;box-shadow:3px 3px 0 #000;margin:6px}
-.btn:disabled{opacity:.35}.btn.b{background:linear-gradient(#d6ddff,#8c99d8)}
+.btn:disabled{opacity:.35}.btn.b{background:linear-gradient(#d6ddff,#8c99d8)}.btn.sm2{font-size:18px;padding:4px 14px}
 .c{text-align:center}.row{display:flex;flex-wrap:wrap;gap:16px;justify-content:center}
 .card{width:300px;border-radius:18px;padding:12px;border:3px solid #000;box-shadow:inset 0 0 0 3px var(--r,#ffd166),6px 7px 0 #0009;
 background:repeating-linear-gradient(-35deg,#0f1630 0 13px,#1a2550 13px 15px,#0f1630 15px 28px,#3a2c0a 28px 29px)}
@@ -20,46 +22,62 @@ background:repeating-linear-gradient(-35deg,#0f1630 0 13px,#1a2550 13px 15px,#0f
 .sm .art{height:64px;font-size:38px}
 .box{background:#f4ecd6;color:#1b1b1b;border:2px solid #000;border-radius:6px;margin-top:10px;padding:10px;font-size:17px}
 .fl{font-style:italic;margin-bottom:6px}
+.hint{margin-top:8px;font-size:14px;background:#e6d9b3;border-radius:4px;padding:5px 7px}
 .tag{text-align:right;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;color:#ffb347;font-size:20px;margin-top:6px}
 .sk{font-family:Caveat,cursive;font-size:24px;line-height:1.15;background:#fffbe6}
 .rel{display:inline-block;font-weight:700;font-size:13px;padding:2px 8px;border-radius:10px;border:2px solid #000;margin-bottom:6px}
 .V{background:#2e8b57;color:#fff}.U{background:#ffbf47}.R{background:#aaa;border-style:dashed}
 .clk{display:flex;gap:4px;margin-top:6px}.clk i{width:22px;height:22px;border:2px solid #000;border-radius:4px;background:#fff;font-style:normal;text-align:center;font-size:14px}.clk i.on{background:#e4572e}
-.pn{background:#141a33ee;border:3px solid #000;border-radius:14px;padding:14px;margin:12px auto;max-width:800px;box-shadow:inset 0 0 0 2px #3a4a8a}
+.pn{background:#141a33ee;border:3px solid #000;border-radius:14px;padding:14px;margin:12px auto;max-width:900px;box-shadow:inset 0 0 0 2px #3a4a8a}
 .trk{display:inline-block;background:#1c2448;border:2px solid #000;border-radius:10px;padding:6px 10px;margin:4px;min-width:118px;text-align:center}
 .trk b{display:block;font-size:26px;color:#ffd166}.pp{color:#ff7a59;letter-spacing:2px}
 .hb{display:inline-block;margin:4px;padding:6px 12px;border-radius:10px;border:2px solid #000;background:#3a3a3a}.hb.on{background:#2fbf71;color:#000}
-.mt{display:inline-block;background:#2a1f10;border:2px solid #000;border-radius:8px;padding:4px 8px;margin:3px;font-size:15px}
-.lg p{margin:6px 0;padding:7px 10px;background:#0f1430;border-left:5px solid #ffd166;border-radius:4px}
+.lg p{margin:6px 0;padding:7px 10px;background:#0f1430;border-left:6px solid #ffd166;border-radius:4px}
+.lg p.ok{border-left-color:#2fbf71}.lg p.no{border-left-color:#e4572e}
+.rb{border:3px solid;border-radius:12px;padding:12px 14px;margin:10px auto;background:#10162c;max-width:900px}
+.rb h3{margin:0 0 6px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-size:28px}
+.gd td{border-bottom:1px solid #334;padding:7px;vertical-align:top}.gd table{width:100%;border-collapse:collapse}
+.opt{display:block;width:100%;text-align:left;font-size:22px}
+.opt div{font:16px 'Atkinson Hyperlegible';font-style:normal;margin-top:3px}
 select,input{font-size:18px;padding:8px;border-radius:8px;border:2px solid #000;width:100%;margin:4px 0}
 .st{font-size:34px;color:#ffd166}.s{font-size:15px;color:#bbb}
 </style></head><body><div class="w" id="app"></div>
 <script>
 const RL={SIG:{n:"Signal",ch:"Theo",c:"#4aa3ff",i:"📻"},QM:{n:"Quartermaster",ch:"Ines",c:"#f0a500",i:"📦"},MED:{n:"Medic",ch:"Pavel",c:"#e07ac0",i:"✚"},LOC:{n:"Local",ch:"Marta",c:"#2fd09c",i:"🏠"}};
 const RO=["SIG","QM","MED","LOC"];
-let S=null;
-const sv=()=>localStorage.setItem("dz",JSON.stringify(S));
-const tr=(k,n)=>{S.t[k]=Math.max(0,Math.min(6,S.t[k]+n))};
-const act=id=>{const x=S.th[id];return !!x&&!x.res&&!x.fail};
-const esc=s=>String(s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
-const EV={1:["Lights Out","Thursday 18:04 · Night","🌑","The lights flicker, then go out. Not just your street — the whole town is dark. Phones still work, for now. Someone knocks on the hall door: “Is anyone organising things here?”"],
-2:["The First Night","Thursday 23:00 · Night","🕯️","The town is quiet and cold. Across the river, the clinic's lights flicker. Mrs Lindqvist from the supermarket is at the door: “My freezers are full. What do I do?” Neighbours want to know what the hall has."],
-3:["Morning Without Power","Friday 09:00","🚰","A silent town wakes up. On the hill streets, the taps are sputtering. Three people from the Hillside estate wait at the door with empty bottles."],
-4:["Phones Go Quiet","Friday 17:00","📵","Phones show “No Service”. The mobile masts have run out of battery. Car horns across town: a long queue at the petrol station. Someone says a fuel tanker is coming."],
-5:["Rumours in the Dark","Saturday 12:00","🗞️","A note passes from house to house: “Thieves are breaking into homes on Mill Lane.” Theo looks pale. “Someone says this blackout wasn't an accident.” The forecast: freezing tomorrow night."],
-6:["The Coldest Night","Saturday 22:00 · Night","❄️","Frost covers the windows. The radio crackles: a grid repair crew has reached Kelderwick, but fallen lines block the main roads in the dark. They need a guide, fuel and radio help to reach the substation."],
-7:["Restoration","Sunday 16:00","💡","The third day fades. The council on the radio: “Power will return in stages. Tell us where it is needed first.” This is the final round."]};
+const ROLEX={SIG:{who:"Theo, 19, runs a local news channel and owns a radio.",knows:"Radio news, official messages and rumours. Some are true. Some are false.",does:"Check rumours, broadcast messages, call emergency services, run the hall's radio point.",why:"Without you, the group acts on false information. You decide what is true."},
+QM:{who:"Ines, 46, runs the community hall.",knows:"What the hall has, how much fuel is left, and what every trip costs.",does:"Drive the van (deliver fuel, fetch food, wood and water), set up the generator.",why:"Almost every plan needs the van, and fuel is very limited. You decide what it's spent on."},
+MED:{who:"Pavel, 38, a night-shift nurse.",knows:"Who is sick or at risk, and what is dangerous (like generators indoors).",does:"Treat people, climb to Mr Aldous, care for the most vulnerable.",why:"You protect everyone's Health, and you spot the deadly mistakes before they happen."},
+LOC:{who:"Marta, 74, has lived on Mill Lane for 46 years.",knows:"The town: people, routes, history, and who owes whom a favour.",does:"Talk to people (the caretaker, shop owners, the depot) and open doors others can't.",why:"Many solutions start with knowing the right person. You hold the maps."}};
+const RES=[["🥫","Supplies","Food, drinking water and batteries for everyone at the hall.","Freezer food (+2).","Sharing with others, batteries for the radio point, water for the tower block.","If Supplies are 1 or less, the cold hurts more."],
+["❤️","Health","How well your neighbours are.","The Medic treats people (+1).","Threats that go wrong, cold nights, failed care.","At 0, the game ends badly."],
+["🤝","Cohesion","How united your group is.","Comforting people, good decisions, a warm hall.","Fear, failures, bad decisions.","At 0, the game ends: everyone for themselves."],
+["🏘️","Trust","How much the wider community trusts the hall.","Helping others, telling the truth.","False messages, refusing help.","Some help needs Trust 3+ (e.g. council water)."],
+["⛽","Fuel","Runs the van and the generator. Only the Quartermaster spends it.","Finding the fuel reserve.","Every van trip. The generator needs 1 per act.","At 0: no van trips, and the generator stops."],
+["📻","Signal","Theo's radio time. Only the Signal spends it.","—","Checking rumours, broadcasts, emergency calls.","At 0: no more checking or broadcasting."],
+["✚","Medkits","Medical supplies. Only the Medic spends them.","—","Treating people.","At 0: no more treatment."],
+["🏠","Contacts","Favours Marta can call in. Only the Local spends them.","—","Special requests, like the bus depot.","At 0: no more favours."],
+["⏳","Crisis","Time pressure.","—","Rises every round, and when any threat clock fills.","At 10, the final round starts immediately."]];
+const EV={1:["Lights Out","Thursday 18:04 · Night","🌑","The lights flicker, then go out. Not just your street — the whole town is dark. Phones still work, for now. Someone knocks on the hall door: “Is anyone organising things here?” You look at each other. It seems you are."],
+2:["The First Night","Thursday 23:00 · Night","🕯️","The town is quiet and cold. Across the river, the clinic's lights flicker. Mrs Lindqvist from the supermarket is at the door: “My freezers are full. What do I do?” Behind her, neighbours want to know what the hall has."],
+3:["Morning Without Power","Friday 09:00","🚰","A silent town wakes up. No traffic lights, no radios in kitchens. On the hill streets, the taps are sputtering. Three people from the Hillside estate wait at the door with empty bottles."],
+4:["Phones Go Quiet","Friday 17:00","📵","One by one, phones show “No Service”. The mobile masts have run out of battery. Car horns across town: a long queue at the petrol station. Someone says a fuel tanker is coming."],
+5:["Rumours in the Dark","Saturday 12:00","🗞️","People are tired and scared. A note passes from house to house: “Thieves are breaking into homes on Mill Lane.” Theo looks pale: “Someone says this blackout wasn't an accident.” The forecast: freezing tomorrow night."],
+6:["The Coldest Night","Saturday 22:00 · Night","❄️","Frost covers the windows. Your breath turns white indoors. Then the radio crackles: a grid repair crew has reached Kelderwick! But fallen lines block the main roads in the dark. They need help."],
+7:["Restoration","Sunday 16:00","💡","The third day fades. The council speaks on the radio: “Power will return in stages. Tell us where it is needed first.” Everyone in the hall turns to look at you. This is the final round."]};
+const GOAL={1:"Help Mr Aldous, and start building the Hub (Warmth, Water, Information).",2:"Save the clinic, grab the freezer food, and decide about the hall's stores.",3:"The water is running out. Fill containers before the taps stop, and help the tower block.",4:"Phones are dead. Calm the petrol crowd, find fuel, and decide who gets the clinic bed.",5:"Fight rumours with facts, and prepare for the freezing night.",6:"Keep people warm, and get the repair crew to the substation.",7:"Final round! Finish the Hub, and choose where the power goes first."};
 const TH={T2:["Mr Aldous's Oxygen","Tower block",3,"His daughter calls: “Dad's breathing machine is beeping. He's on the 9th floor. Please help.”","Health −2, Cohesion −1"],
 T1:["Clinic Generator","Clinic, across the river",3,"The clinic's lights flicker. Their generator is running — but for how long?","Health −2. Mr Aldous can't go to the clinic."],
-O1:["Supermarket Freezers","Supermarket, across the river",3,"OPPORTUNITY: Mrs Lindqvist's freezers are full of food. Soon it will spoil.","The food spoils."],
+O1:["Supermarket Freezers","Supermarket, across the river",3,"Mrs Lindqvist's freezers are full of food. Soon it will spoil.","The food spoils."],
 T3:["Failing Water","Whole town",3,"The water tower is slowly emptying. Nobody knows exactly when the taps will stop.","Taps stop. Supplies −1. No more filling at the hall."],
 T4:["Tower Block Water","Tower block",3,"The upper floors have no water. The pumps need electricity.","Health −1, Trust −1"],
 T6:["Petrol Station Crowd","Petrol station",3,"Cars queue down the road. People are angry. Everyone wants fuel.","Trust −2, Cohesion −1"],
-O2:["Fuel Reserve","Somewhere in town",3,"OPPORTUNITY: Somewhere in Kelderwick there is fuel. Who has it?","The chance is gone."],
+O2:["Fuel Reserve","Somewhere in town",3,"Somewhere in Kelderwick there is fuel. Who has it?","The chance is gone."],
 T8:["Candle Fire","Marta's street",2,"Smoke from a house on Marta's street. Someone used candles for light.","Health −2, Supplies −1, Cohesion −1"],
 T9:["Break-in Rumour","Mill Lane",2,"People are scared. Some talk about guarding their homes at night.","Cohesion −2, Trust −1"],
-T7:["Cold Snap","Whole town",0,"WARNING: Below freezing from tomorrow night. Without Warmth, people suffer.","Each round without Warmth: Health −1"],
-T10:["Grid Crew","Council point → substation",2,"The crew needs: a guide on a safe route, 1 Fuel at the substation, and radio coordination.","No power this weekend. Health −1."]};
+T7:["Cold Snap","Whole town",0,"Below freezing from tomorrow night. Without Warmth at the hall, people suffer.","Each round without Warmth: Health −1"],
+T10:["Grid Crew","Council point → substation",2,"The repair crew is ready, but they can't reach the substation alone.","No power this weekend. Health −1."]};
+const HINT={T2:"Clues: 🏠 Local (how to get in) and ✚ Medic (what he needs).",T1:"Clues: 📻 Signal and 🏠 Local (which bridge?), 📦 Quartermaster (cost).",O1:"Clues: 🏠 Local (who to ask) and 📦 Quartermaster (the van).",T3:"Clues: 📦 Quartermaster (how to fill) and 🏠 Local (when it runs out).",T4:"Clues: ✚ Medic, 🏠 Local and 📦 Quartermaster.",T6:"Clues: 📻 Signal (the rumour), 📦 Quartermaster (pumps), 🏠 Local (owner).",O2:"Clues: 🏠 Local (where) and 📦 Quartermaster (how).",T8:"Clues: 📻 Signal (how to call help) and 🏠 Local.",T9:"Clues: 📻 Signal and 🏠 Local. ✚ Medic can help.",T7:"Get Warmth running at the hall before tomorrow night.",T10:"Needs 3 things: a guide (🏠 knows the routes), fuel (📦) and radio (📻)."};
 const IC={T2:"🫁",T1:"🏥",O1:"🧊",T3:"💧",T4:"🏢",T6:"⛽",O2:"🛢️",T8:"🔥",T9:"🚨",T7:"🥶",T10:"⚡"};
 const IN={1:{SIG:[["V","Radio: the grid operator confirms a major fault. No time for repairs yet."],["R","Social media post: “Power back by midnight! My cousin works at the power station.” (2,000 shares)"],["V","Phones still work, but messages take minutes."]],
 QM:[["V","Hall inventory: 3 Fuel · the van · 1 generator in the storeroom (not tested for 2 years) · 20 empty water containers · 1 box of batteries · an old wood stove (no wood)."],["V","Van trips cost Fuel. Delivering fuel also costs the fuel you deliver."]],
@@ -89,6 +107,11 @@ LOC:[["V","Sketch: the old mill path, down through Hillside and over a wooden fo
 QM:[["V","Final check: make sure Warmth, Water and Information are running."]],
 MED:[["V","Tower block: babies and older people on the top floors. Power there means water and the lift."]],
 LOC:[["V","Marta counted: 120 people in the tower block, 40 on the clinic street, 60 at the hall."]]}};
+let S=null;
+const sv=()=>localStorage.setItem("dz2",JSON.stringify(S));
+const tr=(k,n)=>{S.t[k]=Math.max(0,Math.min(6,S.t[k]+n))};
+const act=id=>{const x=S.th[id];return !!x&&!x.res&&!x.fail};
+const esc=s=>String(s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
 const T=[];const TI={};
 function K(id,who,step,label,av,run,o={}){const t=Object.assign({id,who,step,label,av,run},o);t.ix=T.length;T.push(t);TI[id]=t}
 const inv=(id,l,av,txt,f)=>K(id,"SIG",2,"Investigate: "+l,()=>av()&&!S.f[id],()=>{S.f[id]=1;if(f)S.f[f]=1;return "🔎 "+txt},{cost:{signal:1}});
@@ -147,30 +170,35 @@ const CN={fuel:"Fuel",signal:"Signal",supplies:"Supplies",medkits:"Medkit",conta
 const ctx=c=>{const k=Object.keys(c);return k.length?" ("+k.map(x=>c[x]+" "+CN[x]).join(", ")+")":""};
 const have=c=>Object.keys(c).every(k=>(k==="supplies"?S.t.supplies:S.a[k])>=c[k]);
 const pay=c=>{for(const k in c)k==="supplies"?tr("supplies",-c[k]):S.a[k]-=c[k]};
-const DL={DL1:["QM","Open the Stores?","🥫","Neighbours at the door: “The hall has food. Will you share it now?” Some are scared. Some are angry.",[["open","Open to the street","Supplies −1, Cohesion +1, Trust +1",()=>{tr("supplies",-1);tr("cohesion",1);tr("trust",1);S.f.e3=1},"People still talk about the night the hall opened its doors."],["keep","Keep for the Hub","No immediate effect",()=>{S.f.e4=1},"The Hub had enough. Not everyone understood why."]]],
-DL2:[0,"Hillside Water","🚱","Hillside residents with empty bottles: “Our tank is broken. Our children need water. Can you share?”",[["share","Share our water","Supplies −1, Trust +2",()=>{tr("supplies",-1);tr("trust",2);S.f.e1=1},"Hillside still talks about the water you shared."],["cont","Give containers only","Trust +1",()=>tr("trust",1),"You gave Hillside a way to help themselves."],["ref","Refuse","No immediate effect",()=>{S.f.e2s=1},"Hillside remembers the door that stayed closed."]]],
-DL3:["MED","One Bed","🛏️","The clinic radios: “One bed left. Who gets it?” Mr Aldous needs oxygen. Mrs Petrova is 88, alone and freezing.",[["aldous","Mr Aldous","He can be driven to the clinic (van + Medic together). Mrs Petrova moves to the hall and needs Warmth by tomorrow night.",()=>{S.f.petH=1},"Mr Aldous's daughter flew home on Monday. She brought Pavel a card."],["petrova","Mrs Petrova","The clinic collects her. On the coldest night, the Medic must climb to Mr Aldous with a medkit.",()=>{S.th.T2.res=true;S.f.care=1},"Mrs Petrova slept warm at the clinic. Pavel climbed nine floors twice more."]]],
-DL3A:["MED","The Clinic Is Closed","🏥","The clinic's generator stopped. Its patients were moved away. Pavel can't be in two places.",[["visit","Visit people at home","The Medic has 1 action fewer in the next two rounds.",()=>{if(S.th.T2)S.th.T2.res=true;S.f.mL=1},"Pavel walked every street of Mill Lane that weekend."],["hall","Bring everyone to the hall","Fuel −1, Supplies −1. The hall needs Warmth by tomorrow night.",()=>{if(S.th.T2)S.th.T2.res=true;S.a.fuel=Math.max(0,S.a.fuel-1);tr("supplies",-1);S.f.hC=1},"The hall became a small hospital."]]],
-DL4:[0,"The Sabotage Claim","📡","Theo's contact says the blackout was sabotage. Theo: “People deserve to know!” Nobody can prove it.",[["claim","Broadcast the claim","Cohesion −1",()=>{tr("cohesion",-1);S.f.e6s=1},"The sabotage story spread faster than the facts."],["known","Broadcast only what we know","Cohesion +1",()=>tr("cohesion",1),"Mill Lane trusted the hall's radio — it never said more than it knew."],["sil","Stay silent","No effect",()=>{},"You kept quiet. Some wondered what you knew."]]],
-DL5:["LOC","The Old Mill Path","🌉","The crew could go tonight by the old mill path through Hillside — or wait for daylight and a bridge. Waiting means another freezing night.",[["tonight","Go tonight","The crew can be guided this round. Power could return a night early.",()=>{},"The crew still tells the story of the night neighbours led them over the footbridge."],["wait","Wait for daylight","The crew can only be guided tomorrow.",()=>{},"You chose the safe way. The town waited one more cold night."]]],
-DL6:[0,"Who Gets Power First?","⚡","The council asks where power goes first. (Only matters if the crew fixes the substation.)",[["tower","The tower block","Health +1, Trust +1",()=>{tr("health",1);tr("trust",1)},"When the lift started, the 9th floor cheered."],["clinic","The clinic street","Clinic closed: Health +2. Otherwise Cohesion +1",()=>{S.th.T1.fail?tr("health",2):tr("cohesion",1)},"The clinic lit up first — like the town's heart starting again."],["hallp","Our hall","One Hub system counts as running",()=>{S.f.hb=1},"The hall lit up first. Some said that was fair."]]]};
-function art(k,ic){return `<div class="art">${ic}<div style="background-image:url(art/${k}.jpg)"></div></div>`}
-function card(o){return `<div class="card ${o.sm?"sm":""}" style="--r:${o.c||"#ffd166"}"><div class="ct">${o.t}</div>${art(o.a,o.i)}<div class="box">${o.f?`<div class="fl">${o.f}</div>`:""}${o.b||""}</div><div class="tag">${o.g||""}</div></div>`}
-function thC(id){const d=TH[id],x=S.th[id];let cl="";if(d[2]){cl='<div class="clk">';for(let i=0;i<d[2];i++)cl+=id==="T3"?"<i>?</i>":`<i class="${i<x.clock?"on":""}"></i>`;cl+="</div>"}
-return card({t:d[0],a:id.toLowerCase(),i:IC[id],f:d[3],b:`<b>If the clock fills:</b> ${d[4]}${cl}`,g:(id[0]==="O"?"OPPORTUNITY":id==="T7"?"WARNING":"THREAT")+" · "+d[1],c:"#e4572e"})}
-function board(){const t=S.t,a=S.a,tk=(n,k,i)=>`<div class="trk">${i} ${n}<b>${t[k]}</b><div class="pp">${"●".repeat(t[k])}${"○".repeat(6-t[k])}</div></div>`;
-let th="";for(const id in S.th)if(act(id))th+=`<span class="mt">${IC[id]} ${TH[id][0]} ${TH[id][2]?(id==="T3"?"?":S.th[id].clock+"/"+TH[id][2]):""}</span>`;
-return `<div class="pn c">${tk("Supplies","supplies","🥫")}${tk("Health","health","❤️")}${tk("Cohesion","cohesion","🤝")}${tk("Trust","trust","🏘️")}
-<div>⛽ Fuel <b>${a.fuel}</b> · 📻 Signal <b>${a.signal}</b> · ✚ Medkits <b>${a.medkits}</b> · 🏠 Contacts <b>${a.contacts}</b> · ⏳ Crisis <b>${S.crisis}/10</b></div>
-<div>HUB: <span class="hb ${S.hub.warmth?"on":""}">🔥 Warmth</span><span class="hb ${S.hub.water?"on":""}">💧 Water</span><span class="hb ${S.hub.info?"on":""}">📻 Information</span></div><div>${th}</div>
-<div class="s">Round ${S.round}/7 · Coordinator: <b>${esc(S.pl[S.co].n)}</b></div></div>`}
-function add(id){S.th[id]={clock:id==="T1"?1:0};S.nw.push(id)}
-const TEACH1="<b>Each round:</b> Event → private cards → Council → secret orders → results.<br>Your cards are private. Read words aloud if you like, but <b>DESCRIBE ONLY</b> cards must be explained in your own words.<br>Each role chooses <b>1 action</b> this round.<br>Threats have clocks. If a clock fills, something bad happens.<br><b>Mission:</b> get Warmth, Water and Information running at the hall.";
-const TEACH2="From now on each role chooses <b>2 actions</b>.<br>Some actions need another role to act first, or in the same round. Plan together!<br><b>Dilemmas</b> have no right answer. A role dilemma is decided by that role. A group dilemma: everyone speaks once, the Coordinator speaks last, then vote.";
+const GRP={"🏠 Build the Hub":["gTest","gN","gS","gST","gMH","wood","woodV","fill","cw","cwV","info"],"🫁 Mr Aldous":["osei","aldT","aldW","aldV","aldC"],"🏥 Clinic":["fW","fE"],"🧊 Freezer food":["lind","frz"],"🏢 Tower block water":["t4w","t4p","t4u"],"⛽ Petrol crowd":["iTan","bA","bB","bC","had"],"🛢️ Fuel reserve":["dep","depV"],"🔥 Candle fire":["fR","fH"],"🚨 Break-in rumour":["iBrk","bT","wat","wel","welM"],"⚡ Grid crew":["gM","gW","gE","cF","cR","calm"],"🔎 Check rumours":["iMid","iArm","iEva","iWat","iSab"],"❤️ Look after people":["trt","cmf"]};
+const DL={DL1:["QM","Open the Stores?","🥫","Neighbours at the door: “The hall has food. Will you share it now?” Some are scared. Some are angry.",[["open","Open to the street","Supplies −1, Cohesion +1, Trust +1",()=>{tr("supplies",-1);tr("cohesion",1);tr("trust",1);S.f.e3=1},"People still talk about the night the hall opened its doors.","A crowd may come to the hall (calmer if Information is running)."],["keep","Keep for the Hub","No change",()=>{S.f.e4=1},"The Hub had enough. Not everyone understood why.","Some people may say the hall is hoarding."]]],
+DL2:[0,"Hillside Water","🚱","Hillside residents with empty bottles: “Our tank is broken. Our children need water. Can you share?”",[["share","Share our water","Supplies −1, Trust +2",()=>{tr("supplies",-1);tr("trust",2);S.f.e1=1},"Hillside still talks about the water you shared.","Hillside may return the favour."],["cont","Give containers only","Trust +1",()=>tr("trust",1),"You gave Hillside a way to help themselves.","Nothing special."],["ref","Refuse","No change",()=>{S.f.e2s=1},"Hillside remembers the door that stayed closed.","Hillside may not forget this."]]],
+DL3:["MED","One Bed","🛏️","The clinic radios: “One bed left. Who gets it?” Mr Aldous needs oxygen. Mrs Petrova is 88, alone and freezing.",[["aldous","Mr Aldous","Mrs Petrova moves to the hall",()=>{S.f.petH=1},"Mr Aldous's daughter flew home on Monday. She brought Pavel a card.","Drive him to the clinic (Medic travels + Quartermaster drives). Mrs Petrova needs Warmth at the hall tomorrow night."],["petrova","Mrs Petrova","The clinic collects her",()=>{S.th.T2.res=true;S.f.care=1},"Mrs Petrova slept warm at the clinic. Pavel climbed nine floors twice more.","On the coldest night, the Medic must climb to Mr Aldous with a medkit."]]],
+DL3A:["MED","The Clinic Is Closed","🏥","The clinic's generator stopped. Its patients were moved away. Pavel can't be in two places.",[["visit","Visit people at home","No cost now",()=>{if(S.th.T2)S.th.T2.res=true;S.f.mL=1},"Pavel walked every street of Mill Lane that weekend.","The Medic has 1 action fewer in the next two rounds."],["hall","Bring everyone to the hall","Fuel −1, Supplies −1",()=>{if(S.th.T2)S.th.T2.res=true;S.a.fuel=Math.max(0,S.a.fuel-1);tr("supplies",-1);S.f.hC=1},"The hall became a small hospital.","The hall needs Warmth tomorrow night."]]],
+DL4:[0,"The Sabotage Claim","📡","Theo's contact says the blackout was sabotage. Theo: “People deserve to know!” Nobody can prove it.",[["claim","Broadcast the claim","Cohesion −1",()=>{tr("cohesion",-1);S.f.e6s=1},"The sabotage story spread faster than the facts.","Unproven claims can cause trouble later."],["known","Broadcast only what we know","Cohesion +1",()=>tr("cohesion",1),"Mill Lane trusted the hall's radio. It never said more than it knew.","Nothing special."],["sil","Stay silent","No change",()=>{},"You kept quiet. Some wondered what you knew.","Nothing special."]]],
+DL5:["LOC","The Old Mill Path","🌉","The crew could go tonight by the old mill path through Hillside, or wait for daylight and a bridge. Waiting means another freezing night.",[["tonight","Go tonight","The crew can be guided this round",()=>{},"The crew still tells the story of the night neighbours led them over the footbridge.","Power could come back a night early."],["wait","Wait for daylight","The crew waits",()=>{},"You chose the safe way. The town waited one more cold night.","The crew can only be guided in the final round."]]],
+DL6:[0,"Who Gets Power First?","⚡","The council asks where power goes first.",[["tower","The tower block","—",()=>{tr("health",1);tr("trust",1)},"When the lift started, the 9th floor cheered.","If the crew fixes the substation: Health +1, Trust +1."],["clinic","The clinic street","—",()=>{S.th.T1.fail?tr("health",2):tr("cohesion",1)},"The clinic lit up first, like the town's heart starting again.","If the crew fixes the substation: Health +2 if the clinic closed, otherwise Cohesion +1."],["hallp","Our hall","—",()=>{S.f.hb=1},"The hall lit up first. Some said that was fair.","If the crew fixes the substation: one missing Hub system counts as running."]]]};
+const TEACH1="<b>Each round:</b> Event → private cards → plan together → secret orders → results.<br>Your cards are private. Read words aloud if you like, but <b>DESCRIBE ONLY</b> cards must be explained in your own words.<br>This round each role chooses <b>1 action</b>.<br>Threats have clocks. If a clock fills, something bad happens.";
+const TEACH2="From now on each role chooses <b>2 actions</b>.<br>Some actions need another role to act first or in the same round. Plan together!<br><b>Decisions</b> have no right answer. Read <b>Now</b> and <b>Later</b> before choosing.";
 const FOOL=[["“Power back by midnight” (R1)","False."],["“Army generators” (R2)","False."],["Marta: “The East Bridge floods” (R2)","True this time."],["Clinic: “Fuel until morning” (R2)","True."],["Water board: “until Saturday” (R3)","Roughly right, but the message was old."],["“The clinic is evacuating” (R3)","False."],["“A fuel tanker is coming” (R4)","False."],["“Thieves on Mill Lane” (R5)","False: a video game."],["“It was sabotage” (R5)","Unknown. Nobody could prove it."]];
 const NOTES=[["Real","Many water systems need electric pumps. In tall buildings, upper floors often lose water first."],["Real","Mobile masts often have backup batteries that may last only a few hours."],["Real","Card machines and cash machines usually need power. Some cash at home helps."],["Real","Most petrol pumps need electricity."],["Real","Generators make carbon monoxide, which you can't see or smell. Never use one indoors or in a garage."],["Real","Candles cause many house fires. Battery torches are safer. In a fire: get out, stay out, call for help."],["Real","A full freezer keeps food frozen about 48 hours (half-full, about 24)."],["Real","Many agencies suggest households can manage alone for at least 72 hours."],["Real","A battery or wind-up radio keeps you informed when phones fail."],["Invented","Kelderwick, Mill Lane, all characters and the substation mystery."]];
-function start(names){S={pl:names.map(n=>({n,r:[]})),round:1,co:0,t:{supplies:names.length<=2?5:4,health:5,cohesion:4,trust:3},a:{fuel:3,signal:3,medkits:2,contacts:3},hub:{warmth:false,water:false,info:false},wt:null,f:{},th:{},dec:{},codas:[],crisis:0,ph:"brief",nw:[],r:{},br:[],log:[],ord:{},pi:0,show:false,esc:[]};
-RO.forEach((r,i)=>S.pl[i%names.length].r.push(r));startRound()}
+const NM={supplies:"🥫 Supplies",health:"❤️ Health",cohesion:"🤝 Cohesion",trust:"🏘️ Trust",fuel:"⛽ Fuel",signal:"📻 Signal",medkits:"✚ Medkits",contacts:"🏠 Contacts"};
+const HN={warmth:"🔥 Warmth",water:"💧 Water",info:"📻 Information"};
+const snap=()=>JSON.parse(JSON.stringify({t:S.t,a:S.a,hub:S.hub}));
+function dif(p){if(!p)return "";const o=[];for(const k in S.t)if(p.t[k]!==S.t[k])o.push(NM[k]+": "+p.t[k]+" → <b>"+S.t[k]+"</b>");for(const k in S.a)if(p.a[k]!==S.a[k])o.push(NM[k]+": "+p.a[k]+" → <b>"+S.a[k]+"</b>");for(const k in S.hub)if(p.hub[k]!==S.hub[k])o.push(HN[k]+": <b>"+(S.hub[k]?"RUNNING ✅":"STOPPED ❌")+"</b>");return `<div class="sec">📊 What changed</div><div class="pn lg">${o.length?o.map(x=>"<p>"+x+"</p>").join(""):"<p>Nothing changed.</p>"}</div>`}
+function art(k,ic){return `<div class="art">${ic}<div style="background-image:url(art/${k}.jpg)"></div></div>`}
+function card(o){return `<div class="card ${o.sm?"sm":""}" style="--r:${o.c||"#ffd166"}"><div class="ct">${o.t}</div>${art(o.a,o.i)}<div class="box">${o.f?`<div class="fl">${o.f}</div>`:""}${o.b||""}${o.h?`<div class="hint">💡 ${o.h}</div>`:""}</div><div class="tag">${o.g||""}</div></div>`}
+function thC(id){const d=TH[id],x=S.th[id];let cl="";if(d[2]){cl='<div class="clk">';for(let i=0;i<d[2];i++)cl+=id==="T3"?"<i>?</i>":`<i class="${i<x.clock?"on":""}"></i>`;cl+="</div>"}
+return card({t:d[0],a:id.toLowerCase(),i:IC[id],f:d[3],b:`<b>If the clock fills:</b> ${d[4]}${cl}`,h:HINT[id],g:(id[0]==="O"?"OPPORTUNITY":id==="T7"?"WARNING":"THREAT")+" · "+d[1],c:"#e4572e"})}
+function guideH(){return `<div class="pn gd"><table>${RES.map(r=>`<tr><td style="font-size:30px">${r[0]}</td><td><b>${r[1]}</b>: ${r[2]}<br>➕ <i>Get more:</i> ${r[3]}<br>➖ <i>Spent on:</i> ${r[4]}<br>⚠️ ${r[5]}</td></tr>`).join("")}</table><p><b>🏠 The Hub = your Mission.</b> Get 🔥 Warmth, 💧 Water and 📻 Information running at the hall by the end of Round 7.</p></div>`}
+function board(){const t=S.t,a=S.a,tk=(n,k,i)=>`<div class="trk">${i} ${n}<b>${t[k]}</b><div class="pp">${"●".repeat(t[k])}${"○".repeat(6-t[k])}</div></div>`;
+return `<div class="pn c">${tk("Supplies","supplies","🥫")}${tk("Health","health","❤️")}${tk("Cohesion","cohesion","🤝")}${tk("Trust","trust","🏘️")}
+<div style="margin:6px 0">⛽ Fuel <b>${a.fuel}</b> · 📻 Signal <b>${a.signal}</b> · ✚ Medkits <b>${a.medkits}</b> · 🏠 Contacts <b>${a.contacts}</b> · ⏳ Crisis <b>${S.crisis}/10</b></div>
+<div>MISSION: <span class="hb ${S.hub.warmth?"on":""}">🔥 Warmth</span><span class="hb ${S.hub.water?"on":""}">💧 Water</span><span class="hb ${S.hub.info?"on":""}">📻 Information</span></div>
+<div class="s">Round ${S.round}/7 · Coordinator: <b>${esc(S.pl[S.co].n)}</b></div><button class="btn b sm2" onclick="S.g=!S.g;R()">${S.g?"Hide help":"❓ What do these mean?"}</button></div>${S.g?guideH():""}`}
+function add(id){S.th[id]={clock:id==="T1"?1:0};S.nw.push(id)}
+function start(names){S={pl:names.map(n=>({n,r:[]})),round:1,co:0,t:{supplies:names.length<=2?5:4,health:5,cohesion:4,trust:3},a:{fuel:3,signal:3,medkits:2,contacts:3},hub:{warmth:false,water:false,info:false},wt:null,f:{},th:{},dec:{},codas:[],crisis:0,ph:"team",nw:[],r:{},br:[],log:[],ord:{},pi:0,show:false,esc:[]};
+RO.forEach((r,i)=>S.pl[i%names.length].r.push(r));sv();R()}
 function chk(){if(S.t.health<=0)S.broke="h";else if(S.t.cohesion<=0)S.broke="c";if(S.broke)S.ph="end"}
 function startRound(){const r=S.round;S.r={};S.nw=[];S.br=[];S.ord={};S.co=(r-1)%S.pl.length;S.dc=null;
 const B=(t,x,w)=>S.br.push({t,x,w});
@@ -201,32 +229,32 @@ function nA(r){let n=S.round===1?1:2;if(r==="MED"&&S.f.mL&&(S.round===5||S.round
 function opts(r){return T.filter(t=>(t.who===r||t.who==="ANY")&&(t.sh?t.sh():t.av()))}
 function lock(){S.pl[S.pi].r.forEach(r=>{S.ord[r]=[];for(let i=0;i<nA(r);i++){const v=document.getElementById("o_"+r+"_"+i).value;if(v)S.ord[r].push(v)}});next()}
 function next(){S.show=false;S.pi++;if(S.pi>=S.pl.length){S.pi=0;if(S.ph==="intel")S.ph="council";else if(S.ph==="ord"){resolve();return}}sv();R()}
-function resolve(){S.log=[];const L=[];RO.forEach(r=>(S.ord[r]||[]).forEach(id=>L.push({r,id})));
-S.rev=L.map(o=>RL[o.r].ch+": "+TI[o.id].label);
+function resolve(){S.pre=snap();S.log=[];const L=[];RO.forEach(r=>(S.ord[r]||[]).forEach(id=>L.push({r,id})));
+S.rev=L.map(o=>RL[o.r].i+" "+RL[o.r].ch+": "+TI[o.id].label);
 L.sort((a,b)=>TI[a.id].step-TI[b.id].step||TI[a.id].ix-TI[b.id].ix);
-L.forEach(o=>{const t=TI[o.id],w="<b>"+RL[o.r].ch+"</b> — "+t.label+"<br>";
+L.forEach(o=>{const t=TI[o.id],w="<b>"+RL[o.r].ch+"</b>: "+t.label+"<br>";
 if(!t.av()){S.log.push(w+"✖ "+(t.no||"Not possible right now."));return}
 const c=cost(t);if(!have(c)){S.log.push(w+"✖ Not enough resources"+ctx(c)+".");return}
 pay(c);S.log.push(w+t.run())});
-if(act("T4")&&S.f.t4w&&S.f.t4p&&S.f.t4u){S.th.T4.res=true;S.log.push("✅ Tower Block Water: RESOLVED.")}else if(act("T4")&&S.f.t4w&&S.f.t4p){S.r.t4=1;S.log.push("◐ Tower Block Water: partly solved. The top floors still need water carried up. (Clock paused.)")}
-if(act("T8")&&S.f.fR&&S.f.fH){S.th.T8.res=true;S.log.push("✅ Candle Fire: RESOLVED. Everyone got out.")}else if(act("T8")&&S.r.fire)S.log.push("◐ Candle Fire: half done. Clock paused this round.");
-if(act("T9")&&S.f.wel&&S.f.welM){S.th.T9.res=true;S.log.push("✅ Break-in Rumour: RESOLVED. The visits calm the street.")}
-if(act("T10")&&S.f.guide&&S.f.cF&&S.f.cR&&(!S.f.e6||S.f.calm)){S.th.T10.res=true;S.f.pw=S.round;S.log.push("✅ Grid Crew: RESOLVED! The crew reaches the substation."+(S.round===6?" Power returns a night early!":""))}
+if(act("T4")&&S.f.t4w&&S.f.t4p&&S.f.t4u){S.th.T4.res=true;S.log.push("✅ Tower Block Water: SOLVED.")}else if(act("T4")&&S.f.t4w&&S.f.t4p){S.r.t4=1;S.log.push("◐ Tower Block Water: partly solved. The top floors still need water carried up. (Clock paused.)")}
+if(act("T8")&&S.f.fR&&S.f.fH){S.th.T8.res=true;S.log.push("✅ Candle Fire: SOLVED. Everyone got out.")}else if(act("T8")&&S.r.fire)S.log.push("◐ Candle Fire: half done. Clock paused this round.");
+if(act("T9")&&S.f.wel&&S.f.welM){S.th.T9.res=true;S.log.push("✅ Break-in Rumour: SOLVED. The visits calm the street.")}
+if(act("T10")&&S.f.guide&&S.f.cF&&S.f.cR&&(!S.f.e6||S.f.calm)){S.th.T10.res=true;S.f.pw=S.round;S.log.push("✅ Grid Crew: SOLVED! The crew reaches the substation."+(S.round===6?" Power returns a night early!":""))}
 if(act("T2")&&S.r.osei&&!S.f.stab)S.log.push("◐ Someone keeps Mr Aldous calm. (Clock paused this round.)");
 if(!L.length)S.log.push("No actions were taken.");
 S.ph="res";chk();sv();R()}
-function escal(){const r=S.round,E=[];S.crisis++;
+function escal(){S.pre=snap();const r=S.round,E=[];S.crisis++;
 const FX={T2:()=>{tr("health",-2);tr("cohesion",-1)},T1:()=>{tr("health",-2);if(act("T2")){S.th.T2.clock++;if(S.th.T2.clock>=3)fail("T2")}},T3:()=>{tr("supplies",-1);S.f.dry=1},T4:()=>{tr("health",-1);tr("trust",-1)},T6:()=>{tr("trust",-2);tr("cohesion",-1)},T8:()=>{tr("health",-2);tr("supplies",-1);tr("cohesion",-1)},T9:()=>{tr("cohesion",-2);tr("trust",-1)},T10:()=>{tr("health",-1)}};
-function fail(id){S.th[id].fail=true;if(id[0]!=="O")S.crisis++;E.push("⏰ "+TH[id][0]+": clock full! "+TH[id][4]);if(FX[id])FX[id]()}
-const tk=(id,skip)=>{if(!act(id)||skip||!TH[id][2])return;S.th[id].clock++;if(S.th[id].clock>=TH[id][2])fail(id)};
+function fail(id){S.th[id].fail=true;if(id[0]!=="O")S.crisis++;E.push("✖ ⏰ "+TH[id][0]+": clock full! "+TH[id][4]);if(FX[id])FX[id]()}
+const tk=(id,skip)=>{if(!act(id)||skip||!TH[id][2])return;S.th[id].clock++;if(S.th[id].clock>=TH[id][2])fail(id);else if(id!=="T3")E.push("⏳ "+TH[id][0]+": clock "+S.th[id].clock+"/"+TH[id][2])};
 tk("T2",r<(S.f.pT2||0)||(S.r.osei&&!S.f.stab));tk("T1");tk("O1");
 if(act("T3")){tk("T3");if(act("T3"))E.push("💧 The water tower level drops…")}
 tk("T4",S.r.t4);tk("T6",S.r.t6);tk("O2");tk("T8",S.r.fire);tk("T9");tk("T10");
-if(S.hub.warmth&&S.wt==="gen"&&S.f.gPos==="S"){S.hub.warmth=false;E.push("🌧️ Rain soaks the generator in the open yard. It stops. (You can set it up again somewhere sheltered, at no fuel cost.)")}
-if(r===2&&S.hub.warmth){tr("cohesion",1);E.push("🔥 The hall is warm. People relax. Cohesion +1.")}
-if(r>=6&&!(r===7&&S.f.pw===6)&&!S.hub.warmth){const d=S.t.supplies<=1?2:1;tr("health",-d);E.push("🥶 Bitter cold and no Warmth at the hall. Health −"+d+".")}
-if(r===6){if(S.f.petH&&!S.hub.warmth){tr("health",-1);E.push("🥶 Mrs Petrova shivers in the cold hall. Health −1.")}if(S.f.hC&&!S.hub.warmth){tr("health",-2);E.push("🥶 The patients at the hall are freezing. Health −2.")}if(S.f.care&&!S.f.cared){tr("health",-2);E.push("🫁 Nobody climbed to Mr Aldous tonight. Health −2.")}}
-if(r===7&&S.f.pw===7&&S.d6&&!S.f.d6){DL.DL6[4].find(x=>x[0]===S.d6)[3]();S.f.d6=1;E.push("💡 The lights come back on, in the order you chose.")}
+if(S.hub.warmth&&S.wt==="gen"&&S.f.gPos==="S"){S.hub.warmth=false;E.push("✖ 🌧️ Rain soaks the generator in the open yard. It stops. (Set it up again somewhere sheltered, no fuel cost.)")}
+if(r===2&&S.hub.warmth){tr("cohesion",1);E.push("✅ 🔥 The hall is warm. People relax. Cohesion +1.")}
+if(r>=6&&!(r===7&&S.f.pw===6)&&!S.hub.warmth){const d=S.t.supplies<=1?2:1;tr("health",-d);E.push("✖ 🥶 Bitter cold and no Warmth at the hall. Health −"+d+".")}
+if(r===6){if(S.f.petH&&!S.hub.warmth){tr("health",-1);E.push("✖ 🥶 Mrs Petrova shivers in the cold hall. Health −1.")}if(S.f.hC&&!S.hub.warmth){tr("health",-2);E.push("✖ 🥶 The patients at the hall are freezing. Health −2.")}if(S.f.care&&!S.f.cared){tr("health",-2);E.push("✖ 🫁 Nobody climbed to Mr Aldous tonight. Health −2.")}}
+if(r===7&&S.f.pw===7&&S.d6&&!S.f.d6){DL.DL6[4].find(x=>x[0]===S.d6)[3]();S.f.d6=1;E.push("✅ 💡 The lights come back on, in the order you chose.")}
 if(!E.length)E.push("A quiet hour. Nothing new goes wrong.");
 S.esc=E;S.ph="esc";chk();sv();R()}
 function nextRound(){if(S.round>=7){S.ph="end";sv();R();return}S.round=S.crisis>=10?7:S.round+1;startRound()}
@@ -245,29 +273,40 @@ if(S.th.T1)o.push(S.th.T1.fail?"The clinic's patients were moved out of town in 
 if(S.th.T8)o.push(S.th.T8.res?"Mrs Petrova's house was damaged, but everyone got out.":S.th.T8.fail?"The fire spread to two houses. Everyone got out, but some lost everything.":"");
 if(S.hub.water&&!S.f.dry)o.push("You filled the containers before the taps went dry.");
 if(S.th.T9&&S.th.T9.res)o.push("The thieves story stopped with the hall's radio.");return o}
-const foot=()=>`<p class="c"><button class="btn b" onclick="restart()">New game</button></p>`;
-function title(){const s0=localStorage.getItem("dz");return `<h1>DAY ZERO</h1><p class="c" style="color:#c9c3ad"><i>The lights go out. Nobody has the whole picture.</i></p><div class="row">${card({t:"Lights Out",a:"ev1",i:"🌑",f:"A town goes dark. Your neighbours need you.",b:"1–4 players · about 75 minutes · pass this device around for private cards.",g:"A CRISIS ADVENTURE"})}</div><div class="pn"><h2>Who is playing?</h2>${[0,1,2,3].map(i=>`<input id="n${i}" placeholder="Player ${i+1} name${i?" (optional)":""}">`).join("")}<p class="s">Four roles are shared between players. Best with 3–4. One player = practice mode.</p><div class="c"><button class="btn" onclick="go()">Start</button>${s0?'<button class="btn b" onclick="cont()">Continue saved game</button>':""}</div></div>`}
+const goal=()=>`<div class="goal">🎯 <b>This round:</b> ${GOAL[S.round]}</div>`;
+const foot=()=>`<p class="c"><button class="btn b sm2" onclick="restart()">New game</button></p>`;
+function title(){const s0=localStorage.getItem("dz2");return `<h1>DAY ZERO</h1><p class="c" style="color:#c9c3ad"><i>The lights go out. Nobody has the whole picture.</i></p><div class="row">${card({t:"Lights Out",a:"ev1",i:"🌑",f:"A town goes dark. Your neighbours need you.",b:"1–4 players · about 75 minutes · pass this device around for private cards.",g:"A CRISIS ADVENTURE"})}</div><div class="pn"><h2>Who is playing?</h2>${[0,1,2,3].map(i=>`<input id="n${i}" placeholder="Player ${i+1} name${i?" (optional)":""}">`).join("")}<p class="s">Four roles are shared between players. Best with 3–4. One player = practice mode.</p><div class="c"><button class="btn" onclick="go()">Start</button>${s0?'<button class="btn b" onclick="cont()">Continue saved game</button>':""}</div></div>`}
 function go(){const n=[0,1,2,3].map(i=>document.getElementById("n"+i).value.trim()).filter(x=>x);if(!n.length)n.push("Player 1");start(n)}
-function cont(){S=JSON.parse(localStorage.getItem("dz"));R()}
-function restart(){if(confirm("Start a new game? The saved game will be deleted.")){localStorage.removeItem("dz");S=null;R()}}
-function vBrief(){const e=EV[S.round];let h=`<h2>Round ${S.round} · ${e[0]}</h2><div class="row">${card({t:e[0],a:"ev"+S.round,i:e[2],f:e[3],g:e[1]})}`;
+function cont(){S=JSON.parse(localStorage.getItem("dz2"));R()}
+function restart(){if(confirm("Start a new game? The saved game will be deleted.")){localStorage.removeItem("dz2");S=null;R()}}
+function vTeam(){const own=r=>S.pl.find(p=>p.r.includes(r)).n;
+return `<h2>The Story</h2><div class="pn" style="font-size:20px">Kelderwick is a small town. It's a cold Thursday evening in November. Suddenly, <b>the power goes out across the whole town</b>, and nobody knows for how long.<br><br>You are neighbours who meet at the <b>Mill Lane community hall</b>. People are scared. Someone has to organise things. That's you.<br><br><b>Your mission:</b> keep Mill Lane going for 3 days until the power returns, and turn the hall into a <b>Community Hub</b> with 🔥 Warmth, 💧 Water and 📻 Information.</div>
+<div class="sec">🏆 How you win</div><div class="pn">⭐ <b>Mission:</b> get all 3 Hub systems running by the end.<br>⭐ <b>People:</b> keep ❤️ Health high.<br>⭐ <b>Community:</b> keep 🤝 Cohesion and 🏘️ Trust high.<br>Up to 9 stars. Your choices decide which of 7 endings you get.</div>
+<div class="sec">👥 Meet your team</div><p class="c"><b>Nobody has the whole picture.</b> Each role gets different private cards every round. You only succeed if you share what you know.</p>
+${RO.map(r=>`<div class="rb" style="border-color:${RL[r].c}"><h3 style="color:${RL[r].c}">${RL[r].i} ${RL[r].n}: played by ${esc(own(r))}</h3><b>Who:</b> ${ROLEX[r].who}<br><b>Knows:</b> ${ROLEX[r].knows}<br><b>Can do:</b> ${ROLEX[r].does}<br><b>Why it matters:</b> ${ROLEX[r].why}</div>`).join("")}
+<div class="sec">🎒 Your resources</div>${guideH()}<div class="c"><button class="btn" onclick="startRound()">Start Round 1</button></div>`}
+function vBrief(){const e=EV[S.round];let h=`<h2>Round ${S.round} · ${e[0]}</h2>${goal()}<div class="sec">📖 What's happening</div><div class="row">${card({t:e[0],a:"ev"+S.round,i:e[2],f:e[3],g:e[1]})}`;
 if(S.round<=2)h+=card({t:"How to Play",a:"teach",i:"📖",b:S.round===1?TEACH1:TEACH2,g:"COORDINATOR READS ALOUD"});h+="</div>";
-if(S.br.length)h+=`<div class="row">${S.br.map(b=>card({t:b.t,a:"echo",i:"↩️",f:b.x,b:b.w?"<i>"+b.w+"</i>":"",g:b.w?"ECHO":"NEWS",sm:1})).join("")}</div>`;
-if(S.nw.length)h+=`<h2>New this round</h2><div class="row">${S.nw.map(thC).join("")}</div>`;
-return h+board()+`<div class="c"><button class="btn" onclick="S.ph='intel';S.pi=0;S.show=false;sv();R()">Deal private cards</button></div>`+foot()}
+if(S.br.length)h+=`<div class="sec">↩️ Because of earlier choices</div><div class="row">${S.br.map(b=>card({t:b.t,a:"echo",i:"↩️",f:b.x,b:b.w?"<i>"+b.w+"</i>":"",g:b.w?"ECHO":"NEWS",sm:1})).join("")}</div>`;
+if(S.nw.length)h+=`<div class="sec">⚠️ New problems</div><div class="row">${S.nw.map(thC).join("")}</div>`;
+return h+`<div class="sec">🏘️ Your town</div>`+board()+`<div class="c"><button class="btn" onclick="S.ph='intel';S.pi=0;S.show=false;sv();R()">Deal private cards</button></div>`+foot()}
+function roleBox(r){return `<div class="rb" style="border-color:${RL[r].c}"><h3 style="color:${RL[r].c}">${RL[r].i} You are the ${RL[r].n} (${RL[r].ch})</h3><b>Your job:</b> ${ROLEX[r].does}<br><span class="s">${ROLEX[r].why}</span></div>`}
 function vPass(){const p=S.pl[S.pi],rs=p.r.map(r=>RL[r].i+" "+RL[r].n).join(" & ");
 if(!S.show)return `<div class="pn c"><h2>${S.ph==="intel"?"Private cards":"Secret orders"}</h2><p style="font-size:28px">Pass the device to<br><b style="color:#ffd166;font-size:44px">${esc(p.n)}</b><br>${rs}</p><p class="s">Everyone else, look away.</p><button class="btn" onclick="S.show=true;R()">I'm ${esc(p.n)}: show me</button></div>`;
-if(S.ph==="intel"){let h=`<h2>${esc(p.n)}'s cards</h2><p class="c s">Read words aloud if you like. DESCRIBE ONLY cards: explain in your own words. Don't show the screen.</p><div class="row">`;
-p.r.forEach(r=>(IN[S.round][r]||[]).forEach(x=>{h+=card({t:RL[r].i+" "+RL[r].n,a:"r_"+r,i:RL[r].i,c:RL[r].c,sm:1,b:`<span class="rel ${x[0]}">${{V:"✔ VERIFIED",U:"? UNCONFIRMED",R:"~ RUMOUR"}[x[0]]}</span><div class="${x[2]?"sk":""}">${x[1]}</div>`,g:x[2]?"👁 DESCRIBE ONLY":RL[r].ch})}));
-return h+`</div><div class="c"><button class="btn" onclick="next()">Hide my cards</button></div>`}
-let h=`<h2>${esc(p.n)}: choose secretly</h2><div class="pn">`;
-p.r.forEach(r=>{const op=opts(r),n=nA(r);h+=`<h3 style="color:${RL[r].c}">${RL[r].i} ${RL[r].n} (${RL[r].ch}): ${n} action${n>1?"s":""}</h3>`;for(let i=0;i<n;i++)h+=`<select id="o_${r}_${i}"><option value="">— No action —</option>${op.map(t=>`<option value="${t.id}">${esc(t.label+ctx(cost(t)))}</option>`).join("")}</select>`});
-return h+`<p class="s">Some actions need another role to act first, or in the same round. Costs are paid when the action happens.</p></div><div class="c"><button class="btn" onclick="lock()">Lock in &amp; hide</button></div>`}
-function vCouncil(){let h=`<h2>Council · Round ${S.round}</h2><div class="pn"><b>1. Sitreps:</b> each player says the most important thing they know.<br><b>2. Discuss and plan.</b> Who does what? Which rumours do you trust?<br><b>3.</b> ${S.dl?"Decide the dilemma below.":"When ready, go to secret orders."}<br><span class="s">Coordinator: ${esc(S.pl[S.co].n)}. Reads aloud, speaks last, breaks ties.</span></div>`;
-if(S.dl){const d=DL[S.dl];h+=`<div class="row">${card({t:d[1],a:S.dl.toLowerCase(),i:d[2],f:d[3],b:d[0]?`<b>Decided by the ${RL[d[0]].n}</b> after listening.`:"<b>Group decision:</b> everyone speaks once, Coordinator last, then vote.",g:"DILEMMA"})}<div class="pn" style="max-width:420px">${d[4].map(o=>`<button class="btn ${S.dc===o[0]?"":"b"}" style="width:100%;text-align:left" ${S.dc?"disabled":""} onclick="choose('${o[0]}')">${o[1]}<div style="font:16px 'Atkinson Hyperlegible'">${o[2]}</div></button>`).join("")}${S.dc?"<p>✔ Decided.</p>":""}</div></div>`}
-return h+board()+`<div class="row">${Object.keys(S.th).filter(act).map(thC).join("")}</div><div class="c"><button class="btn" ${S.dl&&!S.dc?"disabled":""} onclick="S.ph='ord';S.pi=0;S.show=false;sv();R()">Go to secret orders</button></div>`}
-function vRes(){return `<h2>Results · Round ${S.round}</h2><div class="pn"><b>Orders revealed:</b><br>${(S.rev||[]).map(esc).join("<br>")||"None"}</div><div class="pn lg">${S.log.map(x=>"<p>"+x+"</p>").join("")}</div>${board()}<div class="c"><button class="btn" onclick="escal()">End of round</button></div>`}
-function vEsc(){return `<h2>End of Round ${S.round}</h2><div class="pn lg">${S.esc.map(x=>"<p>"+x+"</p>").join("")}</div>${board()}<div class="c"><button class="btn" onclick="nextRound()">${S.round>=7?"See the ending":"Next round"}</button></div>`}
+if(S.ph==="intel"){let h=`<h2>${esc(p.n)}'s private cards</h2><p class="c s">Remember what matters, then share it during planning. DESCRIBE ONLY cards: explain in your own words.</p>`;
+p.r.forEach(r=>{h+=roleBox(r)+`<div class="row">`;(IN[S.round][r]||[]).forEach(x=>{h+=card({t:RL[r].i+" "+RL[r].n,a:"r_"+r,i:RL[r].i,c:RL[r].c,sm:1,b:`<span class="rel ${x[0]}">${{V:"✔ VERIFIED",U:"? UNCONFIRMED",R:"~ RUMOUR"}[x[0]]}</span><div class="${x[2]?"sk":""}">${x[1]}</div>`,g:x[2]?"👁 DESCRIBE ONLY":RL[r].ch})});h+="</div>"});
+return h+`<div class="c"><button class="btn" onclick="next()">Hide my cards</button></div>`}
+let h=`<h2>${esc(p.n)}: choose secretly</h2>`;
+p.r.forEach(r=>{const op=opts(r),n=nA(r);let o='<option value="">— No action —</option>';for(const g in GRP){const l=op.filter(t=>GRP[g].includes(t.id));if(l.length)o+=`<optgroup label="${g}">${l.map(t=>`<option value="${t.id}">${esc(t.label+ctx(cost(t)))}</option>`).join("")}</optgroup>`}
+h+=roleBox(r)+`<div class="pn"><b>${n} action${n>1?"s":""}:</b>`;for(let i=0;i<n;i++)h+=`<select id="o_${r}_${i}">${o}</select>`;h+="</div>"});
+return h+`<p class="c s">Actions are grouped by problem. Costs are paid when the action happens. Some actions need another role to act first or in the same round.</p><div class="c"><button class="btn" onclick="lock()">Lock in &amp; hide</button></div>`}
+function vCouncil(){let h=`<h2>Plan Together · Round ${S.round}</h2>${goal()}<div class="sec">📋 How to plan</div><div class="pn"><b>1. Share:</b> each player says the most important thing on their private cards.<br><b>2. Plan:</b> which problems first? Who does what? Which rumours do you trust?<br><b>3.</b> ${S.dl?"Make the decision below.":"When ready, go to secret orders."}<br><span class="s">Coordinator: ${esc(S.pl[S.co].n)}. Reads aloud, speaks last, breaks ties.</span></div>`;
+if(S.dl){const d=DL[S.dl];h+=`<div class="sec">⚖️ Decision</div><div class="row">${card({t:d[1],a:S.dl.toLowerCase(),i:d[2],f:d[3],b:d[0]?`<b>Decided by the ${RL[d[0]].n}</b> after listening to everyone.`:"<b>Group decision:</b> everyone speaks once, the Coordinator speaks last, then vote.",g:"DILEMMA"})}<div class="pn" style="max-width:460px">${d[4].map((o,i)=>`<button class="btn opt ${S.dc===o[0]?"":"b"}" ${S.dc?"disabled":""} onclick="choose('${o[0]}')">Option ${"ABC"[i]}: ${o[1]}<div>⚡ <b>Now:</b> ${o[2]}</div><div>🔮 <b>Later:</b> ${o[5]}</div></button>`).join("")}${S.dc?"<p>✔ Decided.</p>":""}</div></div>`}
+const A=Object.keys(S.th).filter(act);if(A.length)h+=`<div class="sec">⚠️ Problems right now</div><div class="row">${A.map(thC).join("")}</div>`;
+return h+`<div class="sec">🏘️ Your town</div>`+board()+`<div class="c"><button class="btn" ${S.dl&&!S.dc?"disabled":""} onclick="S.ph='ord';S.pi=0;S.show=false;sv();R()">Go to secret orders</button></div>`}
+const lg=a=>`<div class="pn lg">${a.map(x=>`<p class="${x.includes("✖")?"no":x.includes("✅")?"ok":""}">${x}</p>`).join("")}</div>`;
+function vRes(){return `<h2>Results · Round ${S.round}</h2><div class="sec">🗣️ Orders revealed</div><div class="pn">${(S.rev||[]).map(esc).join("<br>")||"None"}</div><div class="sec">🎬 What happened</div>${lg(S.log)}${dif(S.pre)}<div class="sec">🏘️ Your town</div>${board()}<div class="c"><button class="btn" onclick="escal()">End of round</button></div>`}
+function vEsc(){const nx=S.round<7?`<div class="goal">🔜 <b>Coming next:</b> Round ${S.round+1}: ${EV[S.round+1][0]}</div>`:"";return `<h2>End of Round ${S.round}</h2><div class="sec">⏰ Time passes…</div>${lg(S.esc)}${dif(S.pre)}${nx}<div class="sec">🏘️ Your town</div>${board()}<div class="c"><button class="btn" onclick="nextRound()">${S.round>=7?"See the ending":"Next round"}</button></div>`}
 function vEnd(){const z=ending(),st=n=>"★".repeat(n)+"☆".repeat(3-n),cod=[...S.codas];if(S.d6)cod.push(S.f.d6?DL.DL6[4].find(x=>x[0]===S.d6)[4]:"The council decided without you. The power came later.");
 return `<h1 style="font-size:56px">${z.e[0]}</h1><div class="row">${card({t:z.e[0],a:"end",i:"🏁",f:z.e[1]+z.x,g:"YOUR ENDING"})}</div>
 <div class="pn c"><div class="st">Mission ${st(z.m)} · People ${st(z.p)} · Community ${st(z.c)}</div></div>
@@ -276,7 +315,7 @@ return `<h1 style="font-size:56px">${z.e[0]}</h1><div class="row">${card({t:z.e[
 <div class="pn"><h2>Field Notes</h2>${NOTES.map(n=>`<p><span class="rel ${n[0]==="Real"?"V":"U"}">${n[0]}</span> ${n[1]}</p>`).join("")}<p class="s">General guidance only. Check your local official advice.</p></div>
 <div class="pn"><h2>Talk About It</h2><p>1. Which rumour fooled you, and why?</p><p>2. What would our household need for 72 hours?</p><p>3. Who in our street might need help in a blackout?</p><p>4. Which decision would you change?</p><p>5. When is it right to share something you can't prove?</p></div>
 <div class="pn"><h2>What Happens Next?</h2><p><i>Two weeks later, the grid operator's report blames “equipment failure.” But one photo still bothers you: the substation lock wasn't forced. Someone had a key. To be continued…</i></p></div>
-<div class="c"><button class="btn" onclick="localStorage.removeItem('dz');S=null;R()">Play again</button></div>`}
-function R(){const A=document.getElementById("app");if(!S){A.innerHTML=title();return}A.innerHTML=({brief:vBrief,intel:vPass,council:vCouncil,ord:vPass,res:vRes,esc:vEsc,end:vEnd}[S.ph])();window.scrollTo(0,0)}
+<div class="c"><button class="btn" onclick="localStorage.removeItem('dz2');S=null;R()">Play again</button></div>`}
+function R(){const A=document.getElementById("app");if(!S){A.innerHTML=title();return}A.innerHTML=({team:vTeam,brief:vBrief,intel:vPass,council:vCouncil,ord:vPass,res:vRes,esc:vEsc,end:vEnd}[S.ph])();window.scrollTo(0,0)}
 R();
 </script></body></html>
