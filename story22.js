@@ -22,7 +22,7 @@ function dz22Changes(before,after){
 }
 function dz22Status(id,raw){
  const x=String(raw||"");
- if(/^🚪|^🌊/.test(x)||/don't know you|needs trust|don't know\. no sign/i.test(x))return "blocked";
+ if(/^🚪|^🌊|^✖/.test(x)||/hasn't agreed|haven't agreed|not agreed|cannot|can't get in|not possible|don't know you|needs trust|don't know\. no sign/i.test(x))return "blocked";
  return "done";
 }
 function dz22Record(action,status,raw,before){
