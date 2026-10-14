@@ -1,4 +1,4 @@
-name: Rebuild Day Zero Pages
+name: Verify Day Zero 2.3 public game
 on:
   push:
     paths:
@@ -6,27 +6,28 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
-  pages: write
 jobs:
-  rebuild:
+  verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Request fresh Pages build
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
+      - name: Verify publicly served game, scripts and illustrated assets
         run: |
-          set -uo pipefail
-          echo "Pages status before build request"
-          gh api "repos/$REPO/pages" --jq '{status,build_type,source,html_url}' || true
-          echo "Requesting a new build on the current source branch"
-          if gh api -X POST "repos/$REPO/pages/builds"; then
-            echo "BUILD_REQUEST_ACCEPTED"
-          else
-            echo "BUILD_REQUEST_REFUSED"
-          fi
-          sleep 5
-          echo "Latest Pages build"
-          gh api "repos/$REPO/pages/builds/latest" --jq '{status,error,commit,created_at}' || true
-          echo "Current Pages status"
-          gh api "repos/$REPO/pages" --jq '{status,build_type,source}' || true
+          set -euo pipefail
+          BASE="https://nneyt.github.io/dayzero"
+          for attempt in $(seq 1 20); do
+            echo "Attempt $attempt: test the published Day Zero 2.3 game"
+            if curl -fsSL --max-time 15 "$BASE/dayzero23.html?v=verified-$attempt" -o /tmp/dayzero23.html &&
+               grep -q 'Day Zero 2.3' /tmp/dayzero23.html &&
+               grep -q 'story23.js' /tmp/dayzero23.html &&
+               curl -fsSL --max-time 15 "$BASE/story21.js" -o /tmp/story21.js &&
+               curl -fsSL --max-time 15 "$BASE/story23.js" -o /tmp/story23.js &&
+               curl -fsSL --max-time 15 "$BASE/art/dz23/batteries.svg" -o /tmp/batteries.svg &&
+               grep -q '<svg' /tmp/batteries.svg; then
+              echo "PUBLIC_GAME_VERIFIED"
+              wc -c /tmp/dayzero23.html /tmp/story21.js /tmp/story23.js /tmp/batteries.svg
+              exit 0
+            fi
+            sleep 4
+          done
+          echo "PUBLIC_GAME_NOT_AVAILABLE"
+          exit 1
