@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day Zero 2.4 · Your private briefing</title>
+<meta name="theme-color" content="#141a33">
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 60% -15%,#283769,#080b18 76%);color:#f5f1e8;font:17px/1.48 system-ui,-apple-system,'Segoe UI',sans-serif}
+header{padding:22px 18px 14px;text-align:center;border-bottom:3px solid #f0b953;background:#0d162e}
+.logo{color:#ffdc7f;font:italic 900 31px Impact,'Arial Narrow',sans-serif;letter-spacing:1px}
+header p{margin:4px auto;color:#bfcbe3;font-size:13px}
+main{max-width:690px;margin:auto;padding:18px 14px 40px}
+h1{font-size:30px;margin:0;color:#ffda84;line-height:1.14}
+.subtitle{color:#ced8ef;font-size:15px;margin:8px 0 16px}
+.dz24-role-section{margin:18px 0 28px}
+.dz24-role-line{display:flex;gap:12px;align-items:center;background:#121b35;border:2px solid var(--dz24-role);border-radius:12px;padding:12px}
+.dz24-role-icon{font-size:29px}
+.dz24-role-name{font-size:22px;color:#ffe08b;font-weight:850}
+.dz24-role-mechanic{font-size:14px;color:#bbc8e8;margin-top:2px}
+.dz24-intel-grid{display:grid;gap:12px;margin-top:14px}
+.dz24-intel-card{background:#f3e7ce;color:#172037;border-radius:12px;overflow:hidden;border:2px solid #141b37;box-shadow:4px 5px 0 #0007;display:grid;grid-template-columns:111px minmax(0,1fr)}
+.dz24-artwrap{background:#182747;min-height:130px}
+.dz24-artwrap img{width:100%;height:100%;min-height:130px;object-fit:cover;display:block}
+.dz24-card-copy{padding:11px 12px}
+.dz24-meta{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.dz24-state{display:inline-block;padding:3px 9px;border:2px solid #18223b;border-radius:7px;background:#e7b75b;font-weight:850;font-size:11px;letter-spacing:.04em}
+.dz24-intel-card.verified .dz24-state{background:#34885d;color:white}
+.dz24-intel-card.rumour .dz24-state{background:#b8bac4;border-style:dashed}
+.dz24-mark{border:1px solid #786046;padding:3px 6px;font-size:10px;border-radius:5px}
+.dz24-card-copy p{margin:8px 0 0;font-size:16px;line-height:1.42}
+.instructions{border-left:4px solid #ffce7c;padding:10px 12px;background:#162345;border-radius:6px;font-size:14px}
+button{cursor:pointer;background:#f9cf6b;border:2px solid #111827;border-radius:10px;padding:12px 18px;color:#162139;font-weight:800;font-size:16px;box-shadow:3px 3px #0004}
+.centre{text-align:center;margin:20px 0}.hidden{display:none!important}
+.mask{padding:48px 18px;text-align:center;background:#18233e;border:2px solid #6b81a6;border-radius:14px;margin:14px 0}.mask p{color:#bdc8e2}
+footer{color:#9babc8;font-size:12px;text-align:center;padding:12px 22px 28px}
+@media (max-width:400px){.dz24-intel-card{grid-template-columns:86px minmax(0,1fr)}.dz24-artwrap,.dz24-artwrap img{min-height:145px}.dz24-card-copy p{font-size:15px}}
+</style></head>
+<body><header><div class="logo">DAY ZERO · PRIVATE BRIEFING</div><p>TV + PHONES EDITION</p></header><main id="phone">Loading your briefing…</main><footer>Your phone shows a fixed briefing for this round. Scan the next QR code when the TV advances. No app or account required.</footer>
+<script>
+const RL={SIG:{n:"Signal",ch:"Theo",c:"#4aa3ff",i:"📻"},QM:{n:"Quartermaster",ch:"Ines",c:"#f0a500",i:"📦"},MED:{n:"Medic",ch:"Pavel",c:"#e07ac0",i:"✚"},LOC:{n:"Local",ch:"Marta",c:"#2fd09c",i:"🏠"}};
+
+const IN={1:{SIG:[["V","Radio: the grid operator confirms a major fault. No time for repairs yet."],["R","Social media post: “Power back by midnight! My cousin works at the power station.” (2,000 shares)"],["V","Phones still work, but messages take minutes."]],
+QM:[["V","Hall inventory: 3 Fuel · the van · 1 generator in the storeroom (not tested for 2 years) · 20 empty water containers · 1 box of batteries · an old wood stove (no wood)."],["V","Van trips cost Fuel. Delivering fuel also costs the fuel you deliver."]],
+MED:[["V","Mr Aldous uses a breathing machine. Its battery lasts about 6 hours."],["V","Generators make carbon monoxide. You can't see or smell it. A generator must NEVER run inside a building."],["V","Home oxygen users usually keep a backup cylinder. Mr Aldous may have one."]],
+LOC:[["V","Sketch of the tower block: the lift is crossed out. The back stairs are “LOCKED AT NIGHT”. Note: Mr Osei, caretaker, has the keys.",1],["V","Sketch of the hall from above: a small roofed corner OUTSIDE by the north wall, circled: “good shelter”. The storeroom has no windows.",1],["V","Bram Hollis at the woodyard sells firewood. Grumpy, but fair."],["U","“In the 1998 storm, the taps ran dry after the first day.”"]]},
+2:{SIG:[["U","Clinic volunteer: “Our generator has fuel until tomorrow morning.”"],["V","Police: “The EAST Bridge is closed — flooding. Use the West Bridge.”"],["V","Card machines don't work. Cash only."],["R","“The army is bringing free generators tonight!”"]],
+QM:[["V","Van to the clinic: West Bridge = 1 Fuel trip + 1 delivered = 2 Fuel. East Bridge = 2 + 1 = 3 Fuel."],["V","Supermarket freezer food = +2 Supplies. Van trip: 2 Fuel."]],
+MED:[["V","The clinic has 4 patients on oxygen. If its generator stops, they're in danger."],["V","The clinic could take ONE more patient — only while its power is safe."],["V","A full freezer keeps food frozen about 2 days; half-full, about 1 day."]],
+LOC:[["U","Sketch of both bridges: wavy lines over the East Bridge. “Floods every time it rains like this.”",1],["V","Mrs Lindqvist owes Marta a favour — Marta fed her cat for a month."],["V","Mr Osei says three older people live above the 6th floor."]]},
+3:{SIG:[["V","Council: “Save water. Drinking and cooking only.”"],["U","Water board: “Supply should continue until Saturday.”"],["R","“The clinic is evacuating!”"]],
+QM:[["V","Filling the 20 containers at the kitchen tap takes TWO fill actions."],["V","If the generator is running, it needs 1 Fuel at the start of each act."]],
+MED:[["V","Older people on the top floors can't do the stairs. A water point downstairs won't help them — someone must carry water UP."],["V","People need 2–3 litres of drinking water a day."]],
+LOC:[["V","Hillside's water tank broke last month. Never repaired."],["V","Mr Osei will run a ground-floor water point if someone brings water."],["V","Mr Osei's daughter works at the water company: “The tower will be empty by Saturday afternoon.”"]]},
+4:{SIG:[["V","Phones and internet have stopped. Only radios work."],["V","Emergency calls only through the council radio relay."],["R","“A fuel tanker is coming to the petrol station tonight!”"]],
+QM:[["V","Petrol pumps need electricity. Without power, they CANNOT work."],["V","At a fuel store, the van can fill up and pay for the trip from what it collects."]],
+MED:[["V","The clinic has one bed left. Mr Aldous needs oxygen. Mrs Petrova, 88, lives alone in a freezing house."],["V","Candles cause many house fires. Torches are safer."]],
+LOC:[["V","Mr Haddad owns the petrol station. He'll put up a sign — but only if you can tell him the truth."],["V","Ruth Adeyemi runs the bus depot. Big diesel tank. She owes the hall a favour."],["V","Mrs Petrova on Marta's street has no heating. She lights candles every evening."]]},
+5:{SIG:[["R","Note: “Thieves are breaking into homes on Mill Lane. Guard your doors.”"],["U","Radio contact: “The blackout was sabotage. Someone at the grid company told me.”"],["V","Weather service: below freezing tomorrow night."]],
+QM:[["V","The generator needs 1 Fuel tomorrow night. The wood stove needs none once it has wood."]],
+MED:[["V","Most at risk from cold: Mrs Petrova, Mr Aldous, two babies in the tower block."],["V","One shared warm room is safer than people alone in cold houses."]],
+LOC:[["V","Marta asked around: Mrs Grant heard her grandson's video game and thought it was a break-in."],["V","Bram Hollis has plenty of wood if the hall asks."]]},
+6:{SIG:[["V","Crew on channel 4: “We need a guide, 1 Fuel at the substation, and someone on the radio.”"],["V","Tonight: minus 6 degrees."],["R","“Power back for everyone at midnight!”"]],
+QM:[["V","Taking 1 Fuel to the substation: van trip 1 + 1 delivered = 2 Fuel."]],
+MED:[["V","Danger signs of cold: strong shivering, confusion, slow speech, sleepiness."],["V","Stay warm: layers, hats, blankets, food, warm drinks, one room."]],
+LOC:[["V","Sketch: the old mill path, down through Hillside and over a wooden footbridge. “Safe, even at night.”",1],["V","In daylight the crew could use the West Bridge. The East is still under water."]]},
+7:{SIG:[["V","Council: power returns in stages. They ask where it's needed first."],["V","Photo from a crew member: the substation lock was opened, not forced. Someone used a key.",1]],
+QM:[["V","Final check: make sure Warmth, Water and Information are running."]],
+MED:[["V","Tower block: babies and older people on the top floors. Power there means water and the lift."]],
+LOC:[["V","Marta counted: 120 people in the tower block, 40 on the clinic street, 60 at the hall."]]}};
+
+const esc=s=>String(s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
+</script>
+<script src="dz24.js"></script>
+<script>
+function phoneRender(){
+ const q=new URLSearchParams(window.location.hash.slice(1));
+ const round=Number(q.get("round"));
+ const roles=(q.get("roles")||"").split(",").filter(r=>Object.prototype.hasOwnProperty.call(RL,r));
+ const name=q.get("name")||"Player";
+ const app=document.getElementById("phone");
+ if(!Number.isInteger(round)||round<1||round>7||!roles.length){
+  app.innerHTML='<h1>Briefing not found</h1><p>Scan the QR code beside your name on the main TV screen to open your round’s briefing.</p>';
+  return;
+ }
+ app.innerHTML='<div class="dz24-eyebrow" style="color:#a8c2e9;font-size:13px;font-weight:800;letter-spacing:.09em">ROUND '+round+' OF 7</div><h1>'+esc(name)+'’s briefing</h1><p class="subtitle">Only your role’s information is shown here. Share what you learn at the council, but consider whether each source is verified, unconfirmed or a rumour.</p>'+
+ '<div class="instructions">Read your cards, then keep your phone face down until the council. You can reveal them again whenever you need to check a detail.</div>'+
+ '<div id="briefing">'+dz24PlayerHand({r:roles},round)+'</div>'+
+ '<div id="mask" class="mask hidden"><h1>Briefing hidden</h1><p>Tap below to view your cards again.</p></div>'+
+ '<div class="centre"><button id="hidebtn" onclick="phoneToggle()">Hide my briefing</button></div>';
+}
+function phoneToggle(){
+ const cards=document.getElementById("briefing"),mask=document.getElementById("mask"),button=document.getElementById("hidebtn");
+ const isOpen=!cards.classList.contains("hidden");
+ cards.classList.toggle("hidden",isOpen);mask.classList.toggle("hidden",!isOpen);
+ button.textContent=isOpen?"Reveal my briefing":"Hide my briefing";
+ window.scrollTo(0,0);
+}
+phoneRender();
+</script></body></html>
