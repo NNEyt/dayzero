@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Day Zero 2.1 — Story Edition</title>
+<title>Day Zero 2.2 — Story Edition</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box}
@@ -67,8 +67,28 @@ select,input{font-size:18px;padding:8px;border-radius:8px;border:2px solid #000;
 .dz21-settings{border-left:5px solid #c593e5}.dz21-settings select{max-width:460px;margin:6px 0 15px}
 .dz21-outro{border:2px solid #b88c4b;padding:18px 22px}.dz21-outro h3{font:italic 800 29px 'Barlow Condensed',Impact,sans-serif;color:#ffcf72;margin:7px 0}.dz21-outro p{margin:0;line-height:1.55}
 @media(max-width:600px){.dz21-head{padding:14px}.dz21-hero{height:205px}.dz21-prose{padding:17px}}
-</style></head><body><div class="preview-banner">🧪 DAY ZERO 2.1 — STORY TEST BUILD · Separate save · <a href="./">Return to original game</a></div><div class="w" id="app"></div>
+
+/* Day Zero 2.2 - Illustrated results and narrative council */
+.dz22-story{display:grid;grid-template-columns:minmax(175px,32%) 1fr;max-width:940px;margin:14px auto;border:3px solid #080c1f;border-radius:16px;overflow:hidden;background:#f4ecd8;color:#26202b;box-shadow:0 7px 0 #0008}
+.dz22-scene-image{background:#16213d;min-height:240px}.dz22-scene-image .art{height:100%;min-height:240px;border:0;border-radius:0}
+.dz22-story-prose{padding:22px 25px;font:18px/1.52 Georgia,serif}.dz22-story-prose p{margin:11px 0}.dz22-story-prose h3{font:bold 31px/1.12 Georgia,serif;color:#332039;margin:8px 0 13px}
+.dz22-kicker{font:italic 800 16px 'Barlow Condensed',Impact,sans-serif;letter-spacing:.045em;color:#c47b20}
+.dz22-read{font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#795c68;margin:8px 0 15px}
+.dz22-teamwork{border-left:5px solid #2fd09c;padding:16px 20px}.dz22-teamwork p{margin:9px 0;font-size:16px}.dz22-teamwork b{color:#ffd166}
+.dz22-role-cue{max-width:900px;margin:8px auto;border-left:5px solid #e0b264;padding:10px 15px;background:#191f3b;color:#f2e9d5;font:17px/1.5 Georgia,serif}
+.dz22-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:16px;max-width:1100px;margin:14px auto 22px}
+.dz22-result{border:3px solid var(--dz22,#ffcf70);border-radius:14px;overflow:hidden;background:#171d39;box-shadow:4px 5px 0 #0009;color:#f5f1e8}
+.dz22-art{height:158px;background:#121c3a}.dz22-art .art{height:100%;border:0;border-radius:0}
+.dz22-details{padding:12px 15px 14px}.dz22-details h4{font:bold 25px/1.09 'Barlow Condensed',Impact,sans-serif;color:#ffda8c;margin:5px 0 10px}
+.dz22-details p{font:16px/1.5 Georgia,serif;margin:8px 0 12px}.dz22-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.dz22-chips span{padding:4px 9px;background:#303c69;border-radius:8px;font-size:13px;color:#f5eacb}
+.dz22-technical{font-size:15px}.dz22-technical summary{cursor:pointer;color:#cbd5ff;font-weight:700}
+.dz22-delta-list{display:flex;gap:7px;flex-wrap:wrap}.dz22-delta-list span{background:#293257;border:1px solid #7582b6;border-radius:9px;padding:7px 10px}
+.dz22-resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:10px}.dz22-resource{border:1px solid #404e83;border-radius:10px;background:#1c2448;padding:11px}.dz22-resource b{color:#ffdb8c}.dz22-resource p{margin:5px 0;font-size:15px}.dz22-resource small{font-size:13px;color:#d7d9ee}
+@media(max-width:620px){.dz22-story{grid-template-columns:1fr}.dz22-scene-image,.dz22-scene-image .art{min-height:185px;max-height:215px}.dz22-story-prose{padding:17px}.dz22-grid{grid-template-columns:1fr}.dz22-art{height:185px}}
+</style></head><body><div class="preview-banner">🧪 DAY ZERO 2.2 — STORY TEST BUILD · Separate save · <a href="./">Return to original game</a></div><div class="w" id="app"></div>
 <script src="story21.js"></script>
+<script src="story22.js"></script>
+<script src="story22.js"></script>
 <script>
 const RL={SIG:{n:"Signal",ch:"Theo",c:"#4aa3ff",i:"📻"},QM:{n:"Quartermaster",ch:"Ines",c:"#f0a500",i:"📦"},MED:{n:"Medic",ch:"Pavel",c:"#e07ac0",i:"✚"},LOC:{n:"Local",ch:"Marta",c:"#2fd09c",i:"🏠"}};
 const RO=["SIG","QM","MED","LOC"];
@@ -81,9 +101,9 @@ const RES=[["🥫","Supplies","Food, drinking water and batteries for everyone a
 ["🤝","Cohesion","How united your group is.","Comforting people, good decisions, a warm hall.","Fear, failures, bad decisions.","At 0, the game ends: everyone for themselves."],
 ["🏘️","Trust","How much the wider community trusts the hall.","Helping others, telling the truth.","False messages, refusing help.","Some help needs Trust 3+ (e.g. council water)."],
 ["⛽","Fuel","Runs the van and the generator. Only the Quartermaster spends it.","Finding the fuel reserve.","Every van trip. The generator needs 1 per act.","At 0: no van trips, and the generator stops."],
-["📻","Signal","Theo's radio time. Only the Signal spends it.","—","Checking rumours, broadcasts, emergency calls.","At 0: no more checking or broadcasting."],
-["✚","Medkits","Medical supplies. Only the Medic spends them.","—","Treating people.","At 0: no more treatment."],
-["🏠","Contacts","Favours Marta can call in. Only the Local spends them.","—","Special requests, like the bus depot.","At 0: no more favours."],
+["📻","Signal","Theo's limited radio capacity.","A working radio point restores +1 at the start of each later round (max 6); receiver + batteries adds +1 once.","Investigations, broadcasts, emergency calls.","If it reaches 0, Theo must wait for a recharge before spending more."],
+["✚","Medkits","Limited medical equipment carried by Pavel.","No repeatable refill in this first adventure; start with 2.","Treating people.","At 0: no more medkit treatments."],
+["🏠","Contacts","Limited favours Marta can ask for.","No repeatable refill in this first adventure; start with 3.","Special requests, including access to the bus depot.","At 0: no more favours to spend."],
 ["⏳","Crisis","Time pressure.","—","Rises every round, and when any threat clock fills.","At 10, the final round starts immediately."]];
 const EV={1:["Lights Out","Thursday 18:04 · Night","🌑","The lights flicker, then go out. Not just your street — the whole town is dark. Phones still work, for now. Someone knocks on the hall door: “Is anyone organising things here?” You look at each other. It seems you are."],
 2:["The First Night","Thursday 23:00 · Night","🕯️","The town is quiet and cold. Across the river, the clinic's lights flicker. Mrs Lindqvist from the supermarket is at the door: “My freezers are full. What do I do?” Behind her, neighbours want to know what the hall has."],
@@ -135,7 +155,7 @@ QM:[["V","Final check: make sure Warmth, Water and Information are running."]],
 MED:[["V","Tower block: babies and older people on the top floors. Power there means water and the lift."]],
 LOC:[["V","Marta counted: 120 people in the tower block, 40 on the clinic street, 60 at the hall."]]}};
 let S=null;
-const sv=()=>localStorage.setItem("dz2_story21_root",JSON.stringify(S));
+const sv=()=>localStorage.setItem("dz2_story22_test",JSON.stringify(S));
 const tr=(k,n)=>{S.t[k]=Math.max(0,Math.min(6,S.t[k]+n))};
 const act=id=>{const x=S.th[id];return !!x&&!x.res&&!x.fail};
 const esc=s=>String(s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
@@ -327,19 +347,32 @@ DL3A:["MED","The Clinic Is Closed","🏥","The clinic's generator stopped. Its p
 DL4:[0,"The Sabotage Claim","📡","Theo's contact says the blackout was sabotage. Theo: “People deserve to know!” Nobody can prove it.",[["claim","Broadcast the claim","Cohesion −1",()=>{tr("cohesion",-1);S.f.e6s=1},"The sabotage story spread faster than the facts.","Unproven claims can cause trouble later."],["known","Broadcast only what we know","Cohesion +1",()=>tr("cohesion",1),"Mill Lane trusted the hall's radio. It never said more than it knew.","Nothing special."],["sil","Stay silent","No change",()=>{},"You kept quiet. Some wondered what you knew.","Nothing special."]]],
 DL5:["LOC","The Old Mill Path","🌉","The crew could go tonight by the old mill path through Hillside, or wait for daylight and a bridge. Waiting means another freezing night.",[["tonight","Go tonight","The crew can be guided this round",()=>{},"The crew still tells the story of the night neighbours led them over the footbridge.","Power could come back a night early."],["wait","Wait for daylight","The crew waits",()=>{},"You chose the safe way. The town waited one more cold night.","The crew can only be guided in the final round."]]],
 DL6:[0,"Who Gets Power First?","⚡","The council asks where power goes first.",[["tower","The tower block","—",()=>{tr("health",1);tr("trust",1)},"When the lift started, the 9th floor cheered.","If the crew fixes the substation: Health +1, Trust +1."],["clinic","The clinic street","—",()=>{S.th.T1.fail?tr("health",2):tr("cohesion",1)},"The clinic lit up first, like the town's heart starting again.","If the crew fixes the substation: Health +2 if the clinic closed, otherwise Cohesion +1."],["hallp","Our hall","—",()=>{S.f.hb=1},"The hall lit up first. Some said that was fair.","If the crew fixes the substation: one missing Hub system counts as running."]]]};
-const TEACH1="<b>Each round:</b> Event → private cards → plan together → secret orders → results.<br>Your cards are private. Read words aloud if you like, but <b>DESCRIBE ONLY</b> cards must be explained in your own words.<br>This round each role chooses <b>1 action</b>.<br>Threats have clocks. If a clock fills, something bad happens.";
-const TEACH2="From now on each role chooses <b>2 actions</b>.<br>Some actions need another role to act first or in the same round. Plan together!<br><b>Decisions</b> have no right answer. Read <b>Now</b> and <b>Later</b> before choosing.";
+const TEACH1="<b>How the story works:</b> The narrator reads the chapter and new problem cards aloud. Each player privately receives their role cards. <b>At the council, share all your information with the team:</b> read ordinary cards aloud; explain DESCRIBE ONLY cards in your own words.<br><b>Then make a team plan</b> and each player chooses secret orders. This round each role gets <b>1 action</b>.<br>Some actions need another role to act first. If a threat clock fills, bad consequences follow. The narrator reads the illustrated results aloud.";
+const TEACH2="From this chapter onwards, each role may choose <b>2 actions</b>. You are a team: talk first and plan who does what, then lock in the orders.<br><b>Example:</b> Marta can ask the caretaker to unlock the tower, while Pavel chooses to climb to Mr Aldous in the same round. If the unlocking does not happen, the climb cannot succeed.<br>Read important decisions aloud together before voting. Some consequences only become clear later.";
 const FOOL=[["“Power back by midnight” (R1)","False."],["“Army generators” (R2)","False."],["Marta: “The East Bridge floods” (R2)","True this time."],["Clinic: “Fuel until morning” (R2)","True."],["Water board: “until Saturday” (R3)","Roughly right, but the message was old."],["“The clinic is evacuating” (R3)","False."],["“A fuel tanker is coming” (R4)","False."],["“Thieves on Mill Lane” (R5)","False: a video game."],["“It was sabotage” (R5)","Unknown. Nobody could prove it."]];
 const NOTES=[["Real","Many water systems need electric pumps. In tall buildings, upper floors often lose water first."],["Real","Mobile masts often have backup batteries that may last only a few hours."],["Real","Card machines and cash machines usually need power. Some cash at home helps."],["Real","Most petrol pumps need electricity."],["Real","Generators make carbon monoxide, which you can't see or smell. Never use one indoors or in a garage."],["Real","Candles cause many house fires. Battery torches are safer. In a fire: get out, stay out, call for help."],["Real","A full freezer keeps food frozen about 48 hours (half-full, about 24)."],["Real","Many agencies suggest households can manage alone for at least 72 hours."],["Real","A battery or wind-up radio keeps you informed when phones fail."],["Invented","Kelderwick, Mill Lane, all characters and the substation mystery."]];
 const NM={supplies:"🥫 Supplies",health:"❤️ Health",cohesion:"🤝 Cohesion",trust:"🏘️ Trust",fuel:"⛽ Fuel",signal:"📻 Signal",medkits:"✚ Medkits",contacts:"🏠 Contacts"};
 const HN={warmth:"🔥 Warmth",water:"💧 Water",info:"📻 Information"};
-const snap=()=>JSON.parse(JSON.stringify({t:S.t,a:S.a,hub:S.hub}));
-function dif(p){if(!p)return "";const o=[];for(const k in S.t)if(p.t[k]!==S.t[k])o.push(NM[k]+": "+p.t[k]+" → <b>"+S.t[k]+"</b>");for(const k in S.a)if(p.a[k]!==S.a[k])o.push(NM[k]+": "+p.a[k]+" → <b>"+S.a[k]+"</b>");for(const k in S.hub)if(p.hub[k]!==S.hub[k])o.push(HN[k]+": <b>"+(S.hub[k]?"RUNNING ✅":"STOPPED ❌")+"</b>");return `<div class="sec">📊 What changed</div><div class="pn lg">${o.length?o.map(x=>"<p>"+x+"</p>").join(""):"<p>Nothing changed.</p>"}</div>`}
+const snap=()=>JSON.parse(JSON.stringify({t:S.t,a:S.a,hub:S.hub,items:dzInit().inventory}));
+function dif(p){
+ if(!p)return "";
+ const changes=dz22Changes(p,dz22Frame());
+ return '<div class="sec">📊 What changed</div><div class="pn">'+
+ (changes.length?'<div class="dz22-delta-list">'+changes.map(t=>'<span>'+esc(t)+'</span>').join("")+'</div>':
+ '<p>No resource counters or inventory totals changed. The team may still have unlocked access, tested equipment or advanced the story; see the illustrated action cards above.</p>')+
+ '</div>';
+}
+
 function art(k,ic){return `<div class="art">${ic}<div style="background-image:url(art/${k}.jpg)"></div></div>`}
 function card(o){return `<div class="card ${o.sm?"sm":""}" style="--r:${o.c||"#ffd166"}"><div class="ct">${o.t}</div>${art(o.a,o.i)}<div class="box">${o.f?`<div class="fl">${o.f}</div>`:""}${o.b||""}${o.h?`<div class="hint">💡 ${o.h}</div>`:""}</div><div class="tag">${o.g||""}</div></div>`}
 function thC(id){const d=TH[id],x=S.th[id];let cl="";if(d[2]){cl='<div class="clk">';for(let i=0;i<d[2];i++)cl+=id==="T3"?"<i>?</i>":`<i class="${i<x.clock?"on":""}"></i>`;cl+="</div>"}
 return card({t:d[0],a:id.toLowerCase(),i:IC[id],f:d[3],b:`<b>If the clock fills:</b> ${d[4]}${cl}`,h:HINT[id],g:(id[0]==="O"?"OPPORTUNITY":id==="T7"?"WARNING":"THREAT")+" · "+d[1],c:"#e4572e"})}
-function guideH(){return `<div class="pn gd"><table>${RES.map(r=>`<tr><td style="font-size:30px">${r[0]}</td><td><b>${r[1]}</b>: ${r[2]}<br>➕ <i>Get more:</i> ${r[3]}<br>➖ <i>Spent on:</i> ${r[4]}<br>⚠️ ${r[5]}</td></tr>`).join("")}</table><p><b>🏠 The Hub = your Mission.</b> Get 🔥 Warmth, 💧 Water and 📻 Information running at the hall by the end of Round 7.</p></div>`}
+function guideH(){
+ return '<div class="pn"><p><b>What these numbers mean:</b> Some resources can be replenished, while others are scarce. You need to decide when to spend them.</p><div class="dz22-resource-grid">'+RES.map(r=>
+ '<div class="dz22-resource"><b>'+r[0]+' '+r[1]+'</b><p>'+r[2]+'</p><p><strong>➕ Get more:</strong> '+r[3]+'</p><p><strong>➖ Use:</strong> '+r[4]+'</p><small>⚠️ '+r[5]+'</small></div>'
+ ).join("")+'</div><p><b>🏠 Your mission:</b> get Warmth, Water and Information running at the hall before the final round ends.</p></div>';
+}
+
 function board(){const t=S.t,a=S.a,tk=(n,k,i)=>`<div class="trk">${i} ${n}<b>${t[k]}</b><div class="pp">${"●".repeat(t[k])}${"○".repeat(6-t[k])}</div></div>`;
 return `<div class="pn c">${tk("Supplies","supplies","🥫")}${tk("Health","health","❤️")}${tk("Cohesion","cohesion","🤝")}${tk("Trust","trust","🏘️")}
 <div style="margin:6px 0">⛽ Fuel <b>${a.fuel}</b> · 📻 Signal <b>${a.signal}</b> · ✚ Medkits <b>${a.medkits}</b> · 🏠 Contacts <b>${a.contacts}</b> · ⏳ Crisis <b>${S.crisis}/10</b></div>
@@ -351,6 +384,7 @@ RO.forEach((r,i)=>S.pl[i%names.length].r.push(r));sv();R()}
 function chk(){if(S.t.health<=0)S.broke="h";else if(S.t.cohesion<=0)S.broke="c";if(S.broke)S.ph="end"}
 function startRound(){const r=S.round;S.r={};S.nw=[];S.br=[];S.ord={};S.co=(r-1)%S.pl.length;S.dc=null;
 const B=(t,x,w)=>S.br.push({t,x,w});
+if(r>1&&S.hub.info&&S.a.signal<6){S.a.signal++;B("A Fresh Radio Shift","With the hall radio point staffed and organised, Theo gains 1 Signal for this round (up to 6).","Because you established the Information hub.");}
 if(S.f.e5===r){tr("health",-2);S.hub.warmth=false;B("Headaches at the Hall","People feel dizzy and sick. The generator was running indoors: carbon monoxide. Health −2. The generator is off until someone sets it up outside.","Because the generator was set up indoors.")}
 if((r===3||r===6)&&S.hub.warmth&&S.wt==="gen"){if(S.a.fuel>0){S.a.fuel--;B("Generator","The generator uses 1 Fuel to keep running.")}else{S.hub.warmth=false;S.f.gFuel=0;B("Generator","No fuel left. The generator stops.")}}
 if(r===1)add("T2");
@@ -380,13 +414,24 @@ function nA(r){let n=S.round===1?1:2;if(r==="MED"&&S.f.mL&&(S.round===5||S.round
 function opts(r){return T.filter(t=>(t.who===r||t.who==="ANY")&&(t.sh?t.sh():t.av()))}
 function lock(){S.pl[S.pi].r.forEach(r=>{S.ord[r]=[];for(let i=0;i<nA(r);i++){const v=document.getElementById("o_"+r+"_"+i).value;if(v)S.ord[r].push(v)}});next()}
 function next(){S.show=false;S.pi++;if(S.pi>=S.pl.length){S.pi=0;if(S.ph==="intel"){if(DZ21_BREAK_ROUNDS.includes(S.round)&&!S.story.seen[S.round]){S.story.seen[S.round]=1;S.ph="break"}else S.ph="council"}else if(S.ph==="ord"){resolve();return}}sv();R()}
-function resolve(){S.pre=snap();S.log=[];const L=[];RO.forEach(r=>(S.ord[r]||[]).forEach(id=>L.push({r,id})));
+function resolve(){S.pre=snap();S.log=[];S.report=[];const L=[];RO.forEach(r=>(S.ord[r]||[]).forEach(id=>L.push({r,id})));
 S.rev=L.map(o=>RL[o.r].i+" "+RL[o.r].ch+": "+TI[o.id].label);
 L.sort((a,b)=>TI[a.id].step-TI[b.id].step||TI[a.id].ix-TI[b.id].ix);
-L.forEach(o=>{const t=TI[o.id],w="<b>"+RL[o.r].ch+"</b>: "+t.label+"<br>";
-if(!t.av()){S.log.push(w+"✖ "+(t.no||"Not possible right now."));return}
-const c=cost(t);if(!have(c)){S.log.push(w+"✖ Not enough resources"+ctx(c)+".");return}
-pay(c);S.log.push(w+t.run())});
+L.forEach(o=>{
+ const t=TI[o.id],w="<b>"+RL[o.r].ch+"</b>: "+t.label+"<br>",before=dz22Frame();
+ if(!t.av()){
+  const msg=t.no||"Not possible right now.";
+  S.log.push(w+"✖ "+msg);S.report.push(dz22Record(o,"blocked",msg,before));return;
+ }
+ const c=cost(t);
+ if(!have(c)){
+  const msg="Not enough resources"+ctx(c)+".";
+  S.log.push(w+"✖ "+msg);S.report.push(dz22Record(o,"blocked",msg,before));return;
+ }
+ pay(c);const message=t.run();
+ S.log.push(w+message);
+ S.report.push(dz22Record(o,dz22Status(o.id,message),message,before));
+});
 if(act("T4")&&S.f.t4w&&S.f.t4p&&S.f.t4u){S.th.T4.res=true;S.log.push("✅ Tower Block Water: SOLVED.")}else if(act("T4")&&S.f.t4w&&S.f.t4p){S.r.t4=1;S.log.push("◐ Tower Block Water: partly solved. The top floors still need water carried up. (Clock paused.)")}
 if(act("T8")&&S.f.fR&&S.f.fH){S.th.T8.res=true;S.log.push("✅ Candle Fire: SOLVED. Everyone got out.")}else if(act("T8")&&S.r.fire)S.log.push("◐ Candle Fire: half done. Clock paused this round.");
 if(act("T9")&&S.f.wel&&S.f.welM){S.th.T9.res=true;S.log.push("✅ Break-in Rumour: SOLVED. The visits calm the street.")}
@@ -426,17 +471,17 @@ if(S.hub.water&&!S.f.dry)o.push("You filled the containers before the taps went 
 if(S.th.T9&&S.th.T9.res)o.push("The thieves story stopped with the hall's radio.");return o}
 const goal=()=>`<div class="goal">🎯 <b>This round:</b> ${GOAL[S.round]}</div>`;
 const foot=()=>`<p class="c"><button class="btn b sm2" onclick="restart()">New game</button></p>`;
-function title(){const s0=localStorage.getItem("dz2_story21_root");return `<h1>DAY ZERO</h1><p class="c" style="color:#c9c3ad"><i>The lights go out. Nobody has the whole picture.</i></p><div class="row">${card({t:"Lights Out",a:"ev1",i:"🌑",f:"A town goes dark. Your neighbours need you.",b:"1–4 players · about 75 minutes · pass this device around for private cards.",g:"A CRISIS ADVENTURE"})}</div><div class="pn"><h2>Who is playing?</h2>${[0,1,2,3].map(i=>`<input id="n${i}" placeholder="Player ${i+1} name${i?" (optional)":""}">`).join("")}<p class="s">Four roles are shared between players. Best with 3–4. One player = practice mode.</p><div class="c"><button class="btn" onclick="go()">Start</button>${s0?'<button class="btn b" onclick="cont()">Continue saved game</button>':""}</div></div>`}
+function title(){const s0=localStorage.getItem("dz2_story22_test");return `<h1>DAY ZERO</h1><p class="c" style="color:#c9c3ad"><i>The lights go out. Nobody has the whole picture.</i></p><div class="row">${card({t:"Lights Out",a:"ev1",i:"🌑",f:"A town goes dark. Your neighbours need you.",b:"1–4 players · about 75 minutes · pass this device around for private cards.",g:"A CRISIS ADVENTURE"})}</div><div class="pn"><h2>Who is playing?</h2>${[0,1,2,3].map(i=>`<input id="n${i}" placeholder="Player ${i+1} name${i?" (optional)":""}">`).join("")}<p class="s">Four roles are shared between players. Best with 3–4. One player = practice mode.</p><div class="c"><button class="btn" onclick="go()">Start</button>${s0?'<button class="btn b" onclick="cont()">Continue saved game</button>':""}</div></div>`}
 function go(){const n=[0,1,2,3].map(i=>document.getElementById("n"+i).value.trim()).filter(x=>x);if(!n.length)n.push("Player 1");start(n)}
-function cont(){S=JSON.parse(localStorage.getItem("dz2_story21_root"));dzInit();dz21Init();R()}
-function restart(){if(confirm("Start a new game? The saved game will be deleted.")){localStorage.removeItem("dz2_story21_root");S=null;R()}}
+function cont(){S=JSON.parse(localStorage.getItem("dz2_story22_test"));dzInit();dz21Init();R()}
+function restart(){if(confirm("Start a new game? The saved game will be deleted.")){localStorage.removeItem("dz2_story22_test");S=null;R()}}
 function vTeam(){const own=r=>S.pl.find(p=>p.r.includes(r)).n;
 return `<h2>The Story</h2><div class="pn" style="font-size:20px">Kelderwick is a small town. It's a cold Thursday evening in November. Suddenly, <b>the power goes out across the whole town</b>, and nobody knows for how long.<br><br>You are neighbours who meet at the <b>Mill Lane community hall</b>. People are scared. Someone has to organise things. That's you.<br><br><b>Your mission:</b> keep Mill Lane going for 3 days until the power returns, and turn the hall into a <b>Community Hub</b> with 🔥 Warmth, 💧 Water and 📻 Information.</div>
 <div class="sec">🏆 How you win</div><div class="pn">⭐ <b>Mission:</b> get all 3 Hub systems running by the end.<br>⭐ <b>People:</b> keep ❤️ Health high.<br>⭐ <b>Community:</b> keep 🤝 Cohesion and 🏘️ Trust high.<br>Up to 9 stars. Your choices decide which of 7 endings you get.</div>
 <div class="sec">👥 Meet your team</div><p class="c"><b>Nobody has the whole picture.</b> Each role gets different private cards every round. You only succeed if you share what you know.</p>
 ${RO.map(r=>`<div class="rb" style="border-color:${RL[r].c}"><h3 style="color:${RL[r].c}">${RL[r].i} ${RL[r].n}: played by ${esc(own(r))}</h3><b>Who:</b> ${ROLEX[r].who}<br><b>Knows:</b> ${ROLEX[r].knows}<br><b>Can do:</b> ${ROLEX[r].does}<br><b>Why it matters:</b> ${ROLEX[r].why}</div>`).join("")}
 ${dz21Setup()}<div class="sec">🎒 Your resources</div>${guideH()}<div class="c"><button class="btn" onclick="startRound()">Start Round 1</button></div>`}
-function vBrief(){const e=EV[S.round];let h=`<h2>Round ${S.round} · ${e[0]}</h2>${goal()}<p class="c s">The chapter has been read. Review the current problems and plan together.</p><div class="row">`;
+function vBrief(){const e=EV[S.round];let h=`<h2>Round ${S.round} · ${e[0]}</h2>${goal()}<p class="c s"><b>Coordinator:</b> read each new problem card aloud so everyone knows what the team is facing. Then deal private information cards.</p><div class="row">`;
 if(S.round<=2)h+=card({t:"How to Play",a:"teach",i:"📖",b:S.round===1?TEACH1:TEACH2,g:"COORDINATOR READS ALOUD"});h+="</div>";
 if(S.br.length)h+=`<div class="sec">↩️ Because of earlier choices</div><div class="row">${S.br.map(b=>card({t:b.t,a:"echo",i:"↩️",f:b.x,b:b.w?"<i>"+b.w+"</i>":"",g:b.w?"ECHO":"NEWS",sm:1})).join("")}</div>`;
 if(S.nw.length)h+=`<div class="sec">⚠️ New problems</div><div class="row">${S.nw.map(thC).join("")}</div>`;
@@ -444,20 +489,20 @@ return h+`<div class="sec">🏘️ Your town</div>`+board()+`<div class="c"><but
 function roleBox(r){return `<div class="rb" style="border-color:${RL[r].c}"><h3 style="color:${RL[r].c}">${RL[r].i} You are the ${RL[r].n} (${RL[r].ch})</h3><b>Your job:</b> ${ROLEX[r].does}<br><span class="s">${ROLEX[r].why}</span></div>`}
 function vPass(){const p=S.pl[S.pi],rs=p.r.map(r=>RL[r].i+" "+RL[r].n).join(" & ");
 if(!S.show)return `<div class="pn c"><h2>${S.ph==="intel"?"Private cards":"Secret orders"}</h2><p style="font-size:28px">Pass the device to<br><b style="color:#ffd166;font-size:44px">${esc(p.n)}</b><br>${rs}</p><p class="s">Everyone else, look away.</p><button class="btn" onclick="S.show=true;R()">I'm ${esc(p.n)}: show me</button></div>`;
-if(S.ph==="intel"){let h=`<h2>${esc(p.n)}'s private cards</h2><p class="c s">Remember what matters, then share it during planning. DESCRIBE ONLY cards: explain in your own words.</p>`;
+if(S.ph==="intel"){let h=`<h2>${esc(p.n)}'s private cards</h2><p class="c">Read these privately now. When everyone meets at the council, <b>share the information on every card.</b> You may read ordinary cards aloud, but explain DESCRIBE ONLY cards in your own words without showing their text.</p>`;
 p.r.forEach(r=>{h+=roleBox(r)+`<div class="row">`;(IN[S.round][r]||[]).forEach(x=>{h+=card({t:RL[r].i+" "+RL[r].n,a:"r_"+r,i:RL[r].i,c:RL[r].c,sm:1,b:`<span class="rel ${x[0]}">${{V:"✔ VERIFIED",U:"? UNCONFIRMED",R:"~ RUMOUR"}[x[0]]}</span><div class="${x[2]?"sk":""}">${x[1]}</div>`,g:x[2]?"👁 DESCRIBE ONLY":RL[r].ch})});h+="</div>"});
 return h+`<div class="c"><button class="btn" onclick="next()">Hide my cards</button></div>`}
 let h=`<h2>${esc(p.n)}: choose secretly</h2>`+dzPanel();
 p.r.forEach(r=>{const op=opts(r),n=nA(r);let o='<option value="">— No action —</option>';for(const g in GRP){const l=op.filter(t=>GRP[g].includes(t.id));if(l.length)o+=`<optgroup label="${g}">${l.map(t=>`<option value="${t.id}">${esc(t.label+ctx(cost(t)))}</option>`).join("")}</optgroup>`}
-h+=roleBox(r)+`<div class="pn"><b>${n} action${n>1?"s":""}:</b>`;for(let i=0;i<n;i++)h+=`<select id="o_${r}_${i}">${o}</select>`;h+="</div>"});
+h+=roleBox(r)+dz22RolePrompt(r)+`<div class="pn"><b>${n} action${n>1?"s":""}:</b><p class="s">Discussed the plan with your team? Choose your actions below. Some require another role\'s action to succeed.</p>`;for(let i=0;i<n;i++)h+=`<select id="o_${r}_${i}">${o}</select>`;h+="</div>"});
 return h+`<p class="c s">Actions are grouped by problem. Costs are paid when the action happens. Some actions need another role to act first or in the same round.</p><div class="c"><button class="btn" onclick="lock()">Lock in &amp; hide</button></div>`}
-function vCouncil(){let h=`<h2>Plan Together · Round ${S.round}</h2>${goal()}<div class="sec">📋 How to plan</div><div class="pn"><b>1. Share:</b> each player says the most important thing on their private cards.<br><b>2. Plan:</b> which problems first? Who does what? Which rumours do you trust?<br><b>3.</b> ${S.dl?"Make the decision below.":"When ready, go to secret orders."}<br><span class="s">Coordinator: ${esc(S.pl[S.co].n)}. Reads aloud, speaks last, breaks ties.</span></div>`;
+function vCouncil(){let h=`<h2>Your Team · Round ${S.round}</h2>`+dz22CouncilScene()+goal()+`<div class="pn"><b>1.</b> Share each role\'s information aloud. <b>2.</b> Discuss who will do what, and what depends on another player. <b>3.</b> ${S.dl?"Make the group decision below.":"Agree on your plan."}<br><span class="s">Coordinator: ${esc(S.pl[S.co].n)}. Everyone speaks; the coordinator reads the story and breaks ties.</span></div>`;
 if(S.dl){const d=DL[S.dl];h+=`<div class="sec">⚖️ Decision</div><div class="row">${card({t:d[1],a:S.dl.toLowerCase(),i:d[2],f:d[3],b:d[0]?`<b>Decided by the ${RL[d[0]].n}</b> after listening to everyone.`:"<b>Group decision:</b> everyone speaks once, the Coordinator speaks last, then vote.",g:"DILEMMA"})}<div class="pn" style="max-width:460px">${d[4].map((o,i)=>`<button class="btn opt ${S.dc===o[0]?"":"b"}" ${S.dc?"disabled":""} onclick="choose('${o[0]}')">Option ${"ABC"[i]}: ${o[1]}<div>⚡ <b>Now:</b> ${o[2]}</div><div>🔮 <b>Later:</b> ${o[5]}</div></button>`).join("")}${S.dc?"<p>✔ Decided.</p>":""}</div></div>`}
 const A=Object.keys(S.th).filter(act);if(A.length)h+=`<div class="sec">⚠️ Problems right now</div><div class="row">${A.map(thC).join("")}</div>`;
 return h+`<div class="sec">🏘️ Your town</div>`+board()+dzPanel()+`<div class="c"><button class="btn" ${S.dl&&!S.dc?"disabled":""} onclick="S.ph='ord';S.pi=0;S.show=false;sv();R()">Go to secret orders</button></div>`}
 const lg=a=>`<div class="pn lg">${a.map(x=>`<p class="${x.includes("✖")?"no":x.includes("✅")?"ok":""}">${x}</p>`).join("")}</div>`;
-function vRes(){return `<h2>Results · Round ${S.round}</h2><div class="sec">🗣️ Orders revealed</div><div class="pn">${(S.rev||[]).map(esc).join("<br>")||"None"}</div><div class="sec">🎬 What happened</div>${lg(S.log)}${dif(S.pre)}${dzPanel()}<div class="sec">🏘️ Your town</div>${board()}<div class="c"><button class="btn" onclick="escal()">End of round</button></div>`}
-function vEsc(){const nx=S.round<7?`<div class="goal">🔜 <b>Coming next:</b> Round ${S.round+1}: ${EV[S.round+1][0]}</div>`:"";return `<h2>End of Round ${S.round}</h2>${dz21Outro()}<div class="sec">⏰ Time passes…</div>${lg(S.esc)}${dif(S.pre)}${nx}<div class="sec">🏘️ Your town</div>${board()}<div class="c"><button class="btn" onclick="nextRound()">${S.round>=7?"See the ending":"Next round"}</button></div>`}
+function vRes(){return dz22Results()}
+function vEsc(){const nx=S.round<7?`<div class="goal">🔜 <b>Coming next:</b> Round ${S.round+1}: ${EV[S.round+1][0]}</div>`:"";return `<h2>End of Round ${S.round}</h2>${dz21Outro()}<div class="sec">⏰ Time passes…</div>${dz22TimePassage()}${dif(S.pre)}${nx}<div class="sec">🏘️ Your town</div>${board()}<div class="c"><button class="btn" onclick="nextRound()">${S.round>=7?"See the ending":"Next round"}</button></div>`}
 function vEnd(){const z=ending(),st=n=>"★".repeat(n)+"☆".repeat(3-n),cod=[...S.codas];if(S.d6)cod.push(S.f.d6?DL.DL6[4].find(x=>x[0]===S.d6)[4]:"The council decided without you. The power came later.");
 return `<h1 style="font-size:56px">${z.e[0]}</h1><div class="row">${card({t:z.e[0],a:"end",i:"🏁",f:z.e[1]+z.x,g:"YOUR ENDING"})}</div>
 <div class="pn c"><div class="st">Mission ${st(z.m)} · People ${st(z.p)} · Community ${st(z.c)}</div></div>${dz21Finale()}
@@ -466,7 +511,7 @@ return `<h1 style="font-size:56px">${z.e[0]}</h1><div class="row">${card({t:z.e[
 <div class="pn"><h2>Field Notes</h2>${NOTES.map(n=>`<p><span class="rel ${n[0]==="Real"?"V":"U"}">${n[0]}</span> ${n[1]}</p>`).join("")}<p class="s">General guidance only. Check your local official advice.</p></div>
 <div class="pn"><h2>Talk About It</h2><p>1. Which rumour fooled you, and why?</p><p>2. What would our household need for 72 hours?</p><p>3. Who in our street might need help in a blackout?</p><p>4. Which decision would you change?</p><p>5. When is it right to share something you can't prove?</p></div>
 <div class="pn"><h2>What Happens Next?</h2><p><i>Two weeks later, the grid operator's report blames “equipment failure.” But one photo still bothers you: the substation lock wasn't forced. Someone had a key. To be continued…</i></p><p>${esc(dzEpilogue())}</p></div>
-<div class="c"><button class="btn" onclick="localStorage.removeItem('dz2_story21_root');S=null;R()">Play again</button></div>`}
+<div class="c"><button class="btn" onclick="localStorage.removeItem('dz2_story22_test');S=null;R()">Play again</button></div>`}
 function R(){if(S){dzInit();dz21Init()}const A=document.getElementById("app");if(!S){A.innerHTML=title();return}A.innerHTML=({team:vTeam,chapter:dz21Chapter,brief:vBrief,intel:vPass,break:dz21Break,council:vCouncil,ord:vPass,res:vRes,esc:vEsc,end:vEnd}[S.ph])();window.scrollTo(0,0)}
 R();
 </script></body></html>
