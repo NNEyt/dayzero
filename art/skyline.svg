@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 320" preserveAspectRatio="xMidYMax slice">
+<!-- Day Zero background: Kelderwick at night during the blackout. Original artwork for this project. -->
+<defs><linearGradient id="far" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#152040"/><stop offset="1" stop-color="#0d1530"/></linearGradient>
+<linearGradient id="near" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c1328"/><stop offset="1" stop-color="#080d1d"/></linearGradient></defs>
+<!-- far hills and roofs -->
+<path fill="url(#far)" d="M0 230 Q120 200 260 214 T540 206 T820 214 T1100 200 T1380 212 T1600 204 V320 H0Z"/>
+<!-- church spire -->
+<path fill="url(#far)" d="M1180 210 V150 L1192 96 L1204 150 V210Z"/>
+<!-- tower block -->
+<rect x="250" y="70" width="120" height="250" fill="url(#near)"/>
+<g fill="#ffc24a"><rect x="268" y="104" width="10" height="12" opacity=".7"/><rect x="330" y="160" width="10" height="12" opacity=".45"/><rect x="290" y="232" width="10" height="12" opacity=".6"/></g>
+<g fill="#1a2547"><rect x="268" y="132" width="10" height="12"/><rect x="290" y="104" width="10" height="12"/><rect x="312" y="132" width="10" height="12"/><rect x="330" y="104" width="10" height="12"/><rect x="290" y="160" width="10" height="12"/><rect x="268" y="188" width="10" height="12"/><rect x="312" y="188" width="10" height="12"/><rect x="340" y="216" width="10" height="12"/><rect x="268" y="244" width="10" height="12"/><rect x="312" y="260" width="10" height="12"/></g>
+<!-- terraced houses -->
+<path fill="url(#near)" d="M0 320 V250 L40 222 L80 250 L120 222 L160 250 V320Z M400 320 V246 L440 216 L480 246 L520 216 L560 246 L600 216 L640 246 V320Z M700 320 V258 L735 232 L770 258 L805 232 L840 258 V320Z M880 320 V240 L930 206 L980 240 L1030 206 L1080 240 V320Z M1240 320 V250 L1280 220 L1320 250 L1360 220 L1400 250 L1440 220 L1480 250 V320Z M1500 320 V256 L1550 230 L1600 256 V320Z"/>
+<g fill="url(#near)"><rect x="60" y="214" width="10" height="20"/><rect x="460" y="206" width="10" height="20"/><rect x="580" y="206" width="10" height="20"/><rect x="950" y="194" width="10" height="20"/><rect x="1300" y="210" width="10" height="20"/><rect x="1420" y="210" width="10" height="20"/></g>
+<!-- the community hall: one warm window -->
+<path fill="url(#near)" d="M1100 320 V262 L1150 234 L1200 262 V320Z"/>
+<rect x="1140" y="276" width="20" height="16" rx="2" fill="#ffc24a" opacity=".85"/>
+<g fill="#ffc24a" opacity=".5"><rect x="515" y="270" width="8" height="10"/><rect x="1010" y="262" width="8" height="10"/><rect x="100" y="272" width="8" height="10"/></g>
+<rect y="300" width="1600" height="20" fill="#070b18"/>
+</svg>

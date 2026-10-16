@@ -1,0 +1,55 @@
+/* Day Zero — "Torchlight" theme for the phone pages (play.html, phone.html). Mobile first. */
+:root{--bg-0:#0a0f1e;--bg-1:#121a2e;--bg-2:#19233d;--bg-3:#222e4d;--line:#2f3d63;--line-2:#435381;--text:#f3f0e8;--muted:#bcc5da;
+ --amber:#ffc24a;--amber-2:#ffd77f;--amber-ink:#1d1500;--red:#ff7a66;--red-bg:#3a1712;--green:#6bdca2;--green-bg:#12321f;--blue:#9cc0ff;
+ --paper:#f7f0df;--ink:#231f19;--ink-2:#574d40;--r-s:10px;--r-m:14px;--r-l:20px;
+ --display:'Barlow Condensed','Arial Narrow',Impact,sans-serif;--body:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;color-scheme:dark}
+body{font:17px/1.55 var(--body);color:var(--text);
+ background:url(art/skyline.svg) center bottom/900px auto no-repeat fixed,radial-gradient(ellipse 90% 40% at 50% -5%,#ffc24a1c,transparent 70%),linear-gradient(#0f1730,var(--bg-0) 55%);background-color:var(--bg-0)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;text-align:left;border-bottom:1px solid var(--line);background:#0a0f1ef2;backdrop-filter:blur(6px)}
+.logo{font:800 20px/1.05 var(--display);letter-spacing:.08em;color:var(--amber)}
+#status{margin:0;white-space:nowrap;max-width:55vw;overflow:hidden;text-overflow:ellipsis;font:700 13px/1.2 var(--body);padding:5px 10px;border-radius:999px;background:var(--bg-3);color:var(--muted);text-align:right}
+#status.ok{background:var(--green-bg);color:#d4ffe6}#status.bad{background:var(--red-bg);color:#ffd6cd}
+main{padding:16px 16px 140px;max-width:560px}
+h1{font:700 34px/1.05 var(--display);color:var(--amber);margin:4px 0 0}
+.subtitle{color:var(--muted);font-size:16px;margin:6px 0 16px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.subtitle .dz-ico,.slot h3 .dz-ico{color:var(--amber-2)}
+.dz24-eyebrow{font:700 13px/1.3 var(--body)!important;letter-spacing:.14em!important;text-transform:uppercase;color:var(--amber-2)!important}
+.instructions{background:var(--bg-1);border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:var(--r-m);padding:12px 14px;font-size:16px;color:var(--text)}
+.panel{background:var(--bg-1);border:1px solid var(--line);border-radius:var(--r-l);padding:16px;margin:14px 0;box-shadow:0 8px 22px #0006}
+.panel.big{font-size:19px;line-height:1.5}
+.panel h2{font:700 26px/1.1 var(--display);color:var(--text);margin:0 0 8px}
+button{min-height:48px;font:700 17px/1.25 var(--body);color:var(--amber-ink);background:linear-gradient(#ffd56f,var(--amber));border:0;border-radius:var(--r-s);padding:12px 18px;box-shadow:0 2px 0 #a8730d,0 6px 14px #0004}
+button:disabled{opacity:.45}
+button.big{font:700 22px/1.1 var(--display);letter-spacing:.02em;width:100%;min-height:58px;border-radius:var(--r-m)}
+.opts button,.kid button{min-height:60px;margin:10px 0;padding:14px 16px;background:var(--paper);color:var(--ink);box-shadow:0 3px 0 #b9ab8a;border:2px solid transparent;font-size:18px}
+.opts button .now{color:var(--ink-2);font-size:15px}
+.opts button.on,.kid button.on{background:var(--amber);border-color:var(--amber-ink);box-shadow:0 0 0 3px var(--amber),0 3px 0 #a8730d}
+.kid button{font-size:20px;min-height:68px}
+select{min-height:50px;font:17px var(--body);border-radius:var(--r-s);border:1px solid var(--line-2);background:#f6f4ee;color:#141a2c}
+label.lab{color:var(--amber-2);font-weight:700;font-size:13px;letter-spacing:.04em;margin-top:12px}
+.slot{background:var(--bg-1);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:var(--r-m);padding:12px 14px;margin:14px 0}
+.slot h3{display:flex;align-items:center;gap:6px;font:700 22px/1.1 var(--display);color:var(--text)}
+.tools{position:fixed;left:0;right:0;bottom:0;z-index:6;margin:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:#0a0f1ef2;border-top:1px solid var(--line);backdrop-filter:blur(6px)}
+.tools:empty{display:none}
+.tools button{min-height:44px;font-size:15px;background:var(--bg-3);color:var(--text);box-shadow:0 0 0 1px var(--line-2) inset}
+.done{color:var(--green);font-size:20px}
+.goalcard,.goalbox{background:radial-gradient(ellipse at top,#cfb2ff1f,transparent 70%),#1a1530;border:1px solid #7c62b0;border-radius:var(--r-l);padding:16px}
+.goalcard h2,.goalbox h2{font:700 26px/1.1 var(--display);color:#e6d6ff}
+.goalcard .s{font:700 12px var(--body);letter-spacing:.14em;color:#cfb2ff}
+.insider{background:radial-gradient(ellipse at top,#ff7a6626,transparent 70%),var(--red-bg);border-color:var(--red)}
+.dz24-role-line{background:var(--bg-1);border:1px solid var(--line);border-left:6px solid var(--dz24-role);border-radius:var(--r-m)}
+.dz24-role-icon{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:none;border-radius:50%;background:var(--dz24-role,var(--amber));color:#0d1222;font-size:22px;box-shadow:0 0 0 3px #0a0f1e,0 0 0 4px var(--dz24-role)}
+.dz24-role-icon .dz-ico{width:24px;height:24px;stroke-width:2.2}
+.dz24-role-name{font:700 24px/1.1 var(--display);color:var(--text)}
+.dz24-role-mechanic{color:var(--muted)}
+.dz24-intel-card{background:var(--paper);color:var(--ink);border:1px solid #0004;border-radius:var(--r-m);box-shadow:0 6px 16px #0005}
+.dz24-state{border:0;border-radius:999px;padding:3px 10px;background:#f0c55f;color:#2b1f00}
+.dz24-intel-card.verified .dz24-state{background:#25744c;color:#fff}
+.dz24-intel-card.rumour .dz24-state{background:#d9d6cf;color:#2e2a24;box-shadow:0 0 0 1px #6b655a inset}
+.dz24-card-copy p{font-size:17px}
+.mask{background:var(--bg-1);border:1px dashed var(--line-2);border-radius:var(--r-l)}
+.centre{margin:22px 0}
+footer{color:#a3aec8;font-size:13px;padding-bottom:90px}
+.dz-ico{width:1.15em;height:1.15em;vertical-align:-.2em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

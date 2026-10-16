@@ -84,6 +84,18 @@ Each episode uses a different set of chapters with its own cold open, and shows 
 
 Progress is saved in `localStorage` under `dz_campaign`. You can copy a campaign code from the title screen and paste it on another device.
 
+## Visual style: "Torchlight"
+
+The look is a UK street during a power cut: deep navy night, warm torch-amber highlights and paper-coloured cards for anything you need to read.
+
+- **Palette:** night surfaces (`#0a0f1e` → `#222e4d`), torch amber (`#ffc24a`) for actions and headings, paper (`#f7f0df`) with dark ink for story text and cards. Red, green and violet are kept for danger, success and secrets. Every text/background pair used meets WCAG AA (body text is 10:1 or better; the smallest coloured labels are at least 4.7:1).
+- **Type:** [Atkinson Hyperlegible](https://brailleinstitute.org/freefont) for everything you read, chosen for young readers and low vision. Barlow Condensed for headings and buttons, upright rather than italic. Georgia for story prose. UnifrakturMaguntia for the Chronicle masthead. The scale steps are 14 / 16 / 18 / 21 / 26 / 32 / 48 px, slightly smaller on phones.
+- **Components:** cards, panels, buttons and spacing all come from the same tokens in `dz-theme.css` (an 8-px spacing scale; 10/14/20 px radii). Buttons are at least 48 px tall, and kid buttons at least 56 px. Focus rings are visible for keyboard players.
+- **Icons and art:** `dz-art.js` draws an inline SVG icon set for the eight roles, the town resources and the mission. Threat clocks are drawn as segmented rings with a plain-words caption ("Clock 2 of 3", "Nearly full!"). It only decorates what the game has already rendered; no game logic changes. `art/skyline.svg` is a quiet silhouette of Kelderwick behind every screen, with one warm window: the hall.
+- **Phones:** `dz-phone.css` gives `play.html` and `phone.html` a mobile-first layout: a sticky header with connection status, big tap targets and a bottom toolbar for "My cards" and "My goal".
+- **Offline-safe:** fonts are self-hosted in `fonts/` (SIL OFL, see `fonts/OFL.txt`). There are no external CDNs. Older versions (`dayzero1.html` … `dayzero24.html`) keep their original look.
+- **Motion:** `prefers-reduced-motion` still switches off every animation.
+
 **Sound:** effects and a quiet wind are synthesised with the WebAudio API. There are no audio files, so there's nothing to license. 🔊/🔇 in the corner turns sound on and off, and the setting is remembered. Staged reveals can be skipped (⏭). If your device asks for reduced motion, the animations are switched off.
 
 ## Files
@@ -92,6 +104,8 @@ Progress is saved in `localStorage` under `dz_campaign`. You can copy a campaign
 |---|---|
 | `index.html` | The latest game. It loads the files below in order. |
 | `dz-main.css`, `dz24.css`, `dz-juice.css` | Base styles, 2.4 card and briefing styles, and styles for the new screens and animations |
+| `dz-theme.css`, `dz-phone.css`, `fonts/`, `art/skyline.svg` | The Torchlight theme (TV and phone), self-hosted fonts and the background skyline |
+| `dz-art.js` | Inline SVG icons for roles and resources, and ring-shaped threat clocks (presentation only) |
 | `story21.js`, `story23.js` | Story chapters, breaks, council scenes and result prose (shared with 2.1–2.4) |
 | `dz24.js`, `qr24.min.js` | TV and phone briefings, order screen, QR codes (MIT, see `qr24-LICENSE.txt`) |
 | `dz-content.js` | Roles, intel cards, extra rumours, personal goals, seeded randomness and variants. Shared with `phone.html`. |
