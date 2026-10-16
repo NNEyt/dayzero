@@ -1,6 +1,6 @@
 /* Day Zero engine (from 2.4, extended for the engagement upgrade). Views live in dz-views.js. */
 const RO=["SIG","QM","MED","LOC"];
-const ROLEX={SIG:{who:"Theo, 19, runs a local news channel and owns a radio.",knows:"Radio news, official messages and rumours. Some are true. Some are false.",does:"Check rumours, broadcast messages, call emergency services, run the hall's radio point.",why:"Without you, the group acts on false information. You decide what is true."},
+const ROLEX={SIG:{who:"Theo, 19, never takes his headphones off. He runs the hall's radio desk.",knows:"Radio news, official messages and rumours. Some are true. Some are false.",does:"Check rumours, broadcast messages, call emergency services, run the hall's radio point.",why:"Without you, the group acts on false information. You decide what is true."},
 QM:{who:"Ines, 46, runs the community hall.",knows:"What the hall has, how much fuel is left, and what every trip costs.",does:"Drive the van (deliver fuel, fetch food, wood and water), set up the generator.",why:"Almost every plan needs the van, and fuel is very limited. You decide what it's spent on."},
 MED:{who:"Pavel, 38, a night-shift nurse.",knows:"Who is sick or at risk, and what is dangerous (like generators indoors).",does:"Treat people, climb to Mr Aldous, care for the most vulnerable.",why:"You protect everyone's Health, and you spot the deadly mistakes before they happen."},
 LOC:{who:"Marta, 74, has lived on Mill Lane for 46 years.",knows:"The town: people, routes, history, and who owes whom a favour.",does:"Talk to people (the caretaker, shop owners, the depot) and open doors others can't.",why:"Many solutions start with knowing the right person. You hold the maps."}};
@@ -8,19 +8,19 @@ const RES=[["🥫","Supplies","Food, drinking water and batteries for everyone a
 ["❤️","Health","How well your neighbours are.","The Medic treats people (+1).","Threats that go wrong, cold nights, failed care.","At 0, the game ends badly."],
 ["🤝","Cohesion","How united your group is.","Comforting people, good decisions, a warm hall.","Fear, failures, bad decisions.","At 0, the game ends: everyone for themselves."],
 ["🏘️","Trust","How much the wider community trusts the hall.","Helping others, telling the truth.","False messages, refusing help.","Some help needs Trust 3+ (e.g. council water)."],
-["⛽","Fuel","Runs the van and the generator. Only the Quartermaster spends it.","Finding the fuel reserve.","Every van trip. The generator needs 1 per act.","At 0: no van trips, and the generator stops."],
-["📻","Signal","Theo's limited radio capacity.","A working radio point restores +1 at the start of each later round (max 6); receiver + batteries adds +1 once.","Investigations, broadcasts, emergency calls.","If it reaches 0, Theo must wait for a recharge before spending more."],
+["⛽","Fuel","Runs the van and the generator. Only the Quartermaster spends it.","Finding the fuel reserve.","Every van trip. The generator needs 1 when each new Act begins (see the story track).","At 0: no van trips, and the generator stops."],
+["📻","Signal","Theo's limited radio capacity.","A working radio point restores +1 at the start of each new Day (max 6); receiver + batteries adds +1 once.","Investigations, broadcasts, emergency calls.","If it reaches 0, Theo must wait for a recharge before spending more."],
 ["✚","Medkits","Limited medical equipment carried by Pavel.","No repeatable refill in this first adventure; start with 2.","Treating people.","At 0: no more medkit treatments."],
 ["🏠","Contacts","Limited favours Marta can ask for.","No repeatable refill in this first adventure; start with 3.","Special requests, including access to the bus depot.","At 0: no more favours to spend."],
-["⏳","Crisis","Time pressure.","—","Rises every round, and when any threat clock fills.","At 10, the final round starts immediately."]];
-const EV={1:["Lights Out","Thursday 18:04 · Night","🌑","The lights flicker, then go out. Not just your street — the whole town is dark. Phones still work, for now. Someone knocks on the hall door: “Is anyone organising things here?” You look at each other. It seems you are."],
-2:["The First Night","Thursday 23:00 · Night","🕯️","The town is quiet and cold. Across the river, the clinic's lights flicker. Mrs Lindqvist from the supermarket is at the door: “My freezers are full. What do I do?” Behind her, neighbours want to know what the hall has."],
-3:["Morning Without Power","Friday 09:00","🚰","A silent town wakes up. No traffic lights, no radios in kitchens. On the hill streets, the taps are sputtering. Three people from the Hillside estate wait at the door with empty bottles."],
-4:["Phones Go Quiet","Friday 17:00","📵","One by one, phones show “No Service”. The mobile masts have run out of battery. Car horns across town: a long queue at the petrol station. Someone says a fuel tanker is coming."],
-5:["Rumours in the Dark","Saturday 12:00","🗞️","People are tired and scared. A note passes from house to house: “Thieves are breaking into homes on Mill Lane.” Theo looks pale: “Someone says this blackout wasn't an accident.” The forecast: freezing tomorrow night."],
-6:["The Coldest Night","Saturday 22:00 · Night","❄️","Frost covers the windows. Your breath turns white indoors. Then the radio crackles: a grid repair crew has reached Kelderwick! But fallen lines block the main roads in the dark. They need help."],
-7:["Restoration","Sunday 16:00","💡","The third day fades. The council speaks on the radio: “Power will return in stages. Tell us where it is needed first.” Everyone in the hall turns to look at you. This is the final round."]};
-const GOAL={1:"Help Mr Aldous, and start building the Hub (Warmth, Water, Information).",2:"Save the clinic, grab the freezer food, and decide about the hall's stores.",3:"The water is running out. Fill containers before the taps stop, and help the tower block.",4:"Phones are dead. Calm the petrol crowd, find fuel, and decide who gets the clinic bed.",5:"Fight rumours with facts, and prepare for the freezing night.",6:"Keep people warm, and get the repair crew to the substation.",7:"Final round! Finish the Hub, and choose where the power goes first."};
+["⏳","Crisis","Time pressure.","—","Rises every Day, and when any threat clock fills.","At 10, the last Day starts immediately."]];
+const EV={1:["Lights Out","Day 1 · Evening","🌑","The lights flicker, then go out. Not just your street — the whole town is dark. Phones still work, for now. Someone knocks on the hall door: “Is anyone organising things here?” You look at each other. It seems you are."],
+2:["The First Night","Morning","🕯️","The town is quiet and cold. Across the river, the clinic's lights flicker. Mrs Lindqvist from the supermarket is at the door: “My freezers are full. What do I do?” Behind her, neighbours want to know what the hall has."],
+3:["Morning Without Power","Morning","🚰","A silent town wakes up. No traffic lights, no radios in kitchens. On the hill streets, the taps are sputtering. Three people from the Hillside estate wait at the door with empty bottles."],
+4:["Phones Go Quiet","Morning","📵","One by one, phones show “No Service”. The mobile masts have run out of battery. Car horns across town: a long queue at the petrol station. Someone says a fuel tanker is coming."],
+5:["Rumours in the Dark","Morning","🗞️","People are tired and scared. A note passes from house to house: “Thieves are breaking into homes on Mill Lane.” Theo looks pale: “Someone says this blackout wasn't an accident.” The forecast: freezing tomorrow night."],
+6:["The Coldest Night","Evening","❄️","Frost covers the windows. Your breath turns white indoors. Then the radio crackles: a grid repair crew has reached Kelderwick! But fallen lines block the main roads in the dark. They need help."],
+7:["Restoration","Afternoon","💡","The council speaks on the radio: “Power will return in stages. Tell us where it is needed first.” Everyone in the hall turns to look at you. This is the last Day."]};
+const GOAL={1:"Help Mr Aldous, and start building the Hub (Warmth, Water, Information).",2:"Save the clinic, grab the freezer food, and decide about the hall's stores.",3:"The water is running out. Fill containers before the taps stop, and help the tower block.",4:"Phones are dead. Calm the petrol crowd, find fuel, and decide who gets the clinic bed.",5:"Fight rumours with facts, and prepare for the freezing night.",6:"Keep people warm, and get the repair crew to the substation.",7:"Last Day! Finish the Hub, and choose where the power goes first."};
 const TH={T2:["Mr Aldous's Oxygen","Tower block",3,"His daughter calls: “Dad's breathing machine is beeping. He's on the 9th floor. Please help.”","Health −2, Cohesion −1"],
 T1:["Clinic Generator","Clinic, across the river",3,"The clinic's lights flicker. Their generator is running — but for how long?","Health −2. Mr Aldous can't go to the clinic."],
 O1:["Supermarket Freezers","Supermarket, across the river",3,"Mrs Lindqvist's freezers are full of food. Soon it will spoil.","The food spoils."],
@@ -30,12 +30,12 @@ T6:["Petrol Station Crowd","Petrol station",3,"Cars queue down the road. People 
 O2:["Fuel Reserve","Somewhere in town",3,"Somewhere in Kelderwick there is fuel. Who has it?","The chance is gone."],
 T8:["Candle Fire","Marta's street",2,"Smoke from a house on Marta's street. Someone used candles for light.","Health −2, Supplies −1, Cohesion −1"],
 T9:["Break-in Rumour","Mill Lane",2,"People are scared. Some talk about guarding their homes at night.","Cohesion −2, Trust −1"],
-T7:["Cold Snap","Whole town",0,"Below freezing from tomorrow night. Without Warmth at the hall, people suffer.","Each round without Warmth: Health −1"],
-T10:["Grid Crew","Council point → substation",2,"The repair crew is ready, but they can't reach the substation alone.","No power this weekend. Health −1."]};
+T7:["Cold Snap","Whole town",0,"Below freezing from tomorrow night. Without Warmth at the hall, people suffer.","Each Day without Warmth: Health −1"],
+T10:["Grid Crew","Council point → substation",2,"The repair crew is ready, but they can't reach the substation alone.","No power for days. Health −1."]};
 const HINT={T2:"Clues: 🏠 Local (how to get in) and ✚ Medic (what he needs).",T1:"Clues: 📻 Signal and 🏠 Local (which bridge?), 📦 Quartermaster (cost).",O1:"Clues: 🏠 Local (who to ask) and 📦 Quartermaster (the van).",T3:"Clues: 📦 Quartermaster (how to fill) and 🏠 Local (when it runs out).",T4:"Clues: ✚ Medic, 🏠 Local and 📦 Quartermaster.",T6:"Clues: 📻 Signal (the rumour), 📦 Quartermaster (pumps), 🏠 Local (owner).",O2:"Clues: 🏠 Local (where) and 📦 Quartermaster (how).",T8:"Clues: 📻 Signal (how to call help) and 🏠 Local.",T9:"Clues: 📻 Signal and 🏠 Local. ✚ Medic can help.",T7:"Get Warmth running at the hall before tomorrow night.",T10:"Needs 3 things: a guide (🏠 knows the routes), fuel (📦) and radio (📻)."};
 const IC={T2:"🫁",T1:"🏥",O1:"🧊",T3:"💧",T4:"🏢",T6:"⛽",O2:"🛢️",T8:"🔥",T9:"🚨",T7:"🥶",T10:"⚡"};
 let S=null;
-const DZ_SAVE="dayzero_save_main";
+const DZ_SAVE="dayzero_save_days";
 const sv=()=>{try{localStorage.setItem(DZ_SAVE,JSON.stringify(S))}catch(e){}};
 const DZ_NOTH=Object.freeze({});
 const tr=(k,n)=>{S.t[k]=Math.max(0,Math.min(6,S.t[k]+n))};
@@ -54,7 +54,7 @@ const DZ_ITEMS={
 };
 const DZ_LOC={
  hall:{name:"Community Hall Storeroom",icon:"🏠",ids:["batteries","receiver"],help:"Available immediately. Searching competes with urgent community work."},
- tower:{name:"Tower Block Cupboard",icon:"🏢",ids:["route","blankets"],help:"Mr Osei must first unlock the stairs. Blankets become available from Round 3."},
+ tower:{name:"Tower Block Cupboard",icon:"🏢",ids:["route","blankets"],help:"Mr Osei must first unlock the stairs. Blankets become available from Day 3."},
  clinic:{name:"Riverside Clinic Maintenance",icon:"🏥",ids:["log","worklight"],help:"Available once the clinic generator has been refuelled."}
 };
 function dzInit(){
@@ -160,11 +160,11 @@ const inv=(id,l,av,txt,f)=>K(id,"SIG",2,"Investigate: "+l,()=>av()&&!S.f[id],()=
 inv("iMid","the “power back by midnight” post",()=>S.round<=3,"No official source. The account was created today. Probably false.");
 inv("iArm","the “army generators” rumour",()=>S.round>=2&&S.round<=3,"Nobody official said this. False.");
 inv("iEva","“the clinic is evacuating”",()=>S.round>=3&&S.round<=4,"False. The clinic is staying open.");
-inv("iWat","the water board's estimate",()=>S.round>=3&&S.round<=5,"The message is from Thursday. They don't really know.");
+inv("iWat","the water board's estimate",()=>S.round>=3&&S.round<=5,"The message is from Day 1. They don't really know.");
 inv("iTan","the fuel tanker rumour",()=>act("T6"),()=>S.v&&S.v.tanker==="tomorrow"?"A tanker IS booked, but for tomorrow. And the pumps can't work without power anyway.":"No tanker is planned. Someone misread an old post.","tank");
 inv("iBrk","the thieves note",()=>act("T9"),"Mrs Grant heard a video game. Nothing was stolen.","brk");
 inv("iSab","the sabotage claim",()=>S.round>=5,"A friend of a friend “heard it at work”. No evidence.");
-K("gTest","ANY",2,"Test the old generator",()=>!S.f.gTest,()=>{S.f.gTest=1;return "🔧 It works. It needs 1 Fuel to start, and 1 Fuel at the start of each new act."});
+K("gTest","ANY",2,"Test the old generator",()=>!S.f.gTest,()=>{S.f.gTest=1;return "🔧 It works. It needs 1 Fuel to start, and 1 Fuel whenever a new Act begins."});
 [["N","outside, in the sheltered corner by the north wall"],["S","outside, in the open south yard"],["ST","in the storeroom"],["MH","in the main hall"]].forEach(([k,w])=>
 K("g"+k,"QM",2,"Set up the generator "+w,()=>S.f.gTest&&!S.hub.warmth,()=>{S.f.gFuel=1;S.hub.warmth=true;S.wt="gen";S.f.gPos=k;
 if(k==="N")return "🔥 The generator hums outside, sheltered. Warmth: RUNNING.";if(k==="S")return "🔥 The generator runs in the open yard. Warmth: RUNNING… for now.";
@@ -212,8 +212,8 @@ K("cmf","ANY",2,"Comfort scared neighbours at the hall",()=>!S.r.cmf,()=>{S.r.cm
 K("exHall","ANY",1,"Search community hall storeroom",()=>!!dzNext("hall"),()=>dzFind("hall"),{no:"Nothing is currently searchable at the hall."});
 K("exTower","ANY",1,"Search tower block caretaker cupboard",()=>!!dzNext("tower"),()=>dzFind("tower"),{no:"Tower access is locked or nothing is ready to find."});
 K("exClinic","ANY",1,"Search clinic maintenance room",()=>!!dzNext("clinic"),()=>dzFind("clinic"),{no:"The clinic must be safe and accessible before searching."});
-K("useReceiver","SIG",2,"Combine receiver and batteries",()=>dzCan("receiver"),()=>dzUse("receiver"),{no:"Theo needs both the receiver and batteries (Round 2 or later)."});
-K("useBlankets","MED",2,"Distribute thermal blankets",()=>dzCan("blankets"),()=>dzUse("blankets"),{no:"Pavel needs blankets (Round 3 or later)."});
+K("useReceiver","SIG",2,"Combine receiver and batteries",()=>dzCan("receiver"),()=>dzUse("receiver"),{no:"Theo needs both the receiver and batteries (from Day 2)."});
+K("useBlankets","MED",2,"Distribute thermal blankets",()=>dzCan("blankets"),()=>dzUse("blankets"),{no:"Pavel needs blankets (from Day 3)."});
 K("useLogSIG","SIG",2,"Examine clinic maintenance record",()=>dzCan("log"),()=>dzUse("log"),{no:"You need the clinic service log first."});
 K("useLogLOC","LOC",2,"Examine clinic maintenance record",()=>dzCan("log"),()=>dzUse("log"),{no:"You need the clinic service log first."});
 K("useRoute","LOC",2,"Survey old mill service route with worklight",()=>dzCan("route"),()=>dzUse("route"),{no:"Marta needs both items, an active grid-crew crisis, and an open route."});
@@ -226,13 +226,10 @@ const GRP={"🏠 Build the Hub":["gTest","gN","gS","gST","gMH","wood","woodV","f
 const DL={DL1:["QM","Open the Stores?","🥫","Neighbours at the door: “The hall has food. Will you share it now?” Some are scared. Some are angry.",[["open","Open to the street","Supplies −1, Cohesion +1, Trust +1",()=>{tr("supplies",-1);tr("cohesion",1);tr("trust",1);S.f.e3=1},"People still talk about the night the hall opened its doors.","A crowd may come to the hall (calmer if Information is running)."],["keep","Keep for the Hub","No change",()=>{S.f.e4=1},"The Hub had enough. Not everyone understood why.","Some people may say the hall is hoarding."]]],
 DL2:[0,"Hillside Water","🚱","Hillside residents with empty bottles: “Our tank is broken. Our children need water. Can you share?”",[["share","Share our water","Supplies −1, Trust +2",()=>{tr("supplies",-1);tr("trust",2);S.f.e1=1},"Hillside still talks about the water you shared.","Hillside may return the favour."],["cont","Give containers only","Trust +1",()=>tr("trust",1),"You gave Hillside a way to help themselves.","Nothing special."],["ref","Refuse","No change",()=>{S.f.e2s=1},"Hillside remembers the door that stayed closed.","Hillside may not forget this."]]],
 DL3:["MED","One Bed","🛏️","The clinic radios: “One bed left. Who gets it?” Mr Aldous needs oxygen. Mrs Petrova is 88, alone and freezing.",[["aldous","Mr Aldous","Mrs Petrova moves to the hall",()=>{S.f.petH=1},"Mr Aldous's daughter flew home on Monday. She brought Pavel a card.","Drive him to the clinic (Medic travels + Quartermaster drives). Mrs Petrova needs Warmth at the hall tomorrow night."],["petrova","Mrs Petrova","The clinic collects her",()=>{if(S.th.T2)S.th.T2.res=true;S.f.care=1},"Mrs Petrova slept warm at the clinic. Pavel climbed nine floors twice more.","On the coldest night, the Medic must climb to Mr Aldous with a medkit."]]],
-DL3A:["MED","The Clinic Is Closed","🏥","The clinic's generator stopped. Its patients were moved away. Pavel can't be in two places.",[["visit","Visit people at home","No cost now",()=>{if(S.th.T2)S.th.T2.res=true;S.f.mL=1},"Pavel walked every street of Mill Lane that weekend.","The Medic has 1 action fewer in the next two rounds."],["hall","Bring everyone to the hall","Fuel −1, Supplies −1",()=>{if(S.th.T2)S.th.T2.res=true;S.a.fuel=Math.max(0,S.a.fuel-1);tr("supplies",-1);S.f.hC=1},"The hall became a small hospital.","The hall needs Warmth tomorrow night."]]],
+DL3A:["MED","The Clinic Is Closed","🏥","The clinic's generator stopped. Its patients were moved away. Pavel can't be in two places.",[["visit","Visit people at home","No cost now",()=>{if(S.th.T2)S.th.T2.res=true;S.f.mL=1},"Pavel walked every street of Mill Lane that weekend.","The Medic has 1 action fewer on the next two Days."],["hall","Bring everyone to the hall","Fuel −1, Supplies −1",()=>{if(S.th.T2)S.th.T2.res=true;S.a.fuel=Math.max(0,S.a.fuel-1);tr("supplies",-1);S.f.hC=1},"The hall became a small hospital.","The hall needs Warmth tomorrow night."]]],
 DL4:[0,"The Sabotage Claim","📡","Theo's contact says the blackout was sabotage. Theo: “People deserve to know!” Nobody can prove it.",[["claim","Broadcast the claim","Cohesion −1",()=>{tr("cohesion",-1);S.f.e6s=1},"The sabotage story spread faster than the facts.","Unproven claims can cause trouble later."],["known","Broadcast only what we know","Cohesion +1",()=>tr("cohesion",1),"Mill Lane trusted the hall's radio. It never said more than it knew.","Nothing special."],["sil","Stay silent","No change",()=>{},"You kept quiet. Some wondered what you knew.","Nothing special."]]],
-DL5:["LOC","The Old Mill Path","🌉","The crew could go tonight by the old mill path through Hillside, or wait for daylight and a bridge. Waiting means another freezing night.",[["tonight","Go tonight","The crew can be guided this round",()=>{},"The crew still tells the story of the night neighbours led them over the footbridge.","Power could come back a night early."],["wait","Wait for daylight","The crew waits",()=>{},"You chose the safe way. The town waited one more cold night.","The crew can only be guided in the final round."]]],
+DL5:["LOC","The Old Mill Path","🌉","The crew could go tonight by the old mill path through Hillside, or wait for daylight and a bridge. Waiting means another freezing night.",[["tonight","Go tonight","The crew can be guided today",()=>{},"The crew still tells the story of the night neighbours led them over the footbridge.","Power could come back a night early."],["wait","Wait for daylight","The crew waits",()=>{},"You chose the safe way. The town waited one more cold night.","The crew can only be guided on the last Day."]]],
 DL6:[0,"Who Gets Power First?","⚡","The council asks where power goes first.",[["tower","The tower block","—",()=>{tr("health",1);tr("trust",1)},"When the lift started, the 9th floor cheered.","If the crew fixes the substation: Health +1, Trust +1."],["clinic","The clinic street","—",()=>{(S.th.T1||DZ_NOTH).fail?tr("health",2):tr("cohesion",1)},"The clinic lit up first, like the town's heart starting again.","If the crew fixes the substation: Health +2 if the clinic closed, otherwise Cohesion +1."],["hallp","Our hall","—",()=>{S.f.hb=1},"The hall lit up first. Some said that was fair.","If the crew fixes the substation: one missing Hub system counts as running."]]]};
-const TEACH1="<b>How it works:</b> The narrator reads the chapter and new problems aloud. Every role gets information: shared on the TV in TV-only mode, or shown on an individual phone in TV + phones mode. Cards are labelled VERIFIED, UNCONFIRMED or RUMOUR. <b>Read or explain your cards however you like.</b> Compare what you know before planning.<br>Choose actions as a team, then choose each role’s actions together on the TV. Round 1 gives each role <b>one action</b>; later rounds give two.<br>Some actions depend on another role or scarce supplies. If a threat clock fills, consequences follow. The narrator can read the illustrated results aloud.";
-const TEACH2="From this chapter onwards, each role may choose <b>2 actions</b>. You are a team: talk first and plan who does what, then lock in the orders.<br><b>Example:</b> Marta can ask the caretaker to unlock the tower, while Pavel chooses to climb to Mr Aldous in the same round. If the unlocking does not happen, the climb cannot succeed.<br>Read important decisions aloud together before voting. Some consequences only become clear later.";
-const FOOL=[["“Power back by midnight” (R1)","False."],["“Army generators” (R2)","False."],["Marta: “The East Bridge floods” (R2)","True this time."],["Clinic: “Fuel until morning” (R2)","True."],["Water board: “until Saturday” (R3)","Roughly right, but the message was old."],["“The clinic is evacuating” (R3)","False."],["“A fuel tanker is coming” (R4)","False."],["“Thieves on Mill Lane” (R5)","False: a video game."],["“It was sabotage” (R5)","Unknown. Nobody could prove it."]];
 const NOTES=[["Real","Many water systems need electric pumps. In tall buildings, upper floors often lose water first."],["Real","Mobile masts often have backup batteries that may last only a few hours."],["Real","Card machines and cash machines usually need power. Some cash at home helps."],["Real","Most petrol pumps need electricity."],["Real","Generators make carbon monoxide, which you can't see or smell. Never use one indoors or in a garage."],["Real","Candles cause many house fires. Battery torches are safer. In a fire: get out, stay out, call for help."],["Real","A full freezer keeps food frozen about 48 hours (half-full, about 24)."],["Real","Many agencies suggest households can manage alone for at least 72 hours."],["Real","A battery or wind-up radio keeps you informed when phones fail."],["Invented","Kelderwick, Mill Lane, all characters and the substation mystery."]];
 const NM={supplies:"🥫 Supplies",health:"❤️ Health",cohesion:"🤝 Cohesion",trust:"🏘️ Trust",fuel:"⛽ Fuel",signal:"📻 Signal",medkits:"✚ Medkits",contacts:"🏠 Contacts"};
 const HN={warmth:"🔥 Warmth",water:"💧 Water",info:"📻 Information"};
@@ -251,28 +248,28 @@ function card(o){return `<div class="card ${o.sm?"sm":""}" style="--r:${o.c||"#f
 function guideH(){
  return '<div class="pn"><p><b>What these numbers mean:</b> Some resources can be replenished, while others are scarce. You need to decide when to spend them.</p><div class="dz22-resource-grid">'+RES.map(r=>
  '<div class="dz22-resource"><b>'+r[0]+' '+r[1]+'</b><p>'+r[2]+'</p><p><strong>➕ Get more:</strong> '+r[3]+'</p><p><strong>➖ Use:</strong> '+r[4]+'</p><small>⚠️ '+r[5]+'</small></div>'
- ).join("")+'</div><p><b>🏠 Your mission:</b> get Warmth, Water and Information running at the hall before the final round ends.</p></div>';
+ ).join("")+'</div><p><b>🏠 Your mission:</b> get Warmth, Water and Information running at the hall before the last Day ends.</p></div>';
 }
 
 function add(id){S.th[id]={clock:id==="T1"?1:0};S.nw.push(id)}
 function chk(){if(S.t.health<=0)S.broke="h";else if(S.t.cohesion<=0)S.broke="c";if(S.broke)S.ph="end"}
 function startRound(){const r=S.round;S.r={};S.nw=[];S.br=[];S.ord={};S.co=dzRoundIdx(r)%S.pl.length;S.dc=null;
 const B=(t,x,w)=>S.br.push({t,x,w});
-if(r>1&&S.hub.info&&S.a.signal<6){S.a.signal++;B("A Fresh Radio Shift","With the hall radio point staffed and organised, Theo gains 1 Signal for this round (up to 6).","Because you established the Information hub.");}
+if(r>1&&S.hub.info&&S.a.signal<6){S.a.signal++;B("A Fresh Radio Shift","With the hall radio point staffed, Theo gains 1 Signal today (up to 6).","Because you established the Information hub.");}
 if(S.f.e5===r){tr("health",-2);S.hub.warmth=false;B("Headaches at the Hall","People feel dizzy and sick. The generator was running indoors: carbon monoxide. Health −2. The generator is off until someone sets it up outside.","Because the generator was set up indoors.")}
-if((r===3||r===6)&&S.hub.warmth&&S.wt==="gen"){if(S.f.tuned&&!S.f.tunedUsed){S.f.tunedUsed=1;B("Generator","Dev's tune-up pays off: the generator sips its fuel. No Fuel needed this time.","Because the Mechanic tuned the generator.")}else if(S.a.fuel>0){S.a.fuel--;B("Generator","The generator uses 1 Fuel to keep running.")}else{S.hub.warmth=false;S.f.gFuel=0;B("Generator","No fuel left. The generator stops.")}}
+if(dzActStart(r)&&S.hub.warmth&&S.wt==="gen"){if(S.f.tuned&&!S.f.tunedUsed){S.f.tunedUsed=1;B("Generator","Dev's tune-up pays off: the generator sips its fuel. No Fuel needed this time.","Because the Mechanic tuned the generator.")}else if(S.a.fuel>0){S.a.fuel--;B("Generator","A new act begins: the generator uses 1 Fuel to keep running.")}else{S.hub.warmth=false;S.f.gFuel=0;B("Generator","No fuel left. The generator stops.")}}
 if(r===1)add("T2");
 if(r===2){add("T1");add("O1")}
 if(r===3){add("T3");if(S.pl.length>2)add("T4")}
-if(r===4){if(!S.hub.info&&!S.f.torch)add("T8");if(S.f.e3){if(S.hub.info){tr("trust",1);B("The Line at the Hall","An organised queue forms thanks to your noticeboard. Trust +1.","Because you opened the stores.")}else{tr("supplies",-1);B("The Line at the Hall","A crowd pushes and argues at the door. Supplies −1.","Because you opened the stores.")}}add("T6");add("O2")}
-if(r===5){if(S.f.e4){tr("trust",-1);B("Whispers about the Hall","People say the hall is hoarding food. Trust −1.","Because you kept the stores closed.")}if(S.pl.length>2)add("T9");add("T7")}
+if(r===4){if(!S.hub.info&&!S.f.torch)add("T8");add("T6");add("O2")}
+if(r===5){if(S.pl.length>2)add("T9");add("T7")}
 if(r===6){if(S.f.e1){if(S.hub.warmth)tr("supplies",1);else S.f.wood=1;B("Neighbours Return the Favour","A cart from Hillside, piled with firewood. "+(S.hub.warmth?"Supplies +1.":"The Quartermaster just needs to fetch it by van."),"Because you shared your water.")}
 if(S.f.e2s){S.f.e2=1;tr("trust",-1);B("The Neighbours Remember","A barrier blocks the road into Hillside. The old mill path is closed to you. Trust −1.","Because you refused to share water.")}
 if(S.f.e6s){S.f.e6=1;tr("trust",-1);B("A Crowd at the Substation","Angry people gather at the substation. Someone must calm them. Trust −1.","Because you broadcast an unproven claim.")}
 if(S.f.wat){tr("trust",-1);tr("cohesion",-1);B("Suspicion on Mill Lane","The night watch stopped a frightened teenager walking home. Trust −1, Cohesion −1.","Because you organised a watch over a false rumour.")}
 add("T10")}
-if(r===7&&S.f.pw===6)B("Early Restoration","Across town, a streetlight flickers on. Power is coming back a night early!");
-dzRoundExtras(r,B);
+if(r===7&&S.f.pw===6)B("Early Restoration","Across town, a streetlight flickers on. Power is coming back a day early!");
+dzArcRound(r,B);dzRoundExtras(r,B);
 let d=null;if(r===2)d="DL1";if(r===3)d="DL2";
 if(r===4){if(S.th.T1&&(S.th.T1||DZ_NOTH).fail)d="DL3A";else if(act("T2"))d="DL3";else{S.codas.push("Mrs Petrova got the last clinic bed.");B("The Clinic Bed","Mrs Petrova gets the last clinic bed.")}}
 if(r===5)d="DL4";
@@ -280,7 +277,7 @@ if(r===6){if(S.f.e2){S.dec.DL5="wait";S.codas.push("The Hillside barrier blocked
 if(r===7)d="DL6";
 if(r===5&&dzInit().clues.service)B("The Mismatched Timestamp","A clinic work order predates the blackout. It could be routine work—or an important clue. Nobody knows yet.","Because you examined the clinic service log.");
 if(r===6&&dzInit().clues.dispatch)B("A Broadcast Remembered","Theo compares the repair message with the unfolding crisis. The dates deserve checking, but do not identify who caused the failure.","Because you tuned the emergency receiver.");
-S.dl=d;S.ph="chapter";chk();sv();R()}
+S.dl=d;dzArcPrepDilemmas();S.ph="news";chk();sv();R()}
 function choose(id){const o=DL[S.dl][4].find(x=>x[0]===id);if(!o)return;if(id==="share"&&S.t.supplies<1){dzToast("Not enough Supplies to share.");return}
 S.dec[S.dl]=id;S.dc=id;(S.decLog=S.decLog||[]).push({dl:S.dl,id,round:S.round,tally:S.lastTally||null,how:S.lastHow||"together"});S.lastTally=null;S.lastHow=null;dzSfx("chime");
 if(S.dl==="DL6"){S.d6=id;if(S.f.pw===6){o[3]();S.f.d6=1}}else{o[3]();S.codas.push(o[4])}
@@ -308,10 +305,10 @@ L.forEach(o=>{
  S.report.push(dz22Record(o,dz22Status(o.id,message),message,before));
 });
 if(act("T4")&&S.f.t4w&&S.f.t4p&&S.f.t4u){S.th.T4.res=true;S.log.push("✅ Tower Block Water: SOLVED.")}else if(act("T4")&&S.f.t4w&&S.f.t4p){S.r.t4=1;S.log.push("◐ Tower Block Water: partly solved. The top floors still need water carried up. (Clock paused.)")}
-if(act("T8")&&S.f.fR&&S.f.fH){S.th.T8.res=true;S.log.push("✅ Candle Fire: SOLVED. Everyone got out.")}else if(act("T8")&&S.r.fire)S.log.push("◐ Candle Fire: half done. Clock paused this round.");
+if(act("T8")&&S.f.fR&&S.f.fH){S.th.T8.res=true;S.log.push("✅ Candle Fire: SOLVED. Everyone got out.")}else if(act("T8")&&S.r.fire)S.log.push("◐ Candle Fire: half done. Clock paused today.");
 if(act("T9")&&S.f.wel&&S.f.welM){S.th.T9.res=true;S.log.push("✅ Break-in Rumour: SOLVED. The visits calm the street.")}
-if(act("T10")&&S.f.guide&&S.f.cF&&S.f.cR&&(!S.f.e6||S.f.calm)){S.th.T10.res=true;S.f.pw=S.round;S.log.push("✅ Grid Crew: SOLVED! The crew reaches the substation."+(S.round===6?" Power returns a night early!":""))}
-if(act("T2")&&S.r.osei&&!S.f.stab)S.log.push("◐ Someone keeps Mr Aldous calm. (Clock paused this round.)");
+if(act("T10")&&S.f.guide&&S.f.cF&&S.f.cR&&(!S.f.e6||S.f.calm)){S.th.T10.res=true;S.f.pw=S.round;S.log.push("✅ Grid Crew: SOLVED! The crew reaches the substation."+(S.round===6?" Power returns a day early!":""))}
+if(act("T2")&&S.r.osei&&!S.f.stab)S.log.push("◐ Someone keeps Mr Aldous calm. (Clock paused today.)");
 if(!L.length)S.log.push("No actions were taken.");
 (S.hist=S.hist||[]).push({round:S.round,rep:S.report.map(x=>({id:x.id,role:x.role,status:x.status,label:x.label}))});
 S.ph="res";chk();sv();R()}
@@ -337,24 +334,14 @@ else if(tot>=8)e=["The Lights of Mill Lane","When the power came back, nobody wa
 else if(m>=2&&c===1)e=["Warm Hall, Cold Shoulders","The Hub worked. But some neighbours remember the doors that stayed closed. Next time, will they come to the hall?"];
 else if(c>=2&&m===1)e=["Together in the Dark","The hall was never really ready. But nobody on Mill Lane faced the dark alone. Sometimes, that's what matters most."];
 else if(tot<=4)e=["Barely Through","You made it. Just. Some mistakes cost more than they should have. But you survived, and you learned."];
-else e=["The Long Weekend","Not perfect. Not a disaster. Mill Lane got through three days without power, mostly together."];
-const x=S.broke?"":S.f.pw===6?" And thanks to you, the power came back a whole night early.":S.f.pw?"":" The power finally returned two days later.";return {e,x,m,p,c}}
+else e=["The Long Weekend","Not perfect. Not a disaster. Mill Lane got through the blackout, mostly together."];
+const x=S.broke?"":S.f.pw===6?" And thanks to you, the power came back a whole day early.":S.f.pw?"":" The power finally returned two days later.";return {e,x,m,p,c}}
 function outc(){const o=[];if(S.th.T2){if((S.th.T2||DZ_NOTH).fail)o.push("Mr Aldous was taken to hospital. His daughter is with him now.");else if(S.dec.DL3==="aldous"&&(S.th.T2||DZ_NOTH).res)o.push("Mr Aldous made it to the clinic, nine floors down.")}
 if(S.th.T1)o.push((S.th.T1||DZ_NOTH).fail?"The clinic's patients were moved out of town in the night.":(S.th.T1||DZ_NOTH).res?"The clinic never went dark.":"");
 if(S.th.T8)o.push((S.th.T8||DZ_NOTH).res?"Mrs Petrova's house was damaged, but everyone got out.":(S.th.T8||DZ_NOTH).fail?"The fire spread to two houses. Everyone got out, but some lost everything.":"");
 if(S.hub.water&&!S.f.dry)o.push("You filled the containers before the taps went dry.");
 if(S.th.T9&&(S.th.T9||DZ_NOTH).res)o.push("The thieves story stopped with the hall's radio.");return o}
-const goal=()=>`<div class="goal">🎯 <b>This round:</b> ${GOAL[S.round]}</div>`;
+const goal=()=>`<div class="goal">🎯 <b>Today:</b> ${GOAL[S.round]}</div>`;
 const foot=()=>`<p class="c"><button class="btn b sm2" onclick="restart()">New game</button></p>`;
 function roleBox(r){return `<div class="rb" style="border-color:${RL[r].c}"><h3 style="color:${RL[r].c}">${RL[r].i} You are the ${RL[r].n} (${RL[r].ch})</h3><b>Your job:</b> ${ROLEX[r].does}<br><span class="s">${ROLEX[r].why}</span></div>`}
 const lg=a=>`<div class="pn lg">${a.map(x=>`<p class="${x.includes("✖")?"no":x.includes("✅")?"ok":""}">${x}</p>`).join("")}</div>`;
-function vRes(){return dz22Results()}
-function vEndClassic(){const z=ending(),st=n=>"★".repeat(n)+"☆".repeat(3-n),cod=[...S.codas];if(S.d6)cod.push(S.f.d6?DL.DL6[4].find(x=>x[0]===S.d6)[4]:"The council decided without you. The power came later.");
-return `<h1 style="font-size:56px">${z.e[0]}</h1><div class="row">${card({t:z.e[0],a:"end",i:"🏁",f:z.e[1]+z.x,g:"YOUR ENDING"})}</div>
-<div class="pn c"><div class="st">Mission ${st(z.m)} · People ${st(z.p)} · Community ${st(z.c)}</div></div>${dz21Finale()}
-<div class="pn"><h2>Your Story</h2>${outc().concat(cod).filter(x=>x).map(x=>"<p>• "+x+"</p>").join("")}</div>
-<div class="pn"><h2>What Fooled You?</h2>${FOOL.map(f=>`<p><b>${f[0]}</b>: ${f[1]}</p>`).join("")}<p><i>Rumours spread fastest when people are scared. Always ask: how do we know?</i></p></div>
-<div class="pn"><h2>Field Notes</h2>${NOTES.map(n=>`<p><span class="rel ${n[0]==="Real"?"V":"U"}">${n[0]}</span> ${n[1]}</p>`).join("")}<p class="s">General guidance only. Check your local official advice.</p></div>
-<div class="pn"><h2>Talk About It</h2><p>1. Which rumour fooled you, and why?</p><p>2. What would our household need for 72 hours?</p><p>3. Who in our street might need help in a blackout?</p><p>4. Which decision would you change?</p><p>5. When is it right to share something you can't prove?</p></div>
-<div class="pn"><h2>What Happens Next?</h2><p><i>Two weeks later, the grid operator's report blames “equipment failure.” But one photo still bothers you: the substation lock wasn't forced. Someone had a key. To be continued…</i></p><p>${esc(dzEpilogue())}</p></div>
-<div class="c"><button class="btn" onclick="localStorage.removeItem('dz2_story24_dual');S=null;R()">Play again</button></div>`}

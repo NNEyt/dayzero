@@ -1,6 +1,6 @@
 /*
   Day Zero: hidden information without a server.
-  - Private personal goals (and the optional Insider), dealt by passing the device after Chapter 1.
+  - Private personal goals (and the optional Insider), dealt by passing the device after Day 1.
   - Secret simultaneous votes on dilemmas: everyone votes in private, then a staged reveal.
   - The Insider's final accusation.
   Every private screen looks the same for every player (same buttons, same extra field),
@@ -21,7 +21,7 @@ function dzGoalCard(i){
 function dzGoalsView(){
  const g=S.gi;g.seen=g.seen||{};if(g.i<0)return dzLivePanel("goals");const p=S.pl[g.i];
  const intro=g.i===0&&!g.show?'<div class="dz-tip"><b>💡 New: private goals.</b> Each of you is quietly hoping for something. You still win or lose together, but your own goal is revealed and scored at the end.'+(S.insiderOn?" <b>And one of you is not what they seem…</b>":"")+'</div>':"";
- if(!g.show)return intro+dzPassScreen("BEFORE CHAPTER 2 · PRIVATE GOALS","Something only you know",p,"I'm "+esc(p.n)+": show me","S.gi.show=true;dzSfx('flip');R()");
+ if(!g.show)return intro+dzPassScreen("BEFORE DAY 2 · PRIVATE GOALS","Something only you know",p,"I'm "+esc(p.n)+": show me","S.gi.show=true;dzSfx('flip');R()");
  return '<h2>'+esc(p.n)+', this is for you only</h2><div class="row dz-st" data-sfx="none">'+dzGoalCard(g.i)+'</div><div class="c"><button class="btn" onclick="dzGoalNext()">Got it · hide &amp; pass on</button></div>';
 }
 function dzGoalNext(){
@@ -86,7 +86,7 @@ function dzVoteReveal(){
  return h+'<div class="c"><button class="btn" onclick="dzApplyVote()">Continue</button></div>';
 }
 function dzApplyVote(){
- const vr=S.vr;if(!vr||S.ph!=="vreveal")return;S.ph="council";
+ const vr=S.vr;if(!vr||S.ph!=="vreveal")return;S.ph="decide";
  choose(vr.winner);
  if(!S.dc){S.together=1;sv();R();return}
  if(vr.unanimous)tr("cohesion",1);
@@ -103,7 +103,7 @@ function dzAccuseView(){
  const ac=S.ac;if(ac.i<0)return dzLivePanel("accuse");const p=S.pl[ac.i];
  const ex=dzExonerated();
  const evidence='<div class="pn"><h3>🔎 The evidence</h3>'+(ex.length?ex.map(j=>'<p>📋 Your evidence rules out <b>'+esc(S.pl[j].n)+'</b>.</p>').join(""):'<p>You found no hard evidence about the substation key. Trust your instincts.</p>')+'</div>';
- if(!ac.show)return (Object.keys(ac.b).length===0?'<h2>🕵️ Who had the key?</h2><div class="pn">The lights are coming back, but one question remains. One of you has been working against the hall all weekend. Each of you now names who you think the Insider is, in secret.</div>'+evidence:"")+dzPassScreen("THE ACCUSATION · BALLOT "+(Object.keys(ac.b).length+1)+" OF "+S.pl.length,"Who is the Insider?",p,"I'm "+esc(p.n)+": open my ballot","S.ac.show=true;dzSfx('flip');R()");
+ if(!ac.show)return (Object.keys(ac.b).length===0?'<h2>🕵️ Who had the key?</h2><div class="pn">The lights are coming back, but one question remains. One of you has been working against the hall the whole time. Each of you now names who you think the Insider is, in secret.</div>'+evidence:"")+dzPassScreen("THE ACCUSATION · BALLOT "+(Object.keys(ac.b).length+1)+" OF "+S.pl.length,"Who is the Insider?",p,"I'm "+esc(p.n)+": open my ballot","S.ac.show=true;dzSfx('flip');R()");
  return '<h2>'+esc(p.n)+': who do you accuse?</h2>'+evidence+'<div class="pn dz-ballot">'+S.pl.map((q,j)=>j===ac.i?"":'<button class="btn opt b" onclick="dzAccuse('+j+')">🫵 '+esc(q.n)+'</button>').join("")+'</div>';
 }
 function dzAccuse(j){

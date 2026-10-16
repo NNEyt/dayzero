@@ -2,7 +2,7 @@
 
 **The lights go out. Nobody has the whole picture.**
 
-Day Zero is a co-operative crisis game for 1–8 players (best with 3–6) around one shared screen. Kelderwick has lost power. You are the neighbours who end up running the Mill Lane community hall for a long, cold weekend. Each of you plays a role (📻 Theo, 📦 Ines, ✚ Pavel, 🏠 Marta, and with 5–8 players 👟 Kit, 🫖 Bea, 🔧 Dev and 🏛️ Grace). Each role sees different information, some verified and some just rumour. Talk, decide, and try to keep everyone safe.
+Day Zero is a co-operative crisis game for 1–8 players (best with 3–6) around one shared screen. Kelderwick has lost power. You are the neighbours who end up running the Mill Lane community hall through a long, cold week. Each of you plays a role (📻 Theo, 📦 Ines, ✚ Pavel, 🏠 Marta, and with 5–8 players 👟 Kit, 🫖 Bea, 🔧 Dev and 🏛️ Grace). Each role sees different information, some verified and some just rumour. Talk, decide, and try to keep everyone safe.
 
 It's a static site: plain HTML, CSS and JavaScript, no build step and no server. It runs on GitHub Pages.
 
@@ -18,9 +18,14 @@ It's a static site: plain HTML, CSS and JavaScript, no build step and no server.
 
 ### How a game runs
 
-1. Type the players' names, choose **Full weekend** (about 60–75 min) or **Quick Night** (about 30 min), and press **Play**.
+1. Type the players' names, choose **Full story · 7 Days** (about 60–75 min) or **Quick game · 5 Days** (about 40 min), and press **Play**.
 2. **The cold open:** the lights go out, a phone rings, and you have a first problem in front of you within about two minutes. Rules are taught as they come up, through one-off 💡 tips.
-3. Each chapter: read the story, read your role cards, hold the council, settle any **dilemma** (by secret vote if you like), choose your actions, then watch what happened and how time moves on.
+3. The story is played **Day by Day**, in three named acts (“Day 3 of 7 · Act II: The Cold”). A story track at the top shows the Day, the act, the beat you're on and the earlier choices the town still remembers. Each Day has four beats:
+   - 📰 **Morning News**: a two-line *Previously…* recap, today's headline, the dramatic question of the Day, who's in the story, the problems, and sometimes a 🔀 Crossroads card or a story moment.
+   - 🗣️ **Discuss**: everyone reads their role cards (on the TV or a phone) and shares what they know.
+   - ✋ **Decide**: the Day's big **dilemma** (by secret vote if you like), then everyone's actions.
+   - 🌙 **Night**: a short story of what happened and how the problem clocks moved, ending on a cliffhanger that the next Morning News picks up.
+   Choices come back later as callbacks (Sam on the radio if you kept the stores, a thank-you from Hillside if you shared water, and so on), and the ending tells the story of your week.
 4. The game ends with **the Mill Lane Chronicle**, a newspaper front page about your game. It comes with an emoji summary you can share. The answer key is hidden behind "Show what you missed".
 
 ### Game options (⚙️ on the title screen)
@@ -29,8 +34,8 @@ It's a static site: plain HTML, CSS and JavaScript, no build step and no server.
 |---|---|---|
 | Screens | TV only | *TV only*: everyone reads the role briefings on the TV. *TV + phone briefings*: private briefings by QR code (no connection needed). *TV + phone controllers*: phones connect to the TV and become controllers. |
 | Difficulty | Normal | **Easy**: more supplies, slower clocks, neighbours rally twice and the "Later" consequences are shown. **Normal**: as written. **Hard**: less fuel and goodwill, faster clocks, no rescue. |
-| Personal goals | On | After Chapter 1, everyone privately gets something they're quietly hoping for. Goals are revealed and scored in the Chronicle. |
-| Secret votes | On (2+ players) | On big decisions, pass the device round and vote in private, then watch the staged reveal. Ties go to the role that owns the decision. A unanimous vote of 3+ players gives Cohesion +1. You can always decide together on screen instead. |
+| Personal goals | On | After Day 1, everyone privately gets something they're quietly hoping for. Goals are revealed and scored in the Chronicle. |
+| Secret votes | On (2+ players) | On big decisions, pass the device around and vote in private, then watch the staged reveal. Ties go to the role that owns the decision. A unanimous vote of 3+ players gives Cohesion +1. You can always decide together on screen instead. |
 | 🕵️ The Insider | **Off** | 3+ players, ages 12+. One player is secretly working against the hall. They get a quiet sabotage choice (up to twice) in secret votes. At the end everyone accuses someone. Evidence you found during the game rules people out. |
 | Town seed | random | A 4-character code such as `K7Q2`. It decides which bridge floods, how true the tanker rumour is, what the "thieves" really were, when the tower runs dry, three extra rumours, the Crossroads event cards and the personal goals. Share `…/?seed=K7Q2` and friends get the same town. |
 
@@ -45,13 +50,13 @@ With five or more names, four extra roles join in this order. If you tick 🧒 n
 | 🔧 Dev, the Mechanic | anyone | Generator tuning (saves fuel), the pump, the radio mast, a bike courier. |
 | 🏛️ Grace, the Liaison | anyone | Official channels: checks, the council warden, the depot gate, relaying to the town, a briefing for the hall. |
 
-Each new role has its own intel cards in every chapter, so a big table still has things nobody else knows. Bigger tables start a little leaner (5+ players: Supplies −1; 7+: Fuel −1) to keep the pressure about the same. The kid roles have fewer, simpler choices and never see Insider or sabotage text.
+Each new role has its own intel cards every Day, so a big table still has things nobody else knows. Bigger tables start a little leaner (5+ players: Supplies −1; 7+: Fuel −1) to keep the pressure about the same. The kid roles have fewer, simpler choices and never see Insider or sabotage text.
 
 ## Phone controllers
 
 Choose **Screens → TV + phone controllers**. After you press Play, the TV shows a lobby with a QR code for each player. Scan yours and your phone becomes your controller:
 
-- your private cards each chapter (tap “I've read my cards”)
+- your private cards each Day (tap “I've read my cards”)
 - your secret goal (and whether you're the Insider)
 - your own actions (younger players get big buttons), with lock-in and “change my actions”
 - secret votes, including the private note, and the final accusation
@@ -82,7 +87,7 @@ The TV shows who's connected and who's done, and every phone step has an “on t
 2. **The Water Week** (January): the tower runs dry and the tanker rumours return.
 3. **Who Had the Key?** (March): the sabotage question finally gets an answer.
 
-Each episode uses a different set of chapters with its own cold open, and shows a **“Previously on Day Zero…”** recap first. Choices carry over: whether Mr Aldous was saved, whether the stores were opened, what you told the hillside, whether you caught the tanker lie, clues about the key, and more. Each carried flag changes the next episode, for example starting stock, trust, a clock or a line of story. Episode 3 ends with **the Inquiry**, which uses the clues you gathered across all three episodes, then a campaign table and badges.
+Episode 1 is 7 Days; episodes 2 and 3 are 5 Days each, with their own headlines, questions, cliffhangers and cold open. Each episode shows a **“Previously on Day Zero…”** recap first. Choices carry over: whether Mr Aldous was saved, whether the stores were opened, what you told the hillside, whether you caught the tanker lie, clues about the key, and more. Each carried flag changes the next episode, for example starting stock, trust, a clock or a line of story. Episode 3 ends with **the Inquiry**, which uses the clues you gathered across all three episodes, then a campaign table and badges.
 
 Progress is saved in `localStorage` under `dz_campaign`. You can copy a campaign code from the title screen and paste it on another device.
 
@@ -96,7 +101,7 @@ The look is a UK street during a power cut: deep navy night, warm torch-amber hi
 - **Icons and art:** `dz-art.js` draws an inline SVG icon set for the eight roles, the town resources and the mission. Threat clocks are drawn as segmented rings with a plain-words caption ("Clock 2 of 3", "Nearly full!"). It only decorates what the game has already rendered; no game logic changes. `art/skyline.svg` is a quiet silhouette of Kelderwick behind every screen, with one warm window: the hall.
 - **Phones:** `dz-phone.css` gives `play.html` and `phone.html` a mobile-first layout: a sticky header with connection status, big tap targets and a bottom toolbar for "My cards" and "My goal".
 - **Offline-safe:** fonts are self-hosted in `fonts/` (SIL OFL, see `fonts/OFL.txt`). There are no external CDNs. Older versions (`dayzero1.html` … `dayzero24.html`) keep their original look.
-- **Polish layer:** `dz-polish.js` and `dz-polish.css` add small SVG scenes to every chapter and story-break header (the lights going out, night, the water tower, a silent radio mast, rumours, the coldest night, dawn, flood, fire, the key). They also add SVG role portraits, engraved ornaments on the Chronicle masthead, and gentle screen and chapter transitions. On TVs 1600 px and wider, the whole game scales up so it can be read from the sofa. Phone tap targets are at least 44 px.
+- **Polish layer:** `dz-polish.js` and `dz-polish.css` add small SVG scenes to every Morning News and Night header (the lights going out, night, the water tower, a silent radio mast, rumours, the coldest night, dawn, flood, fire, the key). They also add SVG role portraits, engraved ornaments on the Chronicle masthead, and gentle screen and Day transitions. On TVs 1600 px and wider, the whole game scales up so it can be read from the sofa. Phone tap targets are at least 44 px.
 - **Motion:** `prefers-reduced-motion` still switches off every animation.
 
 **Sound:** effects and a quiet wind are synthesised with the WebAudio API. There are no audio files, so there's nothing to license. 🔊/🔇 in the corner turns sound on and off, and the setting is remembered. Staged reveals can be skipped (⏭). If your device asks for reduced motion, the animations are switched off.
@@ -109,15 +114,16 @@ The look is a UK street during a power cut: deep navy night, warm torch-amber hi
 | `dz-main.css`, `dz24.css`, `dz-juice.css` | Base styles, 2.4 card and briefing styles, and styles for the new screens and animations |
 | `rules.html`, `playtest.html`, `dz-docs.css` | Player rules page and printable family playtest kit (Torchlight styles, A4 print CSS) |
 | `dz-theme.css`, `dz-phone.css`, `fonts/`, `art/skyline.svg` | The Torchlight theme (TV and phone), self-hosted fonts and the background skyline |
-| `dz-polish.js`, `dz-polish.css` | Polish layer: chapter scenes, role portraits, masthead ornaments, transitions, big-screen scaling (presentation only) |
+| `dz-polish.js`, `dz-polish.css` | Polish layer: Day scenes, role portraits, masthead ornaments, transitions, big-screen scaling (presentation only) |
 | `dz-art.js` | Inline SVG icons for roles and resources, and ring-shaped threat clocks (presentation only) |
-| `story21.js`, `story23.js` | Story chapters, breaks, council scenes and result prose (shared with 2.1–2.4) |
+| `story21.js`, `story23.js` | Older story text and result prose (shared with 2.1–2.4; `index.html` only uses parts of it) |
 | `dz24.js`, `qr24.min.js` | TV and phone briefings, order screen, QR codes (MIT, see `qr24-LICENSE.txt`) |
 | `dz-content.js` | Roles, intel cards, extra rumours, personal goals, seeded randomness and variants. Shared with `phone.html`. |
 | `dz-core.js` | The 2.4 rules engine: threats, actions, dilemmas, resolution, endings |
-| `dz-variety.js` | New-game setup, difficulty, Quick Night, Crossroads events, goal scoring |
+| `dz-variety.js` | New-game setup, difficulty, Quick game, Crossroads events, goal scoring |
 | `dz-roles.js` | Roles 5–8 (Kit, Bea, Dev, Grace), role assignment, kid-friendly order buttons, big-table balance |
 | `dz-campaign.js` | The three-episode campaign: episodes, carried flags, “Previously on”, the Inquiry, badges |
+| `dz-story.js`, `dz-story.css` | The Day-by-Day story: cast, acts, the per-Day headline/question/cliffhanger arc for each episode, callbacks, the story track header, “Previously…” recaps and the ending story |
 | `dz-live.js` | Phone controllers, TV side: PeerJS host, lobby, message checks, live panels |
 | `play.html` | Phone controllers, phone side |
 | `vendor/peerjs.min.js` | PeerJS 1.5.5 (MIT, see `vendor/peerjs-LICENSE.txt`) |

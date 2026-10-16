@@ -1,12 +1,12 @@
 /*
   Day Zero: roles 5–8 for bigger tables.
-  Kit (Runner) and Bea (Host) are kid-friendly: one action a chapter, no costs,
-  a short list of plain-English choices, and one simple card a chapter (never a rumour).
+  Kit (Runner) and Bea (Host) are kid-friendly: one action a Day, no costs,
+  a short list of plain-English choices, and one simple card a Day (never a rumour).
   Dev (Mechanic) and Grace (Liaison) are full adult roles.
 */
 Object.assign(ROLEX,{
- RUN:{who:"Kit, 12, knows every shortcut on Mill Lane.",knows:"Simple, true things Kit sees around town.",does:"One quick job a chapter: run messages, hand out torches, carry water up the tower.",why:"Fast legs save time. Kit can do the jobs nobody else has time for."},
- HST:{who:"Bea, 9, knows where everything in the hall kitchen is.",knows:"Who is scared, who is cold, and where the blankets are.",does:"One kind job a chapter: tea and biscuits, stories for the little ones, blankets.",why:"A hall where people feel welcome holds together."},
+ RUN:{who:"Kit, 12, in the yellow raincoat, knows every shortcut on Mill Lane.",knows:"Simple, true things Kit sees around town.",does:"One quick job a Day: run messages, hand out torches, carry water up the tower.",why:"Fast legs save time. Kit can do the jobs nobody else has time for."},
+ HST:{who:"Bea, 9, knows where everything in the hall kitchen is.",knows:"Who is scared, who is cold, and where the blankets are.",does:"One kind job a Day: tea and biscuits, stories for the little ones, blankets.",why:"A hall where people feel welcome holds together."},
  MEC:{who:"Dev, 33, runs the bike repair shop on Mill Lane.",knows:"Machines: generators, pumps, radios, bikes.",does:"Fix and tune things, move a dangerous generator, reconnect the tower's old pump.",why:"The right repair can save Fuel, Signal and lives."},
  LIA:{who:"Grace, 58, a parish councillor with the council's emergency number.",knows:"Official messages, and who at the council can help.",does:"Check rumours with officials, ask for the water bowser, open barriers, call the relay.",why:"Official answers beat rumours, if someone goes and gets them."}
 });
@@ -78,12 +78,12 @@ function dzKidPick(r,id){
 }
 function dz24Orders(){
  const live=typeof dzLiveOn==="function"&&dzLiveOn();
- let html='<div class="dz24-lead"><div class="dz24-eyebrow">CHAPTER '+dzChapterNo()+' · TEAM ACTIONS</div><h2>Decide together. Make your moves.</h2><p>'+(live?"Players with a connected phone choose their own actions on it. Anyone else enters theirs here.":"Enter each role’s actions on this screen. Actions still resolve in their original order, with the same costs and dependencies.")+'</p></div>';
+ let html='<div class="dz24-lead"><div class="dz24-eyebrow">✋ '+(typeof dzDayLabel==="function"?dzDayLabel().toUpperCase():"TODAY")+' · TEAM ACTIONS</div><h2>Make your moves.</h2><p>'+(live?"Players with a connected phone choose their own actions on it. Anyone else enters theirs here.":"Enter each role’s actions on this screen. Actions still resolve in their original order, with the same costs and dependencies.")+'</p></div>';
  html+='<div class="dz24-order-grid">'+S.pl.map((p,i)=>{
   if(live&&dzLiveOrdersIn(i))return '<section class="dz24-order-player dz-live-locked" id="dz-ordp-'+i+'"><h3>'+esc(p.n)+'</h3><p>📱 ✓ Locked in on their phone.</p><button class="dz24-linkbtn" onclick="dzLiveUnlock('+i+')">Enter on this screen instead</button></section>';
   return '<section class="dz24-order-player" id="dz-ordp-'+i+'"><h3>'+esc(p.n)+(live&&dzLiveConnected(i)?' <span class="dz-live-dot" title="Phone connected">📱 choosing…</span>':'')+'</h3>'+p.r.map(dzOrderRole).join("")+'</section>';
  }).join("")+'</div>';
- return html+'<div class="pn c"><p>Some actions depend on another role acting earlier in the same chapter.</p><button class="btn" onclick="dz24LockTeam()">Resolve the team’s actions</button></div>';
+ return html+'<div class="pn c"><p>Some actions depend on another role acting earlier the same Day. Everything happens together when night falls.</p><button class="btn" onclick="dz24LockTeam()">🌙 Lock in &amp; let night fall</button></div>';
 }
 function dz24LockTeam(){
  const newOrders={},live=typeof dzLiveOn==="function"&&dzLiveOn();

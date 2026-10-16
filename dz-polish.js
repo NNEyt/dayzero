@@ -1,8 +1,8 @@
 /* Day Zero: polish layer (presentation only; reads game state, never changes it).
-   - Inline SVG scenes in chapter / story-break headers (blackout, night, water, silence, rumours, cold, dawn, flood, fire, key)
+   - Inline SVG scenes in Morning News / Night headers (blackout, night, water, silence, rumours, cold, dawn, flood, fire, key)
    - Role portraits (SVG) for role cards and the cold-open team list
    - An engraved masthead ornament for the Chronicle
-   - Screen and chapter transitions (CSS; switched off by prefers-reduced-motion) */
+   - Screen and Day transitions (CSS; switched off by prefers-reduced-motion) */
 (function(){
 const NS='xmlns="http://www.w3.org/2000/svg"';
 /* ---------- chapter header scenes (viewBox 0 0 240 96) ---------- */
@@ -29,6 +29,7 @@ const SC={
 const ROUND={1:"blackout",2:"night",3:"water",4:"quiet",5:"rumours",6:"cold",7:"dawn"};
 function sceneFor(head){
  const t=(head.textContent||"").toLowerCase(),brk=/story break/.test(t);
+ if(/🌙\s*night/.test(t)){const r=typeof S!=="undefined"&&S&&S.round;return r>=6?"cold":r===7?"dawn":"night"}
  if(/flood|bridge|river/.test(t))return "flood";
  if(/fire|candle|flame|smoke/.test(t))return "fire";
  if(/\bkey\b|inquiry|inspector/.test(t))return "key";
@@ -51,7 +52,8 @@ const PORT={
  Ines:{skin:"#8d5a3b",c:"#f0a500",d:'<path d="M22 24l-1 14h3l1-12zM42 24l1 14h-3l-1-12z" fill="#151010"/><path d="M21 23c0-12 22-12 22 0z" fill="#f0a500"/><rect x="20" y="20" width="24" height="5" rx="2" fill="#b77a00"/><circle cx="32" cy="11" r="3" fill="#ffd77f"/>'},
  Pavel:{skin:"#e2b48c",c:"#e07ac0",d:'<path d="M22 24c1-9 19-9 20 0-4-4-16-4-20 0z" fill="#6b4a2c"/><path d="M26 44l6 7 6-7" fill="none" stroke="#f3f0e8" stroke-width="2"/><path d="M24 46c0 10 16 10 16 0" fill="none" stroke="#c9d1e3" stroke-width="2"/><circle cx="32" cy="56" r="2.4" fill="#c9d1e3"/><path d="M44 52h6M47 49v6" stroke="#fff" stroke-width="2"/>'},
  Marta:{skin:"#f0c9a6",c:"#2fd09c",d:'<circle cx="32" cy="13" r="5" fill="#c9c6c0"/><path d="M21 28c-2-14 24-14 22 0-2-7-20-7-22 0z" fill="#d8d5cf"/><path d="M22 41c5 6 15 6 20 0l2 5c-7 6-17 6-24 0z" fill="#2fd09c"/><path d="M38 46l3 9-4 1-2-8z" fill="#26a87e"/>'},
- Kit:{skin:"#d9a273",c:"#ff9f43",d:'<path d="M22 26c-1-4 0-7 2-8l16 0c2 1 3 4 2 8z" fill="#b5502a"/><path d="M21 22c0-11 22-11 22 0z" fill="#ff9f43"/><path d="M41 21l12 2-11 2z" fill="#d97a1f"/><circle cx="27" cy="31" r=".7" fill="#9b5a33"/><circle cx="37" cy="31" r=".7" fill="#9b5a33"/>'},
+ Kit:{skin:"#d9a273",c:"#ffd23f",d:'<path d="M18 30c-1-15 29-15 28 0l-3 10c0-8-2-14-11-14s-11 6-11 14z" fill="#ffd23f"/><path d="M18 30c-1-15 29-15 28 0" fill="none" stroke="#c99a12" stroke-width="1.5"/><path d="M24 24c2-4 14-4 16 0-4-2-12-2-16 0z" fill="#7a4a2a"/><circle cx="27" cy="31" r=".7" fill="#9b5a33"/><circle cx="37" cy="31" r=".7" fill="#9b5a33"/>'},
+ Sam:{skin:"#c99068",c:"#5b7a99",d:'<path d="M22 24c0-11 20-11 20 0-3-4-17-4-20 0z" fill="#2c211a"/><path d="M23 30c1 9 17 9 18 0-1 6-17 6-18 0z" fill="#2c211a"/><rect x="44" y="40" width="9" height="16" rx="2" fill="#2b2f36"/><rect x="46" y="43" width="5" height="4" fill="#7fd1ff"/><path d="M50 40v-9" stroke="#2b2f36" stroke-width="2"/>'},
  Bea:{skin:"#6e4630",c:"#ff6fa8",d:'<circle cx="21" cy="18" r="6" fill="#1a1210"/><circle cx="43" cy="18" r="6" fill="#1a1210"/><path d="M22 25c0-10 20-10 20 0-4-4-16-4-20 0z" fill="#1a1210"/><path d="M24 46v18M40 46v18" stroke="#ffd1e3" stroke-width="2.5"/><path d="M24 54h16v10H24z" fill="#ffd1e3" opacity=".85"/>'},
  Dev:{skin:"#a86f45",c:"#9fb0c8",d:'<path d="M22 24c0-10 20-10 20 0-4-3-16-3-20 0z" fill="#20160f"/><path d="M21 19h22" stroke="#3a3f4a" stroke-width="2.5"/><circle cx="27.5" cy="19" r="3.6" fill="#7fd1ff" stroke="#3a3f4a" stroke-width="1.6"/><circle cx="36.5" cy="19" r="3.6" fill="#7fd1ff" stroke="#3a3f4a" stroke-width="1.6"/><path d="M44 50l8-8m-2-2 4 4" stroke="#dfe5ee" stroke-width="2.4" stroke-linecap="round"/>'},
  Grace:{skin:"#4a3022",c:"#b48cff",d:'<path d="M20 31c-2-19 26-19 24 0h-4c0-10-16-10-16 0z" fill="#bdb8b0"/><circle cx="28" cy="27.5" r="3" fill="none" stroke="#e8e2d6" stroke-width="1.2"/><circle cx="36" cy="27.5" r="3" fill="none" stroke="#e8e2d6" stroke-width="1.2"/><path d="M31 27.5h2" stroke="#e8e2d6" stroke-width="1.2"/><path d="M27 44l5 9 5-9" fill="none" stroke="#ffc24a" stroke-width="1.5"/><rect x="29" y="53" width="6" height="7" rx="1" fill="#f7f0df"/>'}
@@ -79,7 +81,7 @@ function decorate(root){
   const nm=(sec.querySelector(".dz24-role-name")||{}).textContent||"",first=nm.split("·")[0].trim(),ic=sec.querySelector(".dz24-role-icon");
   if(ic&&PORT[first]){const badge=ic.innerHTML;ic.innerHTML=portrait(first,getComputedStyle(sec).getPropertyValue("--dz24-role").trim()||null)+'<span class="dz-portrait-badge">'+badge+'</span>';ic.classList.add("dz-has-portrait")}});
  root.querySelectorAll(".dz-teamline:not([data-dzp])").forEach(l=>{l.dataset.dzp=1;const sp=l.querySelector("span[style]");if(!sp)return;
-  const m=sp.textContent.match(/(Theo|Ines|Pavel|Marta|Kit|Bea|Dev|Grace)/);if(m){l.insertAdjacentHTML("afterbegin",portrait(m[1],sp.style.color));l.classList.add("dz-has-portrait")}});
+  const m=sp.textContent.match(/(Theo|Ines|Pavel|Marta|Kit|Bea|Dev|Grace|Sam)/);if(m){l.insertAdjacentHTML("afterbegin",portrait(m[1],sp.style.color));l.classList.add("dz-has-portrait")}});
  root.querySelectorAll(".dz24-order-role-head:not([data-dzp])").forEach(h=>{h.dataset.dzp=1;const m=(h.textContent||"").match(/(Theo|Ines|Pavel|Marta|Kit|Bea|Dev|Grace)/);if(!m)return;
   const ic=h.querySelector(".dz-ico");const holder=h.closest("[style*='--dz24-role']");const col=holder?holder.style.getPropertyValue("--dz24-role").trim():"";
   if(ic)ic.remove();h.insertAdjacentHTML("afterbegin",portrait(m[1],col||null));h.classList.add("dz-has-portrait")});
@@ -94,7 +96,7 @@ function stateKey(){
 }
 function animate(app){
  const k=stateKey();if(k===last)return;const prev=last;last=k;if(prev===null)return;
- const ch=/^(chapter|break)\|/.test(k)&&!/^(chapter|break)\|/.test(prev||"");
+ const ch=/^(news|night)\|/.test(k)&&!/^(news|night)\|/.test(prev||"");
  app.classList.remove("dz-enter","dz-enter-ch");void app.offsetWidth;app.classList.add(ch?"dz-enter-ch":"dz-enter");
  clearTimeout(animate.t);animate.t=setTimeout(()=>app.classList.remove("dz-enter","dz-enter-ch"),1200);
 }

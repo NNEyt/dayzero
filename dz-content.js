@@ -14,10 +14,10 @@ LOC:[["V","Sketch of the tower block: the lift is crossed out. The back stairs a
 QM:[["V","Van to the clinic: West Bridge = 1 Fuel trip + 1 delivered = 2 Fuel. East Bridge = 2 + 1 = 3 Fuel."],["V","Supermarket freezer food = +2 Supplies. Van trip: 2 Fuel."]],
 MED:[["V","The clinic has 4 patients on oxygen. If its generator stops, they're in danger."],["V","The clinic could take ONE more patient — only while its power is safe."],["V","A full freezer keeps food frozen about 2 days; half-full, about 1 day."]],
 LOC:[["U","Sketch of both bridges: wavy lines over the East Bridge. “Floods every time it rains like this.”",1],["V","Mrs Lindqvist owes Marta a favour — Marta fed her cat for a month."],["V","Mr Osei says three older people live above the 6th floor."]]},
-3:{SIG:[["V","Council: “Save water. Drinking and cooking only.”"],["U","Water board: “Supply should continue until Saturday.”"],["R","“The clinic is evacuating!”"]],
-QM:[["V","Filling the 20 containers at the kitchen tap takes TWO fill actions."],["V","If the generator is running, it needs 1 Fuel at the start of each act."]],
+3:{SIG:[["V","Council: “Save water. Drinking and cooking only.”"],["U","Water board: “Supply should last at least a week.”"],["R","“The clinic is evacuating!”"]],
+QM:[["V","Filling the 20 containers at the kitchen tap takes TWO fill actions."],["V","If the generator is running, it needs 1 Fuel whenever a new Act begins (see the story track)."]],
 MED:[["V","Older people on the top floors can't do the stairs. A water point downstairs won't help them — someone must carry water UP."],["V","People need 2–3 litres of drinking water a day."]],
-LOC:[["V","Hillside's water tank broke last month. Never repaired."],["V","Mr Osei will run a ground-floor water point if someone brings water."],["V","Mr Osei's daughter works at the water company: “The tower will be empty by {WATER_WHEN}.”"]]},
+LOC:[["V","Hillside's water tank broke last month. Never repaired."],["V","Mr Osei will run a ground-floor water point if someone brings water."],["V","Mr Osei's daughter works at the water company: “The tower will be empty {WATER_WHEN}.”"]]},
 4:{SIG:[["V","Phones and internet have stopped. Only radios work."],["V","Emergency calls only through the council radio relay."],["R","“A fuel tanker is coming to the petrol station tonight!”"]],
 QM:[["V","Petrol pumps need electricity. Without power, they CANNOT work."],["V","At a fuel store, the van can fill up and pay for the trip from what it collects."]],
 MED:[["V","The clinic has one bed left. Mr Aldous needs oxygen. Mrs Petrova, 88, lives alone in a freezing house."],["V","Candles cause many house fires. Torches are safer."]],
@@ -77,7 +77,7 @@ const DZ_GOALS={
 const DZ_INSIDER={i:"🕵️",t:"The Insider",x:"Weeks ago someone gave you a key to the substation, and you know more about this blackout than you admit. Keep it secret. You win if the town survives AND the others do not name you at the end. Twice, during a secret vote, you may quietly sabotage the hall's stores."};
 
 /* ---------- the variant: everything that changes from game to game ---------- */
-const DZ_WATER_WHEN={2:"Friday night",3:"Saturday afternoon",4:"late on Saturday night"};
+const DZ_WATER_WHEN={2:"by tomorrow night",3:"in about two days",4:"in about three days"};
 
 /* ---------- Roles 5–8 (Phase 2). Kit and Bea are kid-friendly: one action, short simple cards, no rumours. ---------- */
 Object.assign(RL,{
@@ -87,7 +87,7 @@ Object.assign(RL,{
  LIA:{n:"Liaison",ch:"Grace",c:"#b388ff",i:"🏛️"}
 });
 const DZ_ROLE_NOTE={SIG:"Radio investigations and broadcasts use Signal.",QM:"Van journeys and deliveries consume Fuel.",MED:"Medical actions use limited Medkits; access can matter.",LOC:"Contacts and local knowledge can open doors.",
- RUN:"Kid role · one quick job each chapter. Fast legs, no costs.",HST:"Kid role · one kind job each chapter. No costs.",MEC:"Fixes things. Tools, not Fuel.",LIA:"Talks to the council. Official answers, no Signal needed."};
+ RUN:"Kid role · one quick job each Day. Fast legs, no costs.",HST:"Kid role · one kind job each Day. No costs.",MEC:"Fixes things. Tools, not Fuel.",LIA:"Talks to the council. Official answers, no Signal needed."};
 const DZ_EXTRA_IN={
  RUN:{1:[["V","Kit knows every shortcut on Mill Lane. Kit can run messages and carry light things."]],
   2:[["V","Lots of houses on Marta's street are using candles. Candles can start fires."]],
@@ -119,7 +119,7 @@ const DZ_EXTRA_IN={
   7:[["V","The council will ask where power should go first. It listens to people who have told the truth."]]}
 };
 for(const r in DZ_EXTRA_IN)for(const k in DZ_EXTRA_IN[r]){IN[k]=IN[k]||{};IN[k][r]=DZ_EXTRA_IN[r][k]}
-/* Kit's Chapter-5 card follows the seeded truth about the "thieves". */
+/* Kit's Day-5 card follows the seeded truth about the "thieves". */
 const DZ_KIT_THIEVES={fox:"Last night Kit saw a fox knocking over the bins on Mill Lane. What a racket!",cat:"Last night Kit heard a cat flap banging and banging next door to Mrs Grant's."};
 function dzVariant(seed){
  const rng=dzRng(seed,"variant");

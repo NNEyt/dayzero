@@ -13,7 +13,9 @@ const DZ_ID_CH="abcdefghijkmnpqrstuvwxyz23456789";
 function dzRandId(n){const a=new Uint8Array(n);(window.crypto||{getRandomValues:x=>x.map(()=>Math.random()*256|0)}).getRandomValues(a);return Array.from(a,x=>DZ_ID_CH[x%DZ_ID_CH.length]).join("")}
 function dzLiveOn(){return !!(S&&S.mode==="live"&&S.lv)}
 function dzLiveConnected(i){const c=dzConns[i];return !!(c&&c.open)}
-function dzLiveOrdersIn(i){return dzLiveOn()&&!!S.lv.ord[i]&&S.ph==="ord"}
+function dzLiveOrdersIn(i){return dzLiveOn()&&!!S.lv.ord[i]&&S.ph==="decide"}
+/* Phones pick actions once today's big decision (if any) is settled. */
+function dzLiveActing(){return S.ph==="decide"&&!(S.dl&&!S.dc)}
 let dzLastLv=null;
 function dzLiveSetup(o){
  if(S.mode!=="live")return;
@@ -71,12 +73,12 @@ function dzLiveMsg(conn,d){
   dzSfx("chime");dzLiveStatus();dzLiveSync();return;
  }
  const p=conn.p;if(p===undefined||dzConns[p]!==conn)return;
- if(d.t==="read"&&S.ph==="intel"&&d.round===S.round){S.lv.read[p]=1;sv();dzLiveRefresh()}
+ if(d.t==="read"&&S.ph==="discuss"&&d.round===S.round){S.lv.read[p]=1;sv();dzLiveRefresh()}
  else if(d.t==="goalack"&&S.ph==="goals"){S.gi.seen=S.gi.seen||{};if(S.gi.i===p)return;S.gi.seen[p]=1;sv();if(Object.keys(S.gi.seen).length>=S.pl.length)dzGoalsDone();else dzLiveRefresh()}
- else if(d.t==="orders"&&S.ph==="ord"&&d.round===S.round)dzLiveOrders(p,d.ord);
+ else if(d.t==="orders"&&dzLiveActing()&&d.round===S.round)dzLiveOrders(p,d.ord);
  else if(d.t==="ballot"&&S.ph==="vote"&&S.vt&&d.dl===S.dl)dzLiveBallot(p,d);
  else if(d.t==="accuse"&&S.ph==="accuse"&&S.ac&&!(p in S.ac.b)){const j=Number(d.j);if(Number.isInteger(j)&&j>=0&&j<S.pl.length&&j!==p){S.ac.b[p]=j;dzSfx("vote");dzAccuseCheck()}}
- else if(d.t==="unlock"&&S.ph==="ord"&&S.lv.ord[p]){delete S.lv.ord[p];sv();dzLiveOrderSection(p)}
+ else if(d.t==="unlock"&&S.ph==="decide"&&S.lv.ord[p]){delete S.lv.ord[p];sv();dzLiveOrderSection(p)}
  dzLiveSync();
 }
 function dzLiveOrders(p,ord){
@@ -105,13 +107,13 @@ function dzBallotExtras(me){
 
 /* ---------- what each phone shows ---------- */
 function dzLiveView(i){
- const p=S.pl[i],ph=S.ph,v={ph,round:S.round,ch:dzChapterNo()+"/"+dzChapters(),ep:S.ep||0,name:p.n,roles:p.r,seed:S.seed,title:(EV[S.round]||[""])[0]};
+ const p=S.pl[i],ph=S.ph,v={ph,round:S.round,day:dzDayNo()+"/"+dzDays(),act:dzActLabel(),ep:S.ep||0,name:p.n,roles:p.r,seed:S.seed,title:dzArc().head};
  if((S.goalsShown||ph==="goals")&&(S.goalsOn||i===S.insider)&&S.goals[i])v.goal=i===S.insider?{insider:true}:{key:S.goals[i]};
- if(["intel","break","council","ord","res","esc","vote","vreveal"].includes(ph))v.cards=S.round;
- if(S.lobby&&ph==="chapter")v.k="lobby";
- else if(ph==="intel")v.k="intel",v.read=!!S.lv.read[i];
+ if(["discuss","decide","night","vote","vreveal"].includes(ph))v.cards=S.round;
+ if(S.lobby&&ph==="news")v.k="lobby";
+ else if(ph==="discuss")v.k="intel",v.read=!!S.lv.read[i];
  else if(ph==="goals")v.k="goal",v.acked=!!(S.gi.seen||{})[i];
- else if(ph==="ord"){
+ else if(dzLiveActing()){
   v.k="orders";v.locked=!!S.lv.ord[i];v.mine=S.lv.ord[i]||null;
   v.slots=p.r.map(r=>({r,role:RL[r].ch+" · "+RL[r].n,icon:RL[r].i,c:RL[r].c,kid:dzIsKid(r),n:nA(r),
    opts:opts(r).filter(t=>!dzIsKid(r)||t.av()).map(t=>({id:t.id,l:t.label+ctx(cost(t)),g:Object.keys(GRP).find(g=>GRP[g].includes(t.id))||""}))}));
@@ -122,7 +124,7 @@ function dzLiveView(i){
  }else if(ph==="accuse"&&S.ac){
   v.k="accuse";v.done=i in S.ac.b;v.list=S.pl.map((q,j)=>({j,n:q.n})).filter(x=>x.j!==i);v.ruled=dzExonerated().map(j=>S.pl[j].n);
  }else{
-  v.k="watch";v.msg={chapter:"The story continues on the TV.",brief:"New problems on the TV.",break:"A story break on the TV.",council:"The council is meeting. Talk it through!",res:"See what happened on the TV.",esc:"Time passes…",vreveal:"The votes are being revealed!",accrev:"Who had the key?",end:"Read the Mill Lane Chronicle on the TV."}[ph]||"Watch the TV.";
+  v.k="watch";v.msg={news:"📰 Today's news is on the TV.",decide:"✋ Settle today's big decision on the TV.",night:"🌙 Night falls… watch the TV.",goals:"Watch the TV.",vreveal:"The votes are being revealed!",accrev:"Who had the key?",end:"Read the Mill Lane Chronicle on the TV."}[ph]||"Watch the TV.";
  }
  return v;
 }
@@ -140,7 +142,7 @@ function vLobby(){
  return '<div class="dz24-lead"><div class="dz24-eyebrow">TV + PHONE CONTROLLERS</div><h2>Grab your phones</h2><p>Scan your own code. Your phone becomes your controller: your private cards, your secret goal, your own actions and your secret votes. Same Wi-Fi as the TV works best.</p></div>'+
  '<div id="dz-lvstate">'+dzLiveLinkState()+'</div>'+
  '<div class="dz24-qr-grid">'+S.pl.map((p,i)=>'<article class="dz24-qr-person"><div class="dz24-player-number">PLAYER '+(i+1)+'</div><h3>'+esc(p.n)+'</h3><div class="dz24-player-roles">'+p.r.map(r=>esc(RL[r].i+" "+RL[r].ch)).join(" · ")+'</div><div class="dz24-qr" id="dz-lvqr-'+i+'"></div>'+dzLiveBadge(i)+'<a class="dz24-open-link" href="'+esc(dzLiveJoinUrl(i))+'" target="_blank" rel="noopener">Open link</a></article>').join("")+'</div>'+
- '<div class="pn c"><button class="btn" onclick="dzLiveBegin()">Start the story</button><p class="s">Anyone without a phone plays on this screen, as usual. You can join later too.</p><p class="s"><button class="dz24-linkbtn" onclick="dzLiveToTV()">Play without phones</button></p></div>';
+ '<div class="pn c"><button class="btn" onclick="dzLiveBegin()">📰 Start Day 1</button><p class="s">Anyone without a phone plays on this screen, as usual. You can join later too.</p><p class="s"><button class="dz24-linkbtn" onclick="dzLiveToTV()">Play without phones</button></p></div>';
 }
 function dzLiveBegin(){S.lobby=false;dzSfx("page");sv();R()}
 function dzLiveToTV(){dzLiveStop();S.mode="tv";S.lobby=false;sv();R()}
@@ -156,12 +158,12 @@ function dzLivePanel(kind){
   goals:{h:"🤫 Secret goals",p:"Check your phone for your secret goal, then tap “Got it”.",done:j=>(S.gi.seen||{})[j],btn:j=>"S.gi.i="+j+";S.gi.show=false;R()",lbl:"Show it on this screen"},
   vote:{h:DL[S.dl]?DL[S.dl][2]+" Secret vote: "+DL[S.dl][1]:"Secret vote",p:"Vote on your phone. Nobody sees your ballot.",done:j=>S.vt.b.some(b=>b.who===j),btn:j=>"S.vt.i="+j+";S.vt.show=false;R()",lbl:"Vote on this screen"},
   accuse:{h:"🕵️ Who had the key?",p:"Make your secret accusation on your phone.",done:j=>j in S.ac.b,btn:j=>"S.ac.i="+j+";S.ac.show=false;R()",lbl:"Accuse on this screen"},
-  intel:{h:"📇 Your cards",p:"Read your private cards on your phone, then tap “I've read my cards”. Share what you know at the council.",done:j=>S.lv.read[j],btn:j=>"dzLiveShowHand("+j+")",lbl:"Show their cards here"}
+  intel:{h:"📇 Your cards",p:"Read your private cards on your phone, then tap “I've read my cards”. Then share what you know.",done:j=>S.lv.read[j],btn:j=>"dzLiveShowHand("+j+")",lbl:"Show their cards here"}
  }[kind];
  const done=S.pl.filter((p,j)=>cfg.done(j)).length;
  return '<div class="dz24-lead"><div class="dz24-eyebrow">TV + PHONE CONTROLLERS · '+done+' OF '+n+' READY</div><h2>'+cfg.h+'</h2><p>'+cfg.p+'</p></div>'+
  '<div class="dz-lvlist">'+S.pl.map((p,j)=>'<div class="dz-lvrow'+(cfg.done(j)?" done":"")+'"><b>'+esc(p.n)+'</b> '+(cfg.done(j)?'<span class="dz-lv on">✓ done</span>':dzLiveBadge(j)+' <button class="btn b sm2" onclick="'+cfg.btn(j)+'">'+cfg.lbl+'</button>')+'</div>').join("")+'</div>'+
- (kind==="intel"?'<div id="dz-lvhand"></div><div class="c"><button class="btn" onclick="S.pi=S.pl.length-1;next()">'+(done>=n?"Everyone's read · Begin council":"Begin council")+'</button></div>':"")+
+ (kind==="intel"?'<div id="dz-lvhand"></div>':"")+
  '<div id="dz-lvstate">'+(dzPeerState==="failed"?dzLiveLinkState():"")+'</div>';
 }
 function dzLiveShowHand(j){
@@ -182,7 +184,7 @@ function dzLiveStatus(){
  const st=document.getElementById("dz-lvstate");if(st)st.innerHTML=S&&S.lobby||dzPeerState==="failed"?dzLiveLinkState():"";
  if(!S)return;
  S.pl.forEach((p,i)=>{const b=document.getElementById("dz-lv-"+i);if(b){b.className="dz-lv"+(dzLiveConnected(i)?" on":"");b.textContent=dzLiveConnected(i)?"📱 connected":"📵 not connected"}});
- if(S.ph==="ord")S.pl.forEach((p,i)=>{const d=document.querySelector("#dz-ordp-"+i+" .dz-live-dot");if(d)d.style.display=dzLiveConnected(i)?"":"none"});
+ if(S.ph==="decide")S.pl.forEach((p,i)=>{const d=document.querySelector("#dz-ordp-"+i+" .dz-live-dot");if(d)d.style.display=dzLiveConnected(i)?"":"none"});
 }
 
 /* ---------- hooks into the game ---------- */

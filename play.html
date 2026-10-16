@@ -101,10 +101,10 @@ function tools(v){
  t+='</div>';let x="";if(ui.cards&&v.cards&&v.k!=="intel")x+=hand(v);if(ui.goal&&v.goal&&v.k!=="goal")x+=goalHtml(v);return t+x;
 }
 function render(){
- const v=V;if(!v)return;let h='<div class="dz24-eyebrow" style="color:#a8c2e9;font-size:13px;font-weight:800;letter-spacing:.09em">'+(v.ep?"EPISODE "+v.ep+" · ":"")+"CHAPTER "+esc(v.ch)+" · "+esc(v.title)+'</div><h1>'+esc(v.name)+'</h1><p class="subtitle">'+esc(roleLine(v))+'</p>';
+ const v=V;if(!v)return;const dd=String(v.day||v.ch||"").split("/");let h='<div class="dz24-eyebrow" style="color:#a8c2e9;font-size:13px;font-weight:800;letter-spacing:.09em">'+(v.ep?"EPISODE "+v.ep+" · ":"")+"DAY "+esc(dd[0])+(dd[1]?" OF "+esc(dd[1]):"")+(v.act?" · "+esc(v.act):"")+'</div>'+(v.title?'<div style="color:#ffd77f;font-weight:800;margin-top:2px">📰 '+esc(v.title)+'</div>':"")+'<h1>'+esc(v.name)+'</h1><p class="subtitle">'+esc(roleLine(v))+'</p>';
  if(v.k==="lobby")h+='<div class="panel big">✅ You\'re in! Watch the TV. When it\'s your turn to do something, it will appear here.</div>';
  else if(v.k==="watch")h+='<div class="panel big">📺 '+esc(v.msg)+'</div>';
- else if(v.k==="intel")h+='<div class="instructions">Your private cards. Share what matters at the council, but think about which sources you trust.</div>'+hand(v)+(v.read?'<p class="done">✓ Read. Now talk it through!</p>':'<div class="centre"><button onclick="send({t:\'read\',round:V.round})">✓ I\'ve read my cards</button></div>');
+ else if(v.k==="intel")h+='<div class="instructions">Your private cards for today. Share what matters with the table, but think about which sources you trust.</div>'+hand(v)+(v.read?'<p class="done">✓ Read. Now talk it through!</p>':'<div class="centre"><button onclick="send({t:\'read\',round:V.round})">✓ I\'ve read my cards</button></div>');
  else if(v.k==="goal")h+=goalHtml(v)+(v.acked?'<p class="done">✓ Keep it secret!</p>':'<div class="centre"><button onclick="send({t:\'goalack\'})">Got it, I\'ll keep it secret</button></div>');
  else if(v.k==="orders"){
   if(v.locked){h+='<div class="panel"><p class="done">✓ Locked in</p>'+v.slots.map(s=>'<p><b>'+s.icon+" "+esc(s.role)+'</b>: '+((v.mine&&v.mine[s.r]||[]).map(id=>esc((s.opts.find(o=>o.id===id)||{l:id}).l)).join(", ")||"no action")+'</p>').join("")+'<div class="centre"><button onclick="send({t:\'unlock\'})">Change my actions</button></div></div>'}

@@ -54,11 +54,9 @@ async function bridged(page){if(!BRIDGE)return;await page.addInitScript(INIT);
   const c=(s,req=true)=>{const x=btns().find(b=>oc(b).includes(s));if(x){x.click();return s}return req?"missing "+s:null};
   const ph=S.ph;
   if(ph==="end")return "end";
-  if(ph==="chapter"){if(S.lobby)return c("dzLiveBegin");if(S.prevPending)return c("S.prevPending=false");return c("dzGo('intel')",false)||c("dz21Continue")}
-  if(ph==="brief"){if(S.ev&&!S.ev.done){const o=btns().filter(b=>oc(b).includes("dzEventChoose"));o[0].click();return "event"}return c("dzGo('intel')")}
-  if(ph==="intel"){if(S.lv.read[0]&&S.lv.read[4]){const j=[1,2,3].find(j=>!S.lv.read[j]);if(j!=null)return c("dzLiveShowHand("+j+")");return c("next()",false)||c("dz24FinishBriefings")}return "wait-intel"}
-  if(ph==="break")return c("dz21Continue");
-  if(ph==="council"){if(S.dl&&!S.dc){if(btns().some(b=>oc(b).includes("dzStartVote")))return c("dzStartVote");c("S.together=1",false);const o=btns().filter(b=>oc(b).startsWith("choose("));if(o.length){o[0].click();return "choose"}return "?"}return c("dzGo('ord')")}
+  if(ph==="news"){if(S.lobby)return c("dzLiveBegin");if(S.prevPending)return c("S.prevPending=false");if(S.ev&&!S.ev.done){const o=btns().filter(b=>oc(b).includes("dzEventChoose"));o[0].click();return "event"}return c("dzGo('discuss')")}
+  if(ph==="discuss"){if(S.lv.read[0]&&S.lv.read[4]){const j=[1,2,3].find(j=>!S.lv.read[j]);if(j!=null)return c("dzLiveShowHand("+j+")");return c("dzGo('decide')")}return "wait-intel"}
+  if(ph==="decide"&&S.dl&&!S.dc){if(btns().some(b=>oc(b).includes("dzStartVote")))return c("dzStartVote");c("S.together=1",false);const o=btns().filter(b=>oc(b).startsWith("choose("));if(o.length){o[0].click();return "choose"}return "?"}
   const panel=(S.ph==='vote'&&S.vt.i<0)||(S.ph==='goals'&&S.gi.i<0)||(S.ph==='accuse'&&S.ac.i<0);
   if(panel){const b=btns().find(b=>/S\.(vt|gi|ac)\.i=[123];/.test(oc(b)));if(b){b.click();return "tv-fallback"}return "wait-phones"}
   if(ph==="vote"){if(!S.vt.show)return c("S.vt.show=true");if(!S.vt.sel){btns().find(b=>oc(b).includes("S.vt.sel=")).click();return "sel"}return c("dzCast")}
@@ -66,14 +64,14 @@ async function bridged(page){if(!BRIDGE)return;await page.addInitScript(INIT);
   if(ph==="goals")return S.gi.show?c("dzGoalNext"):c("S.gi.show=true");
   if(ph==="accuse"){if(!S.ac.show)return c("S.ac.show=true");btns().find(b=>oc(b).includes("dzAccuse(")).click();return "accuse"}
   if(ph==="accrev")return c("S.ph='end'");
-  if(ph==="ord"){
+  if(ph==="decide"){
    if(!(S.lv.ord[0]&&S.lv.ord[4]))return "wait-orders";
    for(const sel of document.querySelectorAll("select[id^=o_]")){const used=[...document.querySelectorAll("select[id^=o_]")].map(x=>x.value);const o=[...sel.options].map(x=>x.value).slice(1).filter(id=>!used.includes(id)&&TI[id].av()&&have(cost(TI[id]))&&!["cmf","trt"].includes(id));if(o.length&&!sel.value)sel.value=o[0]}
    return c("dz24LockTeam")}
-  if(ph==="res")return c("escal()");if(ph==="esc")return c("nextRound()");
+  if(ph==="night")return c("nextRound()");
   return "unknown "+ph});
  const want={goal:"05-phone-secret-goal",intel:"06-phone-cards",orders:"07-phone-orders",vote:"08-phone-secret-vote",accuse:"09-phone-accuse"};
- const tvWant={ord:"10-tv-orders-locked-on-phone",vote:"11-tv-vote-panel",goals:"12-tv-goals-panel",intel:"13-tv-intel-panel"};const tvShot=new Set();
+ const tvWant={decide:"10-tv-orders-locked-on-phone",vote:"11-tv-vote-panel",goals:"12-tv-goals-panel",discuss:"13-tv-intel-panel",night:"14-tv-night"};const tvShot=new Set();
  let last="",same=0,t0=Date.now(),reloaded=false;
  while(Date.now()-t0<240000){
   for(const ph of phones){const v=await ph.p.evaluate(()=>typeof V!=="undefined"&&V?V.k+(V.locked||V.voted||V.acked||V.read||V.done?"-done":""):null);
@@ -83,8 +81,8 @@ async function bridged(page){if(!BRIDGE)return;await page.addInitScript(INIT);
    await phoneAct(ph)}
   await sleep(250);
   const ph=await tv.evaluate(()=>S.ph);
-  if(tvWant[ph]&&!tvShot.has(ph)){const ok=ph!=="ord"||await tv.evaluate(()=>!!(S.lv.ord[0]));if(ok&&(ph!=="intel"||await tv.evaluate(()=>!!S.lv.read[0]))){tvShot.add(ph);await tv.screenshot({path:OUT+tvWant[ph]+".png",fullPage:true})}}
-  if(!reloaded&&await tv.evaluate(()=>S.round>=2&&S.ph==="ord")){reloaded=true;
+  if(tvWant[ph]&&!tvShot.has(ph)){const ok=ph!=="decide"||await tv.evaluate(()=>!!(S.lv.ord[0])&&!(S.dl&&!S.dc));if(ok&&(ph!=="discuss"||await tv.evaluate(()=>!!S.lv.read[0]))){tvShot.add(ph);await tv.screenshot({path:OUT+tvWant[ph]+".png",fullPage:true})}}
+  if(!reloaded&&await tv.evaluate(()=>S.round>=2&&S.ph==="decide"&&!(S.dl&&!S.dc))){reloaded=true;
    await phones[0].p.reload();await tv.waitForFunction(()=>dzLiveConnected(0),null,{timeout:20000});
    await phones[0].p.waitForFunction(()=>typeof V!=="undefined"&&V&&V.k==="orders",null,{timeout:20000});console.log("phone reload: rejoined and got its orders view back")}
   const r=await tvStep();stats.tvSteps++;
