@@ -34,7 +34,7 @@ function title(){
  '<label>Difficulty'+sel("dz-diff",Object.keys(DZ_DIFF).map(k=>[k,DZ_DIFF[k].label+" · "+DZ_DIFF[k].blurb]),prev.diff||"normal")+'</label>'+
  '<label class="dz-check"><input type="checkbox" id="dz-goals"'+(prev.goals===false?"":" checked")+'> Personal goals: each player gets a private goal, revealed at the end</label>'+
  '<label class="dz-check"><input type="checkbox" id="dz-vote"'+(prev.vote===false?"":" checked")+'> Secret votes on big decisions (pass the device)</label>'+
- '<label class="dz-check"><input type="checkbox" id="dz-insider"'+(prev.insider?" checked":"")+'> 🕵️ The Insider: one player is secretly working against you (3–4 players, ages 12+)</label>'+
+ '<label class="dz-check"><input type="checkbox" id="dz-insider"'+(prev.insider?" checked":"")+'> 🕵️ The Insider: one player is secretly working against you (3+ players, ages 12+)</label>'+
  '<label>Town seed <span class="s">(leave blank for a new town; share a seed to replay the same one)</span><input id="dz-seed" maxlength="8" placeholder="e.g. K7Q2" value="'+esc(seedQ)+'"></label>'+
  '</details>'+(typeof dzCampPanel==="function"?dzCampPanel():"")+'<p class="s c">1–8 players · best with 3–6 · one player = practice mode · <a href="versions.html">older versions</a></p></div>';
 }
