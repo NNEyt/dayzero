@@ -93,7 +93,7 @@ body{min-height:100vh;
  @keyframes dzRise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
  @keyframes dzChapter{0%{opacity:0;filter:brightness(.2) blur(2px);transform:scale(.985)}60%{opacity:1}100%{opacity:1;filter:none;transform:none}}
  .dz-cold .dz21-hero .art>div{animation:dzFlicker 2.6s steps(1,end) both}
- @keyframes dzFlicker{0%{filter:brightness(1.35) saturate(1.2)}12%{filter:brightness(.35)}16%{filter:brightness(1.25)}22%{filter:brightness(.3)}26%{filter:brightness(1.1)}34%,100%{filter:brightness(.82) saturate(.9)}}
+ @keyframes dzFlicker{0%{filter:brightness(1.35) saturate(1.2)}12%{filter:brightness(.35)}16%{filter:brightness(1.25)}22%{filter:brightness(.3)}26%{filter:brightness(1.1)}34%,100%{filter:brightness(.94)}}
  .dz-sc-blackout .win:not(.hall){fill:#ffc24a;animation:dzLightsOut .5s ease-in both;animation-delay:calc(.35s + var(--i)*.09s)}
  .dz-sc-blackout .win.on:not(.hall){animation-name:dzLightsFlick}
  @keyframes dzLightsOut{to{fill:#1a2440;filter:none}}
