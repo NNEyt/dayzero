@@ -96,6 +96,7 @@ The look is a UK street during a power cut: deep navy night, warm torch-amber hi
 - **Icons and art:** `dz-art.js` draws an inline SVG icon set for the eight roles, the town resources and the mission. Threat clocks are drawn as segmented rings with a plain-words caption ("Clock 2 of 3", "Nearly full!"). It only decorates what the game has already rendered; no game logic changes. `art/skyline.svg` is a quiet silhouette of Kelderwick behind every screen, with one warm window: the hall.
 - **Phones:** `dz-phone.css` gives `play.html` and `phone.html` a mobile-first layout: a sticky header with connection status, big tap targets and a bottom toolbar for "My cards" and "My goal".
 - **Offline-safe:** fonts are self-hosted in `fonts/` (SIL OFL, see `fonts/OFL.txt`). There are no external CDNs. Older versions (`dayzero1.html` … `dayzero24.html`) keep their original look.
+- **Polish layer:** `dz-polish.js` and `dz-polish.css` add small SVG scenes to every chapter and story-break header (the lights going out, night, the water tower, a silent radio mast, rumours, the coldest night, dawn, flood, fire, the key). They also add SVG role portraits, engraved ornaments on the Chronicle masthead, and gentle screen and chapter transitions. On TVs 1600 px and wider, the whole game scales up so it can be read from the sofa. Phone tap targets are at least 44 px.
 - **Motion:** `prefers-reduced-motion` still switches off every animation.
 
 **Sound:** effects and a quiet wind are synthesised with the WebAudio API. There are no audio files, so there's nothing to license. 🔊/🔇 in the corner turns sound on and off, and the setting is remembered. Staged reveals can be skipped (⏭). If your device asks for reduced motion, the animations are switched off.
@@ -108,6 +109,7 @@ The look is a UK street during a power cut: deep navy night, warm torch-amber hi
 | `dz-main.css`, `dz24.css`, `dz-juice.css` | Base styles, 2.4 card and briefing styles, and styles for the new screens and animations |
 | `rules.html`, `playtest.html`, `dz-docs.css` | Player rules page and printable family playtest kit (Torchlight styles, A4 print CSS) |
 | `dz-theme.css`, `dz-phone.css`, `fonts/`, `art/skyline.svg` | The Torchlight theme (TV and phone), self-hosted fonts and the background skyline |
+| `dz-polish.js`, `dz-polish.css` | Polish layer: chapter scenes, role portraits, masthead ornaments, transitions, big-screen scaling (presentation only) |
 | `dz-art.js` | Inline SVG icons for roles and resources, and ring-shaped threat clocks (presentation only) |
 | `story21.js`, `story23.js` | Story chapters, breaks, council scenes and result prose (shared with 2.1–2.4) |
 | `dz24.js`, `qr24.min.js` | TV and phone briefings, order screen, QR codes (MIT, see `qr24-LICENSE.txt`) |
