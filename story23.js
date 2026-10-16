@@ -109,7 +109,7 @@ function dz22Moment(){
  else if(rs.some(x=>x.id==="frz"&&x.status==="done"))detail="The supermarket's food is now part of the hall's provisions.";
  if(miss.length)detail+=(detail?" But ":"")+(miss.length===1?"one plan":"several plans")+" could not go ahead. The team will need to rethink its next steps.";
  if(!detail)detail= "Some efforts have helped; others may matter later. The group's resources and relationships will determine which opportunities remain open.";
- return '<div class="dz22-story"><div class="dz22-scene-image">'+art("ev"+S.round,"📖")+'</div><div class="dz22-story-prose"><div class="dz22-kicker">CHAPTER "+S.round+" · AFTER THE ORDERS</div><h3>Back at the Hall</h3><div class="dz22-read">📖 '+dz21Attribution()+'</div><p>'+esc(lead)+'</p><p>'+esc(detail)+'</p></div></div>';
+ return '<div class="dz22-story"><div class="dz22-scene-image">'+art("ev"+S.round,"📖")+'</div><div class="dz22-story-prose"><div class="dz22-kicker">CHAPTER '+(typeof dzChapterNo==="function"?dzChapterNo():S.round)+' · AFTER THE ORDERS</div><h3>Back at the Hall</h3><div class="dz22-read">'+dz21Attribution()+'</div><p>'+esc(lead)+'</p><p>'+esc(detail)+'</p></div></div>';
 }
 function dz22ResultCards(){
  const reports=Array.isArray(S.report)?S.report:[];
