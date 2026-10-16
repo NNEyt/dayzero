@@ -11,7 +11,7 @@ body{margin:0;font:18px/1.55 var(--body);color:var(--text);
 a{color:var(--amber-2)}
 .wrap{max-width:980px;margin:0 auto;padding:24px 20px 96px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:16px}
-.top a{font-weight:700}
+.top a{font-weight:700;display:inline-flex;align-items:center;min-height:44px}
 h1{font:800 clamp(40px,6vw,64px)/1 var(--display);color:var(--amber);letter-spacing:.02em;margin:24px 0 4px;text-align:center}
 .tag{text-align:center;color:var(--muted);font-style:italic;margin:0 0 24px}
 h2{font:700 30px/1.1 var(--display);color:var(--amber);margin:0 0 10px;display:flex;align-items:center;gap:10px}
@@ -26,7 +26,7 @@ h3{font:700 22px/1.15 var(--display);color:var(--amber-2);margin:16px 0 6px}
 ul,ol{padding-left:22px;margin:6px 0}li{margin:4px 0}
 .s{font-size:15px;color:var(--muted)}.paper .s{color:var(--ink-2)}
 .toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 8px;padding:0;list-style:none}
-.toc a{display:inline-block;padding:8px 14px;border-radius:999px;background:var(--bg-2);border:1px solid var(--line);text-decoration:none;font-size:15px;font-weight:700;min-height:40px}
+.toc a{display:inline-block;padding:8px 14px;border-radius:999px;background:var(--bg-2);border:1px solid var(--line);text-decoration:none;font-size:15px;font-weight:700;min-height:44px;line-height:26px}
 table{width:100%;border-collapse:collapse;font-size:16px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
 th{font:700 15px/1.2 var(--body);color:var(--amber-2);letter-spacing:.04em;text-transform:uppercase}
