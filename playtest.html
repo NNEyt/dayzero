@@ -67,7 +67,7 @@
   <label for="names">Names <span class="s">(optional, comma-separated)</span></label><input id="names" placeholder="Alex, Priya, Tom, Nan" oninput="build()">
   <button type="submit">🖨️ Print the kit</button>
  </form>
- <p class="s c">Prints 1 checklist page, 1 page per 2 feedback cards, and 1 observer sheet. Use “Save as PDF” to keep a copy.</p>
+ <p class="s c">Prints 1 checklist page, 1 page per 2 feedback cards (an odd count gets a spare card for a guest or observer), and 1 observer sheet. Use “Save as PDF” to keep a copy.</p>
 </div>
 
 <!-- ============ 1. HOST CHECKLIST ============ -->
@@ -164,8 +164,8 @@
 <script>
 const QS=[["😀 How fun was it overall?",""],["🧭 I understood what to do next","most of the time"],["🙋 I made a decision that felt like <b>mine</b>",""],["😬 It felt tense and exciting",""],["⏱️ The length felt about right",""],["🔁 I'd like to play again",""]];
 const FACES='<span class="faces" aria-label="circle one: 1 to 5"><span>😞</span><span>🙁</span><span>😐</span><span>🙂</span><span>😄</span></span>';
-function card(name,i){
- return '<div class="card-fb"><div class="sheet-head"><h3>🗒️ Feedback card · '+(name?esc(name):'Player '+(i+1)+': <span class="fill"></span>')+'</h3><span class="s">Age: <span class="fill" style="min-width:50px"></span> Role(s): <span class="fill"></span></span></div>'+
+function card(name,i,spare){
+ return '<div class="card-fb'+(spare?' spare':'')+'"><div class="sheet-head"><h3>🗒️ '+(spare?'Spare card · guest or observer: <span class="fill"></span>':'Feedback card · '+(name?esc(name):'Player '+(i+1)+': <span class="fill"></span>'))+'</h3><span class="s">Age: <span class="fill" style="min-width:50px"></span> Role(s): <span class="fill"></span></span></div>'+
  '<p class="s" style="margin:2px 0 4px">Circle one face for each line. There are no wrong answers.</p>'+
  QS.map(q=>'<div class="q"><span>'+q[0]+(q[1]?' <span class="s">('+q[1]+')</span>':'')+'</span>'+FACES+'</div>').join("")+
  '<h3>⭐ Best moment</h3><div class="lines"><i></i><i></i></div><h3>❓ What was confusing?</h3><div class="lines"><i></i><i></i></div></div>';
@@ -175,7 +175,7 @@ function build(){
  const q=new URLSearchParams(location.search);
  const names=(document.getElementById("names").value||q.get("names")||"").split(",").map(s=>s.trim()).filter(Boolean);
  let n=+document.getElementById("n").value;if(names.length>n){n=Math.min(8,names.length);document.getElementById("n").value=n}
- let h="";for(let i=0;i<n;i+=2){h+='<section class="sheet cards">'+(i===0?'<div class="sheet-head"><h2>🗒️ Player feedback cards</h2><span class="s">Fill in before talking about the game · cut along the dashed line</span></div>':'')+card(names[i],i)+(i+1<n?card(names[i+1],i+1):'')+'</section>'}
+ let h="";for(let i=0;i<n;i+=2){h+='<section class="sheet cards">'+(i===0?'<div class="sheet-head"><h2>🗒️ Player feedback cards</h2><span class="s">Fill in before talking about the game · cut along the dashed line</span></div>':'')+card(names[i],i)+(i+1<n?card(names[i+1],i+1):card("",i+1,true))+'</section>'}
  document.getElementById("cards").innerHTML=h;
 }
 (function(){const q=new URLSearchParams(location.search);const p=+q.get("players");if(p>=1&&p<=8)document.getElementById("n").value=p;if(q.get("names"))document.getElementById("names").value=q.get("names");build()})();
