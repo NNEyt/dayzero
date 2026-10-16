@@ -68,8 +68,8 @@ const DZ_GOALS={
  clinic:{i:"🏥",t:"Lights at the Clinic",x:"The clinic must never go dark.",need:2},
  rumour:{i:"🔎",t:"Rumour Hunter",x:"Get at least 2 rumours checked on Theo's radio.",need:1},
  trust:{i:"🏘️",t:"Pillar of the Community",x:"Finish with Trust 4 or more.",need:1},
- peace:{i:"🤝",t:"Keep the Peace",x:"Finish with Cohesion 5 or more.",need:1},
- scav:{i:"🎒",t:"Scavenger",x:"Find at least 4 pieces of equipment around town.",need:1},
+ peace:{i:"🤝",t:"Keep the Peace",x:"Finish with Cohesion at the very top (6 of 6).",need:1},
+ scav:{i:"🎒",t:"Scavenger",x:"Find at least 5 pieces of equipment around town.",need:1},
  tower:{i:"🏢",t:"Tower Lights",x:"When the council asks, the tower block should get power first.",need:7},
  health:{i:"❤️",t:"Nobody to Hospital",x:"Finish with Health 4 or more.",need:1},
  hub:{i:"🏠",t:"The Full Hub",x:"Have Warmth, Water and Information all running at the end.",need:1}
@@ -78,6 +78,49 @@ const DZ_INSIDER={i:"🕵️",t:"The Insider",x:"Weeks ago someone gave you a ke
 
 /* ---------- the variant: everything that changes from game to game ---------- */
 const DZ_WATER_WHEN={2:"Friday night",3:"Saturday afternoon",4:"late on Saturday night"};
+
+/* ---------- Roles 5–8 (Phase 2). Kit and Bea are kid-friendly: one action, short simple cards, no rumours. ---------- */
+Object.assign(RL,{
+ RUN:{n:"Runner",ch:"Kit",c:"#ff9f43",i:"👟",kid:true},
+ HST:{n:"Host",ch:"Bea",c:"#ff6fa8",i:"🫖",kid:true},
+ MEC:{n:"Mechanic",ch:"Dev",c:"#9fb3c8",i:"🔧"},
+ LIA:{n:"Liaison",ch:"Grace",c:"#b388ff",i:"🏛️"}
+});
+const DZ_ROLE_NOTE={SIG:"Radio investigations and broadcasts use Signal.",QM:"Van journeys and deliveries consume Fuel.",MED:"Medical actions use limited Medkits; access can matter.",LOC:"Contacts and local knowledge can open doors.",
+ RUN:"Kid role · one quick job each chapter. Fast legs, no costs.",HST:"Kid role · one kind job each chapter. No costs.",MEC:"Fixes things. Tools, not Fuel.",LIA:"Talks to the council. Official answers, no Signal needed."};
+const DZ_EXTRA_IN={
+ RUN:{1:[["V","Kit knows every shortcut on Mill Lane. Kit can run messages and carry light things."]],
+  2:[["V","Lots of houses on Marta's street are using candles. Candles can start fires."]],
+  3:[["V","The old people at the top of the tower block can't carry heavy water up the stairs. Kit is fast on stairs!"]],
+  4:[["V","The phones have stopped. People need someone to carry messages. That's Kit's job!"]],
+  5:[["V","Last night Kit saw Mrs Grant's grandson playing a loud video game. He was shouting at the screen!"]],
+  6:[["V","It's going to be very, very cold tonight. Hats, gloves and blankets help."]],
+  7:[["V","From the top of the hill, Kit can see lights coming on in the next town!"]]},
+ HST:{1:[["V","Bea knows where the hall keeps the teabags, the biscuits and the spare blankets."]],
+  2:[["V","Some of the little children at the hall are scared of the dark. A story or a game helps."]],
+  3:[["V","Bea found the big water jugs in the kitchen. They are empty."]],
+  4:[["V","Mrs Petrova lives on her own. She is very old, and her house is very cold."]],
+  5:[["V","People are whispering and looking worried. A cup of tea and a friendly hello help."]],
+  6:[["V","Bea counted the blankets. There are enough for everyone, if we share."]],
+  7:[["V","Everyone is tired. Bea thinks the hall needs a party when the lights come on!"]]},
+ MEC:{1:[["V","Dev's bike shop has tools, a tyre pump and a cargo bike with a trailer."],["V","Generators must run outside. The exhaust is deadly indoors."]],
+  2:[["V","A generator that hasn't run for two years will need a clean and a tune-up to run well."],["R","“Someone on Hillside has a solar battery that can power the whole street!”"]],
+  3:[["V","The tower block has an old hand pump in the basement. It was disconnected years ago, but it could be reconnected."]],
+  4:[["V","Petrol pumps need electricity. Even a full tanker can't help until the power is back."],["U","A man at the garage: “My mate drives tankers. One's on its way.”"]],
+  5:[["V","A well-tuned generator uses noticeably less fuel."]],
+  6:[["V","Night repairs need the crew, light, and someone who knows the route."]],
+  7:[["V","When power returns, switch big appliances on slowly, or the street can trip again."]]},
+ LIA:{1:[["V","Grace has the council emergency officer's direct number."],["U","Council email: “Restoration expected within 48 hours.”"]],
+  2:[["V","The council can check rumours with official sources. It takes a call, not radio Signal."]],
+  3:[["V","The council has a water bowser. It goes to whoever asks first."]],
+  4:[["V","Emergency calls still work through the radio relay at the town hall. Grace can use it."]],
+  5:[["V","Police: no break-ins have been reported in Kelderwick this week."],["R","“The grid company is covering something up.”"]],
+  6:[["V","The old mill path crosses Hillside land. The council can open a road barrier if it asks nicely."]],
+  7:[["V","The council will ask where power should go first. It listens to people who have told the truth."]]}
+};
+for(const r in DZ_EXTRA_IN)for(const k in DZ_EXTRA_IN[r]){IN[k]=IN[k]||{};IN[k][r]=DZ_EXTRA_IN[r][k]}
+/* Kit's Chapter-5 card follows the seeded truth about the "thieves". */
+const DZ_KIT_THIEVES={fox:"Last night Kit saw a fox knocking over the bins on Mill Lane. What a racket!",cat:"Last night Kit heard a cat flap banging and banging next door to Mrs Grant's."};
 function dzVariant(seed){
  const rng=dzRng(seed,"variant");
  const v={flood:rng()<0.5?"E":"W",tanker:rng()<0.5?"none":"tomorrow",thieves:dzPick(rng,["game","fox","cat"]),water:dzPick(rng,[2,3,3,4])};
@@ -94,6 +137,7 @@ const DZ_THIEVES={
 };
 function dzVText(v,html){
  if(!v)return html;let s=String(html);
+ if(DZ_KIT_THIEVES[v.thieves])s=s.split(DZ_EXTRA_IN.RUN[5][0][1]).join(DZ_KIT_THIEVES[v.thieves]);
  if(v.flood==="W")s=s.replace(/\b(East|West|EAST|WEST)( Bridge)/g,(m,w,b)=>({East:"West",West:"East",EAST:"WEST",WEST:"EAST"})[w]+b);
  for(const [a,b] of (DZ_THIEVES[v.thieves]||[]))s=s.split(a).join(b);
  s=s.split("{WATER_WHEN}").join(DZ_WATER_WHEN[v.water]||DZ_WATER_WHEN[3]);
@@ -111,7 +155,7 @@ function dzIntel(v,round,role){
 }
 /* Override of dz24.js role panel: use the variant intel. */
 function dz24RolePanel(r,round){
- const role=RL[r],notes={SIG:"Radio investigations and broadcasts use Signal.",QM:"Van journeys and deliveries consume Fuel.",MED:"Medical actions use limited Medkits; access can matter.",LOC:"Contacts and local knowledge can open doors."};
+ const role=RL[r],notes=DZ_ROLE_NOTE;
  const v=(typeof S!=="undefined"&&S&&S.v)||window.DZ_PHONE_V||null;
  const items=dzIntel(v,round,r);
  return '<section class="dz24-role-section" style="--dz24-role:'+role.c+'"><div class="dz24-role-line"><span class="dz24-role-icon">'+role.i+'</span><div><div class="dz24-role-name">'+role.ch+' · '+role.n+'</div><div class="dz24-role-mechanic">'+esc(notes[r])+'</div></div></div><div class="dz24-intel-grid">'+items.map((x,i)=>dz24IntelCard(r,x,i)).join("")+'</div></section>';

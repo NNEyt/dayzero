@@ -74,3 +74,35 @@
 @media (max-width:640px){.dz-title{font-size:64px}.dz-mast h1{font-size:40px}.dz-head{font-size:32px}.dz-bar{grid-template-columns:1fr 100px 24px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .dz-paper .s{color:#5b5240}
+/* phase 2: bigger tables */
+.dz-namerow{display:flex;gap:8px;align-items:center}.dz-namerow input[id^=n]{flex:1}
+.dz-kidchk{white-space:nowrap;font-size:20px;cursor:pointer}
+.dz-more{margin:8px 0}.dz-more summary{cursor:pointer;font-weight:700;color:#ffd166}
+.dz-kidopts{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.dz-kidbtn{font:700 19px 'Atkinson Hyperlegible',sans-serif;text-align:left;padding:12px 14px;border-radius:12px;border:3px solid #000;background:#fff3d6;color:#1b1b1b;cursor:pointer}
+.dz-kidbtn.on{background:#ffd166;box-shadow:inset 0 0 0 3px #e4572e}
+.dz-kid .dz24-intel-card p{font-size:19px}
+/* phase 2: campaign */
+.dz-camp{max-width:640px;margin:12px auto}.dz-camp>summary{cursor:pointer;font-size:20px}
+.dz-eplist{padding-left:22px}.dz-eplist li{margin:8px 0}.dz-eplist li.done{opacity:.8}.dz-eplist li.next{border-left:4px solid #ffd166;padding-left:8px}
+.dz-code{margin-top:8px}.dz-code textarea,.dz-code input{width:100%;font:13px ui-monospace,monospace;margin:4px 0;padding:6px;border-radius:6px}
+.dz-prev ul{margin:6px 0 10px}.dz-carry li{margin:6px 0}
+.dz-campbox{max-width:800px;margin:16px auto;border:3px solid #c593e5}.dz-campbox h3{font-size:26px;margin:6px 0;color:#ffd166}
+.dz-camptable{width:100%;border-collapse:collapse;margin:8px 0}.dz-camptable td{padding:6px;border-bottom:1px solid #44507f}
+.dz-total{font-size:22px}.dz-badges{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.dz-badge{background:#2a2a14;border:2px solid #ffd166;border-radius:20px;padding:4px 12px;font-weight:700}
+
+/* ---- Phone link (live mode) ---- */
+.dz-lv{display:inline-block;font-size:.8rem;padding:.1rem .5rem;border-radius:999px;background:rgba(255,255,255,.08);color:#b9b3a6;border:1px solid rgba(255,255,255,.15);white-space:nowrap}
+.dz-lv.on{background:rgba(96,190,120,.18);color:#bfe8c8;border-color:rgba(96,190,120,.5)}
+.dz-lvstate{margin:.6rem 0;padding:.5rem .8rem;border-radius:8px;background:rgba(255,255,255,.06);font-size:.95rem}
+.dz-lvstate.ok{background:rgba(96,190,120,.14)}
+.dz-lvstate.bad{background:rgba(220,110,80,.18)}
+.dz-lvlist{display:flex;flex-direction:column;gap:.4rem;margin:.8rem auto;max-width:760px}
+.dz-lvrow{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;padding:.45rem .7rem;border-radius:8px;background:rgba(255,255,255,.05)}
+.dz-lvrow.done{opacity:.75}
+.dz-lvrow .btn{margin-left:auto;padding:.25rem .7rem;font-size:.85rem}
+.dz-live-locked{opacity:.85;border-style:dashed!important}
+.dz-live-dot{font-size:.75rem;font-weight:400;color:#bfe8c8;margin-left:.4rem}
+[id^="dz-lvqr-"]{display:flex;justify-content:center;margin:.5rem 0}
+[id^="dz-lvqr-"] canvas,[id^="dz-lvqr-"] img,[id^="dz-lvqr-"] svg{background:#fff;padding:6px;border-radius:6px;max-width:180px;height:auto}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day Zero · Phone controller</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="alternate icon" href="favicon.ico">
+<meta name="theme-color" content="#141a33">
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 60% -15%,#283769,#080b18 76%);color:#f5f1e8;font:17px/1.48 system-ui,-apple-system,'Segoe UI',sans-serif}
+header{padding:22px 18px 14px;text-align:center;border-bottom:3px solid #f0b953;background:#0d162e}
+.logo{color:#ffdc7f;font:italic 900 31px Impact,'Arial Narrow',sans-serif;letter-spacing:1px}
+header p{margin:4px auto;color:#bfcbe3;font-size:13px}
+main{max-width:690px;margin:auto;padding:18px 14px 40px}
+h1{font-size:30px;margin:0;color:#ffda84;line-height:1.14}
+.subtitle{color:#ced8ef;font-size:15px;margin:8px 0 16px}
+.dz24-role-section{margin:18px 0 28px}
+.dz24-role-line{display:flex;gap:12px;align-items:center;background:#121b35;border:2px solid var(--dz24-role);border-radius:12px;padding:12px}
+.dz24-role-icon{font-size:29px}
+.dz24-role-name{font-size:22px;color:#ffe08b;font-weight:850}
+.dz24-role-mechanic{font-size:14px;color:#bbc8e8;margin-top:2px}
+.dz24-intel-grid{display:grid;gap:12px;margin-top:14px}
+.dz24-intel-card{background:#f3e7ce;color:#172037;border-radius:12px;overflow:hidden;border:2px solid #141b37;box-shadow:4px 5px 0 #0007;display:grid;grid-template-columns:111px minmax(0,1fr)}
+.dz24-artwrap{background:#182747;min-height:130px}
+.dz24-artwrap img{width:100%;height:100%;min-height:130px;object-fit:cover;display:block}
+.dz24-card-copy{padding:11px 12px}
+.dz24-meta{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.dz24-state{display:inline-block;padding:3px 9px;border:2px solid #18223b;border-radius:7px;background:#e7b75b;font-weight:850;font-size:11px;letter-spacing:.04em}
+.dz24-intel-card.verified .dz24-state{background:#34885d;color:white}
+.dz24-intel-card.rumour .dz24-state{background:#b8bac4;border-style:dashed}
+.dz24-mark{border:1px solid #786046;padding:3px 6px;font-size:10px;border-radius:5px}
+.dz24-card-copy p{margin:8px 0 0;font-size:16px;line-height:1.42}
+.instructions{border-left:4px solid #ffce7c;padding:10px 12px;background:#162345;border-radius:6px;font-size:14px}
+button{cursor:pointer;background:#f9cf6b;border:2px solid #111827;border-radius:10px;padding:12px 18px;color:#162139;font-weight:800;font-size:16px;box-shadow:3px 3px #0004}
+.centre{text-align:center;margin:20px 0}.hidden{display:none!important}
+.mask{padding:48px 18px;text-align:center;background:#18233e;border:2px solid #6b81a6;border-radius:14px;margin:14px 0}.mask p{color:#bdc8e2}
+footer{color:#9babc8;font-size:12px;text-align:center;padding:12px 22px 28px}
+@media (max-width:400px){.dz24-intel-card{grid-template-columns:86px minmax(0,1fr)}.dz24-artwrap,.dz24-artwrap img{min-height:145px}.dz24-card-copy p{font-size:15px}}
+.goalbox{margin:22px 0;padding:14px;border:2px dashed #c593e5;border-radius:12px;background:#1d1533}.goalbox h2{margin:4px 0;color:#e4c6ff}
+</head>
+#status{font-size:13px;color:#bfcbe3;margin-top:4px}#status.ok{color:#8ff0bf}#status.bad{color:#ffb4a1}
+.big{font-size:20px}.panel{background:#121b35;border:2px solid #34446e;border-radius:14px;padding:14px;margin:14px 0}
+.opts button,.kid button{display:block;width:100%;text-align:left;margin:8px 0;font-size:17px}
+.opts button.on,.kid button.on{background:#ffd166;box-shadow:inset 0 0 0 3px #e4572e}
+.opts button:disabled{opacity:.4}.now{display:block;font-weight:400;font-size:14px;margin-top:2px}
+select{width:100%;font-size:16px;padding:10px;border-radius:8px;margin:6px 0}
+label.lab{display:block;font-size:13px;color:#bfcbe3;margin-top:8px}
+.slot{border-left:5px solid var(--c);padding-left:10px;margin:14px 0}.slot h3{margin:0 0 4px;color:#ffe08b}
+.tools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0}.tools button{font-size:14px;padding:8px 12px;background:#d6ddff}
+.done{color:#8ff0bf;font-weight:700;text-align:center;font-size:20px}
+.goalcard{border:2px dashed #c593e5;background:#1d1533;border-radius:12px;padding:14px}.goalcard h2{margin:4px 0;color:#e4c6ff}
+.insider{border-color:#e4572e;background:#2b1010}
+</style></head>
+<body><header><div class="logo">DAY ZERO · CONTROLLER</div><div id="status">Connecting…</div></header><main id="phone">Loading…</main>
+<footer>Your phone talks straight to the TV (WebRTC via the free PeerJS service). Nothing is stored online. If anything goes wrong, just play on the TV.</footer>
+<script>const esc=s=>String(s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));</script>
+<script src="vendor/peerjs.min.js"></script>
+<script src="dz24.js"></script>
+<script src="dz-content.js"></script>
+<script>
+/* Day Zero phone controller: joins the TV's game over a PeerJS data channel. */
+const Q=new URLSearchParams(location.hash.slice(1)),HOST=Q.get("h")||"",P=Number(Q.get("p")),KEY=Q.get("k")||"";
+let peer=null,conn=null,V=null,me=null,ui={cards:false,goal:false},pick={},tries=0,lastK="",wake=null;
+const app=()=>document.getElementById("phone");
+function status(t,cls){const s=document.getElementById("status");s.textContent=t;s.className=cls||""}
+function send(m){if(conn&&conn.open)conn.send(m)}
+function connect(){
+ if(!HOST||!Number.isInteger(P)||!KEY){app().innerHTML='<h1>Link not recognised</h1><p>Scan the code beside your name on the TV.</p>';status("No game link","bad");return}
+ if(typeof Peer==="undefined"){status("Phone link unavailable (offline?). Play on the TV.","bad");return}
+ status(tries?"Reconnecting…":"Connecting to the TV…");
+ if(!peer||peer.destroyed){peer=new Peer({debug:0});
+  peer.on("open",()=>openConn());
+  peer.on("error",e=>{status(e.type==="peer-unavailable"?"Can't find the TV game. Is it still open? Retrying…":"Connection problem ("+e.type+"). Retrying…","bad");retry()});
+  peer.on("disconnected",()=>{try{peer.reconnect()}catch(e){}});
+ }else if(peer.open)openConn();
+}
+function openConn(){
+ try{conn&&conn.close()}catch(e){}
+ conn=peer.connect(HOST,{reliable:true});
+ conn.on("open",()=>{tries=0;send({t:"hello",p:P,k:KEY})});
+ conn.on("data",onMsg);
+ conn.on("close",()=>{status("Lost the TV. Reconnecting…","bad");retry()});
+ conn.on("error",()=>retry());
+}
+let rt=null;function retry(){clearTimeout(rt);tries++;rt=setTimeout(connect,Math.min(10000,1500*tries))}
+function onMsg(m){
+ if(!m||typeof m!=="object")return;
+ if(m.t==="denied"){status("This link isn't valid for this game.","bad");app().innerHTML='<h1>Link not valid</h1><p>Scan your code on the TV again.</p>';clearTimeout(rt);tries=-99;return}
+ if(m.t==="replaced"){status("Opened on another device.","bad");app().innerHTML='<h1>Opened elsewhere</h1><p>Your controller was opened on another phone or tab.</p>';tries=-99;try{conn.close()}catch(e){}return}
+ if(m.t==="welcome"){me=m;status("Connected as "+m.name,"ok");window.DZ_PHONE_V=dzVariant(m.seed);return}
+ if(m.t==="unlocked"){pick={};}
+ if(m.t==="view"){const k=m.v.k+":"+m.v.round+":"+m.v.ph;if(k!==lastK&&["intel","goal","orders","vote","accuse"].includes(m.v.k)){try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}if(m.v.k!=="orders")pick={}}if(m.v.k==="orders"&&k!==lastK)pick={};lastK=k;V=m.v;render()}
+}
+function roleLine(v){return v.roles.map(r=>RL[r].i+" "+RL[r].ch+" ("+RL[r].n+")").join(" & ")}
+function goalHtml(v){
+ if(!v.goal)return "";const g=v.goal.insider?DZ_INSIDER:DZ_GOALS[v.goal.key];if(!g)return "";
+ return '<div class="goalcard'+(v.goal.insider?" insider":"")+'"><div class="s">'+(v.goal.insider?"SECRET · YOU ARE THE INSIDER":"YOUR SECRET GOAL")+'</div><h2>'+g.i+" "+esc(g.t)+'</h2><p>'+esc(g.x)+'</p>'+(v.goal.insider?'<p>Play along. In secret votes you get a quiet sabotage choice.</p>':'')+'</div>';
+}
+function hand(v){return dzVText(window.DZ_PHONE_V,dz24PlayerHand({r:v.roles},v.round))}
+function tools(v){
+ let t='<div class="tools">';if(v.cards&&v.k!=="intel")t+='<button onclick="ui.cards=!ui.cards;render()">📇 '+(ui.cards?"Hide":"My")+' cards</button>';
+ if(v.goal&&v.k!=="goal")t+='<button onclick="ui.goal=!ui.goal;render()">🤫 '+(ui.goal?"Hide":"My")+' goal</button>';
+ t+='</div>';let x="";if(ui.cards&&v.cards&&v.k!=="intel")x+=hand(v);if(ui.goal&&v.goal&&v.k!=="goal")x+=goalHtml(v);return t+x;
+}
+function render(){
+ const v=V;if(!v)return;let h='<div class="dz24-eyebrow" style="color:#a8c2e9;font-size:13px;font-weight:800;letter-spacing:.09em">'+(v.ep?"EPISODE "+v.ep+" · ":"")+"CHAPTER "+esc(v.ch)+" · "+esc(v.title)+'</div><h1>'+esc(v.name)+'</h1><p class="subtitle">'+esc(roleLine(v))+'</p>';
+ if(v.k==="lobby")h+='<div class="panel big">✅ You\'re in! Watch the TV. When it\'s your turn to do something, it will appear here.</div>';
+ else if(v.k==="watch")h+='<div class="panel big">📺 '+esc(v.msg)+'</div>';
+ else if(v.k==="intel")h+='<div class="instructions">Your private cards. Share what matters at the council, but think about which sources you trust.</div>'+hand(v)+(v.read?'<p class="done">✓ Read. Now talk it through!</p>':'<div class="centre"><button onclick="send({t:\'read\',round:V.round})">✓ I\'ve read my cards</button></div>');
+ else if(v.k==="goal")h+=goalHtml(v)+(v.acked?'<p class="done">✓ Keep it secret!</p>':'<div class="centre"><button onclick="send({t:\'goalack\'})">Got it, I\'ll keep it secret</button></div>');
+ else if(v.k==="orders"){
+  if(v.locked){h+='<div class="panel"><p class="done">✓ Locked in</p>'+v.slots.map(s=>'<p><b>'+s.icon+" "+esc(s.role)+'</b>: '+((v.mine&&v.mine[s.r]||[]).map(id=>esc((s.opts.find(o=>o.id===id)||{l:id}).l)).join(", ")||"no action")+'</p>').join("")+'<div class="centre"><button onclick="send({t:\'unlock\'})">Change my actions</button></div></div>'}
+  else{h+='<div class="instructions">Agree the plan out loud, then choose your own actions here.</div>'+v.slots.map(s=>{
+   let o='<div class="slot" style="--c:'+s.c+'"><h3>'+s.icon+" "+esc(s.role)+'</h3>';
+   if(s.kid)o+='<div class="kid">'+s.opts.map(x=>'<button class="'+((pick[s.r]||[])[0]===x.id?"on":"")+'" onclick="kidPick(\''+s.r+'\',\''+x.id+'\')">'+esc(x.l)+'</button>').join("")+'</div>';
+   else for(let i=0;i<s.n;i++){o+='<label class="lab">Action '+(i+1)+' of '+s.n+'</label><select onchange="slotPick(\''+s.r+'\','+i+',this.value)"><option value="">— No action —</option>';
+    const groups=[...new Set(s.opts.map(x=>x.g))];
+    o+=groups.map(g=>'<optgroup label="'+esc(g||"Other")+'">'+s.opts.filter(x=>x.g===g).map(x=>'<option value="'+x.id+'"'+((pick[s.r]||[])[i]===x.id?" selected":"")+'>'+esc(x.l)+'</option>').join("")+'</optgroup>').join("")+'</select>'}
+   return o+'</div>'}).join("")+'<div class="centre"><button class="big" onclick="lockIn()">Lock in my actions</button></div>'}
+ }else if(v.k==="vote"){
+  if(v.voted)h+='<div class="panel"><p class="done">🗳️ Vote cast. Watch the TV for the reveal.</p></div>';
+  else{h+='<div class="panel"><h2>'+v.d.i+" "+esc(v.d.t)+'</h2><p>'+esc(v.d.x)+'</p><div class="opts">'+v.d.opts.map(o=>'<button '+(o.dis?"disabled":"")+' class="'+(pick.vote===o.id?"on":"")+'" onclick="pick.vote=\''+o.id+'\';render()">'+(pick.vote===o.id?"☑ ":"☐ ")+esc(o.l)+'<span class="now">⚡ '+esc(o.now)+'</span></button>').join("")+'</div>'+
+   (v.extra&&v.extra.length?'<label class="lab">🤫 Private note (nobody sees this until the end)</label><select id="x">'+v.extra.map(x=>'<option value="'+esc(x.v)+'"'+(pick.x===x.v?" selected":"")+'>'+esc(x.l)+'</option>').join("")+'</select>':"")+
+   '<div class="centre"><button class="big" '+(pick.vote?"":"disabled")+' onclick="castVote()">Cast my secret vote</button></div></div>'}
+ }else if(v.k==="accuse"){
+  if(v.done)h+='<div class="panel"><p class="done">🫵 Accusation made. Watch the TV.</p></div>';
+  else h+='<div class="panel"><h2>🕵️ Who had the key?</h2>'+(v.ruled.length?'<p>📋 Your evidence rules out: <b>'+v.ruled.map(esc).join(", ")+'</b>.</p>':'<p>No hard evidence. Trust your instincts.</p>')+'<div class="opts">'+v.list.map(x=>'<button onclick="if(confirm(\'Accuse \'+'+JSON.stringify(x.n).replace(/"/g,"&quot;")+'+\'?\'))send({t:\'accuse\',j:'+x.j+'})">🫵 '+esc(x.n)+'</button>').join("")+'</div></div>';
+ }
+ h+=tools(v);
+ app().innerHTML=h;
+}
+function kidPick(r,id){pick[r]=(pick[r]||[])[0]===id?[]:[id];render()}
+function slotPick(r,i,id){pick[r]=pick[r]||[];pick[r][i]=id}
+function lockIn(){const ord={};V.slots.forEach(s=>ord[s.r]=(pick[s.r]||[]).filter(Boolean));send({t:"orders",round:V.round,ord})}
+function castVote(){const x=document.getElementById("x");pick.x=x?x.value:"";send({t:"ballot",dl:V.dl,opt:pick.vote,x:pick.x})}
+document.addEventListener("click",()=>{if(!wake&&navigator.wakeLock)navigator.wakeLock.request("screen").then(w=>wake=w).catch(()=>{})},{once:true});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!(conn&&conn.open)&&tries>=0){tries=0;connect()}});
+connect();
+</script></body></html>

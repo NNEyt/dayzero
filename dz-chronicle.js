@@ -45,7 +45,7 @@ function dzCopy(){
  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(done,fallback);else fallback();
 }
 function dzReplay(same){
- const names=S.pl.map(p=>p.n),o={mode:S.mode,diff:S.diff,len:S.len,goals:S.goalsOn,vote:S.vote,insider:S.insiderOn,seed:same?S.seed:""};
+ const names=S.pl.map(p=>p.n),o={kids:S.kids,mode:S.mode,diff:S.diff,len:S.len,goals:S.goalsOn,vote:S.vote,insider:S.insiderOn,seed:same?S.seed:""};
  try{localStorage.removeItem(DZ_SAVE)}catch(e){}start(names,o);
 }
 function dzChronicle(){
@@ -66,7 +66,7 @@ function dzChronicle(){
  const mins=S.startedAt?Math.max(1,Math.round((Date.now()-S.startedAt)/60000)):null;
  const fool=dzFool();
  return '<article class="dz-paper">'+
- '<header class="dz-mast dz-st" data-sfx="press" data-wait="900"><div class="dz-mast-top"><span>'+days[0]+' Edition</span><span>Kelderwick &amp; District</span><span>Price: one kind word</span></div><h1>The Mill Lane Chronicle</h1></header>'+
+ '<header class="dz-mast dz-st" data-sfx="press" data-wait="900"><div class="dz-mast-top"><span>'+(S.ep?'The Kelderwick Files · Episode '+S.ep+' of 3':days[0]+' Edition')+'</span><span>Kelderwick &amp; District</span><span>Price: one kind word</span></div><h1>The Mill Lane Chronicle</h1></header>'+
  '<div class="dz-st" data-sfx="press" data-wait="1100"><h2 class="dz-head">'+esc(z.e[0])+'</h2><p class="dz-stand">'+esc(z.e[1]+z.x)+'</p></div>'+
  '<div class="dz-stars dz-st" data-sfx="success" data-wait="900">Mission '+dzStars(z.m)+' · People '+dzStars(z.p)+' · Community '+dzStars(z.c)+'</div>'+
  '<div class="dz-cols"><div class="dz-col dz-lead"><h3>“We Just Kept the Kettle On”</h3><p>'+lead+'</p>'+(heroHtml?'<h3>Heroes of the Weekend</h3><ul>'+heroHtml+'</ul>':"")+'</div>'+
@@ -79,5 +79,5 @@ function dzChronicle(){
  '<h3>Field Notes</h3>'+NOTES.map(n=>'<p><span class="rel '+(n[0]==="Real"?"V":"U")+'">'+n[0]+'</span> '+n[1]+'</p>').join("")+'<p class="s">General guidance only. Check your local official advice.</p>'+
  '<h3>Talk About It</h3><p>1. Which rumour fooled you, and why?</p><p>2. What would our household need for 72 hours?</p><p>3. Who in our street might need help in a blackout?</p><p>4. Which decision would you change?</p><p>5. When is it right to share something you can\'t prove?</p>'+
  '<h3>What Happens Next?</h3><p><i>Two weeks later, the grid operator\'s report blames “equipment failure.” But one photo still bothers you: the substation lock wasn\'t forced. Someone had a key. To be continued…</i></p><p>'+esc(dzEpilogue())+'</p></details>'+
- '<div class="c"><button class="btn" onclick="dzReplay(false)">Play again (new town)</button><button class="btn b" onclick="dzReplay(true)">Replay this town</button><button class="btn b sm2" onclick="try{localStorage.removeItem(DZ_SAVE)}catch(e){};S=null;R()">Main menu</button></div>';
+ (S.ep?dzCampaignBox()+'<div class="c">':'<div class="c"><button class="btn" onclick="dzReplay(false)">Play again (new town)</button><button class="btn b" onclick="dzReplay(true)">Replay this town</button>')+'<button class="btn b sm2" onclick="try{localStorage.removeItem(DZ_SAVE)}catch(e){};S=null;R()">Main menu</button></div>';
 }

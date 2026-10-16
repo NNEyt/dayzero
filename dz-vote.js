@@ -6,6 +6,8 @@
   Every private screen looks the same for every player (same buttons, same extra field),
   so onlookers can't tell who is the Insider from the screen.
 */
+function dzLive(){return typeof dzLiveOn==="function"&&dzLiveOn()}
+function dzMissing(done){for(let j=0;j<S.pl.length;j++)if(!done(j))return j;return -1}
 function dzPassScreen(kicker,title,p,btn,onclick,extra){
  return '<div class="pn c dz-pass"><div class="dz24-eyebrow">'+kicker+'</div><h2>'+title+'</h2><p style="font-size:26px">Pass the device to<br><b style="color:#ffd166;font-size:46px">'+esc(p.n)+'</b></p>'+(extra||"")+'<p class="s">Everyone else, look away.</p><button class="btn" onclick="'+onclick+'">'+btn+'</button></div>';
 }
@@ -17,23 +19,25 @@ function dzGoalCard(i){
  return card({t:g.t,a:"echo",i:g.i,f:g.x,b:'Keep it to yourself. Steer the group towards it if you can. It is revealed and scored when the story ends.'+(S.insiderOn?'<br><br><b>🕵️ Remember:</b> one of you is the Insider. It is not you.':""),g:"YOUR PRIVATE GOAL",c:"#c593e5"});
 }
 function dzGoalsView(){
- const g=S.gi,p=S.pl[g.i];
+ const g=S.gi;g.seen=g.seen||{};if(g.i<0)return dzLivePanel("goals");const p=S.pl[g.i];
  const intro=g.i===0&&!g.show?'<div class="dz-tip"><b>💡 New: private goals.</b> Each of you is quietly hoping for something. You still win or lose together, but your own goal is revealed and scored at the end.'+(S.insiderOn?" <b>And one of you is not what they seem…</b>":"")+'</div>':"";
  if(!g.show)return intro+dzPassScreen("BEFORE CHAPTER 2 · PRIVATE GOALS","Something only you know",p,"I'm "+esc(p.n)+": show me","S.gi.show=true;dzSfx('flip');R()");
  return '<h2>'+esc(p.n)+', this is for you only</h2><div class="row dz-st" data-sfx="none">'+dzGoalCard(g.i)+'</div><div class="c"><button class="btn" onclick="dzGoalNext()">Got it · hide &amp; pass on</button></div>';
 }
 function dzGoalNext(){
- S.gi.i++;S.gi.show=false;
- if(S.gi.i>=S.pl.length){S.goalsShown=true;startRound();return}
+ const g=S.gi;g.seen=g.seen||{};if(g.i>=0)g.seen[g.i]=1;g.show=false;
+ g.i=dzLive()?-1:dzMissing(j=>g.seen[j]);
+ if(Object.keys(g.seen).length>=S.pl.length){dzGoalsDone();return}
  sv();R();
 }
+function dzGoalsDone(){if(S.ph!=="goals")return;S.goalsShown=true;startRound()}
 
 /* ---------- secret votes ---------- */
-function dzStartVote(){S.vt={i:0,show:false,sel:null,b:[]};S.ph="vote";dzSfx("vote");sv();R()}
+function dzStartVote(){S.vt={i:dzLive()?-1:0,show:false,sel:null,b:[],dl:S.dl};S.ph="vote";dzSfx("vote");sv();R()}
 function dzVoteOptionOk(o){return !(o[0]==="share"&&S.t.supplies<1)}
 function dzVoteView(){
- const d=DL[S.dl],vt=S.vt,p=S.pl[vt.i],n=S.pl.length;
- if(!vt.show)return dzPassScreen("SECRET VOTE · BALLOT "+(vt.i+1)+" OF "+n,d[2]+" "+d[1],p,"I'm "+esc(p.n)+": open my ballot","S.vt.show=true;dzSfx('flip');R()");
+ const d=DL[S.dl],vt=S.vt,n=S.pl.length;if(vt.i<0)return dzLivePanel("vote");const p=S.pl[vt.i];
+ if(!vt.show)return dzPassScreen("SECRET VOTE · BALLOT "+(vt.b.length+1)+" OF "+n,d[2]+" "+d[1],p,"I'm "+esc(p.n)+": open my ballot","S.vt.show=true;dzSfx('flip');R()");
  const me=vt.i,ins=me===S.insider;
  const others=S.pl.map((q,j)=>j).filter(j=>j!==me);
  let extra='<label class="dz-private">🤫 Private note <span class="s">(nobody sees this until the end)</span><select id="dz-x">';
@@ -47,11 +51,13 @@ function dzVoteView(){
 }
 function dzCast(){
  const vt=S.vt;if(!vt.sel)return;const x=document.getElementById("dz-x");
- vt.b.push({who:vt.i,opt:vt.sel,x:x?x.value:""});vt.i++;vt.show=false;vt.sel=null;dzSfx("vote");
- if(vt.i>=S.pl.length){dzTally();return}
+ if(!vt.b.some(b=>b.who===vt.i))vt.b.push({who:vt.i,opt:vt.sel,x:x?x.value:""});vt.show=false;vt.sel=null;dzSfx("vote");
+ vt.i=dzLive()?-1:dzMissing(j=>vt.b.some(b=>b.who===j));
+ if(vt.b.length>=S.pl.length){dzTally();return}
  sv();R();
 }
 function dzTally(){
+ if(S.ph!=="vote")return;
  const d=DL[S.dl],vt=S.vt,counts={};d[4].forEach(o=>counts[o[0]]=0);
  vt.b.forEach(b=>counts[b.opt]++);
  const max=Math.max(...Object.values(counts)),tied=Object.keys(counts).filter(k=>counts[k]===max);
@@ -94,15 +100,20 @@ function dzExonerated(){
  return dzShuffle(dzRng(S.seed,"exonerate"),inn).slice(0,Math.min(clues,inn.length-1));
 }
 function dzAccuseView(){
- const ac=S.ac,p=S.pl[ac.i];
+ const ac=S.ac;if(ac.i<0)return dzLivePanel("accuse");const p=S.pl[ac.i];
  const ex=dzExonerated();
  const evidence='<div class="pn"><h3>🔎 The evidence</h3>'+(ex.length?ex.map(j=>'<p>📋 Your evidence rules out <b>'+esc(S.pl[j].n)+'</b>.</p>').join(""):'<p>You found no hard evidence about the substation key. Trust your instincts.</p>')+'</div>';
- if(!ac.show)return (ac.i===0?'<h2>🕵️ Who had the key?</h2><div class="pn">The lights are coming back, but one question remains. One of you has been working against the hall all weekend. Each of you now names who you think the Insider is, in secret.</div>'+evidence:"")+dzPassScreen("THE ACCUSATION · BALLOT "+(ac.i+1)+" OF "+S.pl.length,"Who is the Insider?",p,"I'm "+esc(p.n)+": open my ballot","S.ac.show=true;dzSfx('flip');R()");
+ if(!ac.show)return (Object.keys(ac.b).length===0?'<h2>🕵️ Who had the key?</h2><div class="pn">The lights are coming back, but one question remains. One of you has been working against the hall all weekend. Each of you now names who you think the Insider is, in secret.</div>'+evidence:"")+dzPassScreen("THE ACCUSATION · BALLOT "+(Object.keys(ac.b).length+1)+" OF "+S.pl.length,"Who is the Insider?",p,"I'm "+esc(p.n)+": open my ballot","S.ac.show=true;dzSfx('flip');R()");
  return '<h2>'+esc(p.n)+': who do you accuse?</h2>'+evidence+'<div class="pn dz-ballot">'+S.pl.map((q,j)=>j===ac.i?"":'<button class="btn opt b" onclick="dzAccuse('+j+')">🫵 '+esc(q.n)+'</button>').join("")+'</div>';
 }
 function dzAccuse(j){
- const ac=S.ac;ac.b[ac.i]=j;ac.i++;ac.show=false;dzSfx("vote");
- if(ac.i>=S.pl.length){
+ const ac=S.ac;if(ac.i>=0&&j!==ac.i&&j>=0&&j<S.pl.length)ac.b[ac.i]=j;ac.show=false;dzSfx("vote");
+ ac.i=dzLive()?-1:dzMissing(k=>k in ac.b);
+ dzAccuseCheck();
+}
+function dzAccuseCheck(){
+ const ac=S.ac;if(S.ph!=="accuse")return;
+ if(Object.keys(ac.b).length>=S.pl.length){
   const c={};Object.values(ac.b).forEach(x=>c[x]=(c[x]||0)+1);const max=Math.max(...Object.values(c)),top=Object.keys(c).filter(k=>c[k]===max).map(Number);
   S.caught=top.length===1&&top[0]===S.insider;S.accTop=top;S.accVotes=c;S.accDone=true;S.ph="accrev";
  }
