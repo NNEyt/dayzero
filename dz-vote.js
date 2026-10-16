@@ -47,7 +47,7 @@ function dzVoteView(){
  if(!S.insiderOn)extra="";
  return '<div class="dz24-lead"><div class="dz24-eyebrow">SECRET BALLOT · '+esc(p.n).toUpperCase()+'</div><h2>'+d[2]+" "+d[1]+'</h2><p>'+d[3]+'</p></div><div class="pn dz-ballot">'+
  d[4].map((o,i)=>'<button class="btn opt '+(vt.sel===o[0]?"":"b")+'" '+(dzVoteOptionOk(o)?"":"disabled")+' onclick="S.vt.sel=\''+o[0]+'\';dzSfx(\'tick\');R()">'+(vt.sel===o[0]?"☑ ":"☐ ")+'Option '+"ABC"[i]+': '+o[1]+'<div>⚡ '+o[2]+'</div></button>').join("")+extra+
- '<div class="c"><button class="btn" '+(vt.sel?"":"disabled")+' onclick="dzCast()">Cast my vote &amp; hide</button></div></div>';
+ '<div class="c"><button class="btn" '+(vt.sel?"":'disabled aria-describedby="dz-vote-hint"')+' onclick="dzCast()">Cast my vote &amp; hide</button>'+(vt.sel?"":'<p class="dz-pick-hint" id="dz-vote-hint">☝️ Pick an option above first</p>')+'</div></div>';
 }
 function dzCast(){
  const vt=S.vt;if(!vt.sel)return;const x=document.getElementById("dz-x");

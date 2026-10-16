@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Day Zero: family playtest kit</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="alternate icon" href="favicon.ico">
+<meta name="theme-color" content="#0a0f1e">
+<link rel="stylesheet" href="fonts/fonts.css"><link rel="stylesheet" href="dz-docs.css">
+<style>
+.sheet{background:var(--paper);color:var(--ink);border-radius:var(--r-l);padding:28px 30px;margin:24px 0;box-shadow:0 8px 22px #0006}
+.sheet h2{color:#7a4b00;margin-bottom:4px}.sheet h3{color:#5b3a00;font-size:20px;margin:14px 0 4px}
+.sheet .s{color:var(--ink-2)}
+.sheet a{color:#7a4b00}
+.sheet ul{margin:4px 0}.sheet li{margin:2px 0}
+.sheet-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:2px solid #7a4b00;padding-bottom:6px;margin-bottom:10px;flex-wrap:wrap}
+.sheet-head .s{font-size:14px}
+.box{list-style:none;padding:0}.box li{padding-left:28px;position:relative}.box li::before{content:"";position:absolute;left:2px;top:4px;width:15px;height:15px;border:2px solid var(--ink);border-radius:3px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:6px 22px}
+.fill{display:inline-block;min-width:120px;border-bottom:1.5px solid var(--ink);height:1.1em;vertical-align:baseline}
+.fill.w{min-width:220px}
+.lines{margin:0 0 4px}.lines i{display:block;height:28px;border-bottom:1.5px solid #8a7a5c}
+.sheet table{font-size:14px}.sheet th,.sheet td{border:1px solid #9b8a66;padding:5px 6px}.sheet th{color:#5b3a00;font-size:13px}
+.obs td{height:34px}
+.card-fb{border:2px dashed #9b8a66;border-radius:var(--r-m);padding:14px 18px;margin:0 0 16px;break-inside:avoid}
+.card-fb h3{margin-top:0}
+.q{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border-bottom:1px solid #d9cba8;padding:4px 0;font-size:16px}
+.faces{white-space:nowrap;font-size:22px;letter-spacing:6px}
+.faces span{display:inline-block;width:32px;height:32px;line-height:30px;text-align:center;border:1.5px solid #9b8a66;border-radius:50%;letter-spacing:0;margin-left:2px}
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center}
+.controls label{font-weight:700}
+.controls input,.controls select{min-height:44px;font:17px var(--body);border-radius:var(--r-s);border:1px solid var(--line-2);background:#f6f4ee;color:#141a2c;padding:6px 10px}
+.controls button{min-height:48px;font:700 20px/1 var(--display);padding:10px 20px;border:0;border-radius:var(--r-m);background:linear-gradient(#ffd56f,var(--amber));color:var(--amber-ink);cursor:pointer;box-shadow:0 2px 0 #a8730d}
+.target{font-weight:700;color:#7a1f10}
+@media (max-width:640px){.sheet{padding:18px 14px}.cols{grid-template-columns:1fr}.q{grid-template-columns:1fr}.faces span{width:30px;height:30px}.obs-wrap{overflow-x:auto}}
+@page{size:A4;margin:11mm 12mm}
+@media print{
+ body{background:#fff!important;color:#000;font-size:11.5pt;line-height:1.35}
+ .wrap{max-width:none;padding:0}
+ .noprint{display:none!important}
+ .sheet{box-shadow:none;border-radius:0;margin:0;padding:0;background:#fff;color:#000;break-after:page;page-break-after:always}
+ #observer{break-after:auto;page-break-after:auto}
+ :root{color-scheme:light}html{background:#fff!important}
+ .sheet-head{flex-wrap:nowrap}.sheet-head h2{white-space:nowrap}.sheet-head .s{text-align:right}
+ .fill{min-width:90px}.fill.w{min-width:150px}
+ .cols p{margin:3pt 0}
+ #observer .cols{gap:0 16px}
+ .obs th{font-size:8.5pt;padding:3px 4px}.obs td{height:26px;padding:2px 4px;font-size:9pt}
+ .share{white-space:nowrap;font-size:8.5pt}
+ .sheet h2{font-size:22pt;color:#000}.sheet h3{font-size:13pt;color:#000;margin:8pt 0 2pt}
+ .sheet .s,.sheet-head .s{color:#333}
+ .sheet-head{border-color:#000}
+ .sheet a{color:#000;text-decoration:none}
+ .sheet th,.sheet td{border-color:#555;color:#000}.sheet th{color:#000}
+ .card-fb{border-color:#555;height:124mm;margin:0 0 6mm;padding:4mm 6mm;overflow:hidden}
+ .q{font-size:11pt;border-color:#bbb;padding:2pt 0}
+ .faces span{border-color:#555;width:26px;height:26px;line-height:24px;font-size:17px}
+ .lines i{height:22px;border-color:#888}
+ .obs td{height:26px}
+ .target{color:#000}
+}
+</style>
+</head><body><div class="wrap">
+<nav class="top noprint"><a href="index.html">← Back to the game</a><a href="rules.html">📖 How to play</a></nav>
+<h1 class="noprint">PLAYTEST KIT</h1>
+<p class="tag noprint">Host checklist, one feedback card per player, and an observer sheet. Prints on A4.</p>
+<div class="card noprint">
+ <form class="controls" onsubmit="event.preventDefault();window.print()">
+  <label for="n">Players</label><select id="n" onchange="build()"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+  <label for="names">Names <span class="s">(optional, comma-separated)</span></label><input id="names" placeholder="Alex, Priya, Tom, Nan" oninput="build()">
+  <button type="submit">🖨️ Print the kit</button>
+ </form>
+ <p class="s c">Prints 1 checklist page, 1 page per 2 feedback cards, and 1 observer sheet. Use “Save as PDF” to keep a copy.</p>
+</div>
+
+<!-- ============ 1. HOST CHECKLIST ============ -->
+<section class="sheet" id="host">
+<div class="sheet-head"><h2>🕯️ Day Zero playtest: host checklist</h2><span class="s">Session date: <span class="fill"></span></span></div>
+<p class="s">Goal: check that the game creates <b>table talk, ownership, tension and “again!”</b>, not just polish. Observe quietly: don't explain beyond what the game says, and note every “what do we do now?”.</p>
+<div class="cols">
+<div>
+<h3>Before they arrive</h3>
+<ul class="box">
+ <li>Open the game on the TV/laptop. Full screen (F11). Sound on (🔊 top right).</li>
+ <li>Use the <b>same seed for every group</b>: open <b>…/?seed=K7Q2</b> (or type K7Q2 in ⚙️ Game options → Town seed).</li>
+ <li>Start fresh with <b>▶ Play</b>, not “Continue saved game”.</li>
+ <li>Phones charged and on the same internet as the TV (controller mode only).</li>
+ <li>Recording consent from everyone (audio is enough). Print the cards; pens ready.</li>
+</ul>
+<h3>Settings for this session</h3>
+<ul class="box">
+ <li><b>Length:</b> Quick Night (≈30 min). For the variety test, play <b>two Quick Nights back to back</b> (new seed for the second).</li>
+ <li><b>Screens:</b> TV + phone controllers if the Wi-Fi is good; otherwise TV only.</li>
+ <li><b>Difficulty:</b> Normal. <b>Personal goals:</b> on. <b>Secret votes:</b> on.</li>
+ <li><b>Insider:</b> off for a first family game; on only with 3+ players aged 12+.</li>
+ <li>Tick 🧒 next to younger players (7–11). With 5+ players they get Kit or Bea.</li>
+</ul>
+<h3>During play</h3>
+<ul class="box">
+ <li>Note the clock time when Play is pressed and at the <b>first decision</b> (target: <span class="target">under 2 min</span>).</li>
+ <li>Hand the observer sheet to a second adult if you're playing.</li>
+ <li>At the end, let them read the Chronicle. Note if anyone shares or photographs it.</li>
+</ul>
+</div>
+<div>
+<h3>📱 If phones won't connect</h3>
+<ul class="box">
+ <li>Every device needs <b>internet</b>, even on the same Wi-Fi. Try one phone on mobile data.</li>
+ <li>Strict Wi-Fi (school, office, hotel) can block the link. Use a phone hotspot for the TV, or switch mode.</li>
+ <li>A phone that slept or reloaded: reopen the same QR link; it rejoins and gets its screen back.</li>
+ <li>One phone stuck? Use its <b>“on this screen”</b> button on the TV. Nobody holds up the game.</li>
+ <li>Lobby says the link failed: press <b>Play without phones</b>.</li>
+</ul>
+<h3>📺 Falling back to TV mode</h3>
+<ul class="box">
+ <li>Mid-game: carry on using the TV buttons; phones are optional.</li>
+ <li>Before starting: ⚙️ Game options → Screens → <b>TV only</b>, or <b>TV + phone briefings</b> (QR codes, no connection needed).</li>
+ <li>Keep the same seed so results stay comparable.</li>
+</ul>
+<h3>After the game (5 min)</h3>
+<ul class="box">
+ <li>Hand out the feedback cards before any discussion.</li>
+ <li>Ask: Which decision did you argue about most? Did anyone feel left out or told what to do? What would you tell a friend this game is about?</li>
+ <li>Note if anyone asks <b>“Can we play again?”</b> unprompted.</li>
+ <li>Next day: text everyone “What's one moment you remember?” (target <span class="target">≥75%</span> can retell one).</li>
+</ul>
+</div>
+</div>
+<p class="s">Group: <span class="fill w"></span> Seed: <span class="fill"></span> Mode: <span class="fill"></span> Length: <span class="fill"></span></p>
+</section>
+
+<!-- ============ 2. FEEDBACK CARDS ============ -->
+<div id="cards"></div>
+
+<!-- ============ 3. OBSERVER SHEET ============ -->
+<section class="sheet" id="observer">
+<div class="sheet-head"><h2>👀 Observer sheet</h2><span class="s">Observer: <span class="fill"></span></span></div>
+<p class="s">Stay silent. Tally with strokes (||||). Write down exact words when someone is lost.</p>
+<div class="cols">
+ <p>Group / players &amp; ages: <span class="fill w"></span></p>
+ <p>Seed · mode · length · difficulty: <span class="fill w"></span></p>
+ <p>Time Play pressed: <span class="fill"></span></p>
+ <p>Time of first decision: <span class="fill"></span> <span class="s">(target <span class="target">&lt; 2 min</span>)</span></p>
+ <p>Time the Chronicle appeared: <span class="fill"></span></p>
+ <p>Total length: <span class="fill"></span> min <span class="s">(Quick Night target 25–35)</span></p>
+</div>
+<div class="obs-wrap"><table class="obs">
+<tr><th>Ch.</th><th>Minutes</th><th>Different speakers</th><th>Top speaker's share of talk</th><th>😂 Laughs</th><th>🗣️ Arguing / debate</th><th>❓ Got lost (“what now?”)</th><th>💤 Downtime / who was idle</th><th>✖ Blocked actions</th></tr>
+<tr><td>1</td><td></td><td></td><td class="share">&lt;⅓ · ⅓–½ · &gt;½</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>2</td><td></td><td></td><td class="share">&lt;⅓ · ⅓–½ · &gt;½</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>3</td><td></td><td></td><td class="share">&lt;⅓ · ⅓–½ · &gt;½</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>4</td><td></td><td></td><td class="share">&lt;⅓ · ⅓–½ · &gt;½</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>5</td><td></td><td></td><td class="share">&lt;⅓ · ⅓–½ · &gt;½</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>6</td><td></td><td></td><td class="share">&lt;⅓ · ⅓–½ · &gt;½</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>7</td><td></td><td></td><td class="share">&lt;⅓ · ⅓–½ · &gt;½</td><td></td><td></td><td></td><td></td><td></td></tr>
+</table></div>
+<p class="s">Quick Night has 4 chapters (rows 1–4). Targets: top speaker under 40% of the talk; blocked actions under 10%.</p>
+<h3>Where people got lost (screen + exact words)</h3><div class="lines"><i></i><i></i><i></i></div>
+<h3>Best moments: laughter, gasps, arguments worth keeping</h3><div class="lines"><i></i><i></i></div>
+<h3>Anyone left out, or one player telling others what to do?</h3><div class="lines"><i></i><i></i></div>
+<div class="cols">
+ <p>“Can we play again?” unprompted: ☐ yes ☐ no &nbsp; by: <span class="fill"></span></p>
+ <p>Chronicle shared, saved or photographed: ☐ yes ☐ no</p>
+</div>
+</section>
+</div>
+<script>
+const QS=[["😀 How fun was it overall?",""],["🧭 I understood what to do next","most of the time"],["🙋 I made a decision that felt like <b>mine</b>",""],["😬 It felt tense and exciting",""],["⏱️ The length felt about right",""],["🔁 I'd like to play again",""]];
+const FACES='<span class="faces" aria-label="circle one: 1 to 5"><span>😞</span><span>🙁</span><span>😐</span><span>🙂</span><span>😄</span></span>';
+function card(name,i){
+ return '<div class="card-fb"><div class="sheet-head"><h3>🗒️ Feedback card · '+(name?esc(name):'Player '+(i+1)+': <span class="fill"></span>')+'</h3><span class="s">Age: <span class="fill" style="min-width:50px"></span> Role(s): <span class="fill"></span></span></div>'+
+ '<p class="s" style="margin:2px 0 4px">Circle one face for each line. There are no wrong answers.</p>'+
+ QS.map(q=>'<div class="q"><span>'+q[0]+(q[1]?' <span class="s">('+q[1]+')</span>':'')+'</span>'+FACES+'</div>').join("")+
+ '<h3>⭐ Best moment</h3><div class="lines"><i></i><i></i></div><h3>❓ What was confusing?</h3><div class="lines"><i></i><i></i></div></div>';
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function build(){
+ const q=new URLSearchParams(location.search);
+ const names=(document.getElementById("names").value||q.get("names")||"").split(",").map(s=>s.trim()).filter(Boolean);
+ let n=+document.getElementById("n").value;if(names.length>n){n=Math.min(8,names.length);document.getElementById("n").value=n}
+ let h="";for(let i=0;i<n;i+=2){h+='<section class="sheet cards">'+(i===0?'<div class="sheet-head"><h2>🗒️ Player feedback cards</h2><span class="s">Fill in before talking about the game · cut along the dashed line</span></div>':'')+card(names[i],i)+(i+1<n?card(names[i+1],i+1):'')+'</section>'}
+ document.getElementById("cards").innerHTML=h;
+}
+(function(){const q=new URLSearchParams(location.search);const p=+q.get("players");if(p>=1&&p<=8)document.getElementById("n").value=p;if(q.get("names"))document.getElementById("names").value=q.get("names");build()})();
+</script>
+<noscript><p class="c">Turn on JavaScript to print the player feedback cards.</p></noscript>
+</body></html>

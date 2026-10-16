@@ -9,6 +9,8 @@ It's a static site: plain HTML, CSS and JavaScript, no build step and no server.
 ## Play
 
 - **Latest version:** `index.html`, the site root.
+- **Rules:** [`rules.html`](rules.html), a short, player-friendly how-to-play page with a “Teach it in 2 minutes” box. It's also linked from the title screen.
+- **Playtest kit:** [`playtest.html`](playtest.html) prints on A4: a host checklist, one feedback card per player (`?players=6&names=Alex,Priya`) and an observer sheet.
 - **Every older version:** [`versions.html`](versions.html). The original game is now at `dayzero1.html`. 2.0–2.3 and the classic 2.4 build each keep their own path and their own save.
 - **Phones as controllers (optional):** in *TV + phone controllers* mode, each player scans a QR code and their phone becomes their controller (`play.html`): private cards, secret goal, their own actions and secret votes. Anyone without a phone plays on the TV, as usual. See [Phone controllers](#phone-controllers) below.
 - **Phones as briefings (optional):** the older *TV + phone briefings* mode still works. Each player scans a QR code to read their private briefing on `phone.html`; there's no connection and everything else happens on the TV.
@@ -104,6 +106,7 @@ The look is a UK street during a power cut: deep navy night, warm torch-amber hi
 |---|---|
 | `index.html` | The latest game. It loads the files below in order. |
 | `dz-main.css`, `dz24.css`, `dz-juice.css` | Base styles, 2.4 card and briefing styles, and styles for the new screens and animations |
+| `rules.html`, `playtest.html`, `dz-docs.css` | Player rules page and printable family playtest kit (Torchlight styles, A4 print CSS) |
 | `dz-theme.css`, `dz-phone.css`, `fonts/`, `art/skyline.svg` | The Torchlight theme (TV and phone), self-hosted fonts and the background skyline |
 | `dz-art.js` | Inline SVG icons for roles and resources, and ring-shaped threat clocks (presentation only) |
 | `story21.js`, `story23.js` | Story chapters, breaks, council scenes and result prose (shared with 2.1–2.4) |

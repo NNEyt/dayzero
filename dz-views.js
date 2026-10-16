@@ -29,6 +29,7 @@ function title(){
  [0,1,2,3].map(row).join("")+'<details class="dz-more"'+((prev.names||[]).length>4?" open":"")+'><summary>➕ 5–8 players (adds Kit 👟, Bea 🫖, Dev 🔧 and Grace 🏛️)</summary>'+[4,5,6,7].map(row).join("")+'<p class="s">Tick 🧒 for younger players (about 7–11): with 5+ players they get Kit or Bea, kid-friendly roles with one simple job a chapter.</p></details>'+
  '<div class="dz-len" role="radiogroup" aria-label="Game length">'+["full","quick"].map(k=>'<label class="dz-chip-radio"><input type="radio" name="dzlen" value="'+k+'"'+((prev.len||"full")===k?" checked":"")+'> <b>'+DZ_LEN[k].label+'</b><span>'+DZ_LEN[k].mins+'</span></label>').join("")+'</div>'+
  '<div class="c"><button class="btn dz-play" onclick="go()">▶ Play</button>'+(saved?'<button class="btn b" onclick="cont()">Continue saved game</button>':"")+'</div>'+
+ '<p class="c dz-rules-link"><a href="rules.html">📖 New here? How to play (a 2-minute teach)</a></p>'+
  '<details class="dz-opts"'+(seedQ?" open":"")+'><summary>⚙️ Game options</summary>'+
  '<label>Screens'+sel("dz-mode",[["tv","TV only · everyone sees the role briefings"],["phones","TV + phone briefings · private briefings by QR code"],["live","📱 TV + phone controllers · phones vote and act (beta, needs internet)"]],prev.mode||"tv")+'</label>'+
  '<label>Difficulty'+sel("dz-diff",Object.keys(DZ_DIFF).map(k=>[k,DZ_DIFF[k].label+" · "+DZ_DIFF[k].blurb]),prev.diff||"normal")+'</label>'+
