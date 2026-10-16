@@ -1,5 +1,6 @@
 // Day Zero headless simulator: plays complete games in jsdom by pressing the real buttons.
 // usage: node sim.js N [smart|random] [filter-json]
+//   env DZ_FORCE='{"DL1":"keep","DL2":"ref","card":0}'  force dilemma options / story-card choices (branch tests)
 //   env DZ_PLAYERS='[1,2,...]'  player counts (default 1–8)
 //   env DZ_SUITE=campaign      play full 3-episode campaigns instead of single games
 //   env DZ_URL=http://localhost:8765/   where the site is served
@@ -9,6 +10,13 @@ const {JSDOM,VirtualConsole}=require("jsdom");
 const N=+process.argv[2]||3,POLICY=process.argv[3]||"smart",ONLY=process.argv[4]?JSON.parse(process.argv[4]):{};
 const BASE=process.env.DZ_URL||"http://localhost:8765/",SUITE=process.env.DZ_SUITE||"games";
 const BAD=/undefined|NaN|\[object|\{WATER_WHEN\}/;
+// player-facing wording that the Day-by-Day structure retired
+const OLDTERM=/\b[Cc]hapters?\b|\bRounds?\b|\b(?:[Tt]his|[Ee]ach|[Ee]very|[Nn]ext|[Ff]inal|[Ll]ater|[Pp]er|[Ss]ame) rounds?\b|Quick Night/;
+const DAYPH=["news","discuss","decide","night"];
+// DZ_FORCE='{"DL1":"keep","DL2":"ref","card":1}' forces dilemma options (decided together) and story-card choices
+const FORCE=process.env.DZ_FORCE?JSON.parse(process.env.DZ_FORCE):{};
+// DZ_EXPECT='["Sam on the Radio","A Door Closes"]'  text that must appear somewhere in a (full-length) game
+const EXPECT=process.env.DZ_EXPECT?JSON.parse(process.env.DZ_EXPECT):[];
 async function openGame(errs){
  const vc=new VirtualConsole();vc.on("jsdomError",e=>errs.push(e.message));vc.on("error",e=>errs.push(String(e)));
  const dom=await JSDOM.fromURL(BASE+"index.html",{runScripts:"dangerously",resources:"usable",virtualConsole:vc,pretendToBeVisual:true,beforeParse(w){w.scrollTo=()=>{}}});
@@ -55,7 +63,8 @@ async function playOne(w,cfg,rnd,res,episodeBtn){
  }
  await new Promise(r=>setTimeout(r,5));
  if(net){const keys=JSON.parse(E("JSON.stringify(S.lv.keys)"));keys.forEach((k,p)=>{if(p%3!==2&&!net.phones[p])net.join(p,k)});await new Promise(r=>setTimeout(r,5));net.flush()}
- let coldWords=0,coldClicks=null,coldDone=false,same=0,lastKey="",guard=0;
+ let coldWords=0,coldClicks=null,coldDone=false,same=0,lastKey="",guard=0,lastView="",seenDay=new Set(),allText="";
+ const S_has_track=()=>!!app().querySelector(".dz-track");
  const st=res.st;
  while(guard++<900){
   if(net){
@@ -67,30 +76,32 @@ async function playOne(w,cfg,rnd,res,episodeBtn){
   const ph=E("S?S.ph:'title'");if(ph==="title")throw new Error("back at title");
   const txt=app().textContent;st.screens++;
   if(BAD.test(txt))res.bad.add(ph+":"+(txt.match(/.{0,40}(undefined|NaN|\[object|\{WATER_WHEN\}).{0,20}/)||[""])[0]);
+  if(EXPECT.length)allText+=" "+txt;
+  {const m=txt.match(OLDTERM);if(m)res.bad.add("old wording on "+ph+": "+txt.slice(Math.max(0,m.index-30),m.index+30).replace(/\s+/g," "));}
+  {const vk=ph+"|"+E("S.round")+"|"+(ph==="vote"?E("S.vt.show+''+S.vt.b.length"):ph==="goals"?E("S.gi.show+''+S.gi.i"):ph==="accuse"?E("S.ac.show+''+Object.keys(S.ac.b).length"):E("S.lobby||S.prevPending?'pre':''"));if(vk!==lastView){if(process.env.DZ_VDBG)console.log("VIEW",vk);lastView=vk;st.views++;if(!["vote","vreveal","goals","accuse","accrev","end"].includes(ph)){const dk=E("S.round")+ph+(E("S.lobby||S.prevPending")?"pre":"");if(!seenDay.has(dk)){seenDay.add(dk);st.dayViews++}}}}
   if(net)for(const p in net.phones){const v=JSON.stringify(net.phones[p].v||{});if(BAD.test(v.replace(/"(undefined)"/g,"")))res.bad.add("phone view:"+v.slice(0,120))}
-  if(!coldDone){coldWords+=txt.split(/\s+/).filter(Boolean).length;if(ph==="ord"){coldDone=true;coldClicks=clicks}}
+  if(!coldDone){coldWords+=txt.split(/\s+/).filter(Boolean).length;if(ph==="decide"&&E("!(S.dl&&!S.dc)")){coldDone=true;coldClicks=clicks}}
   if(ph==="end")break;
   const key=ph+E("S.round")+E("S.pi")+E("JSON.stringify([S.show,S.vt,S.gi,S.ac,S.ev&&S.ev.done,S.dc,S.lobby,S.prevPending,S.lv&&S.lv.read])");
   if(key===lastKey){if(++same>4)throw new Error("stuck in "+ph+(process.env.DZ_DEBUG?" ep="+E("S.ep")+" round="+E("S.round")+" btns="+btns().map(b=>b.getAttribute("onclick")).join("|")+" errs="+errs.slice(-3).join(" ; "):""))}else same=0;lastKey=key;
-  if(ph==="chapter"){
+  if(DAYPH.includes(ph)&&!E("!!S.lobby||!!S.prevPending")&&!S_has_track())errs.push("no story track on "+ph);
+  if(ph==="news"){
    if(E("!!S.lobby"))click("dzLiveBegin");
    else if(E("!!S.prevPending")){if(!app().innerHTML.includes("Previously on"))errs.push("no previously-on screen");res.st.prev++;click("S.prevPending=false")}
-   else click("dzGo('intel')",false)||click("dz21Continue");
+   else if(E("!!(S.ev&&!S.ev.done)")){const o=btns().filter(b=>(b.getAttribute("onclick")||"").includes("dzEventChoose"));const story=E("!!dzEventById(S.ev.id).story");
+    let pick=o[Math.floor(rnd()*o.length)];const fi=story&&FORCE.card!==undefined?o.find(b=>b.getAttribute("onclick")==="dzEventChoose("+FORCE.card+")"):null;if(fi)pick=fi;
+    if(story)st.storyCards++;pick.click();clicks++;st.events++}
+   else{if(E("dzRoundIdx()>0")&&!app().innerHTML.includes("Previously…")&&E("!!S.prevDay"))errs.push("no Previously recap on day "+E("dzDayNo()"));click("dzGo('discuss')")}
   }
-  else if(ph==="brief"){
-   if(E("!!(S.ev&&!S.ev.done)")){const o=btns().filter(b=>(b.getAttribute("onclick")||"").includes("dzEventChoose"));o[Math.floor(rnd()*o.length)].click();clicks++;st.events++}
-   else click("dzGo('intel')");
-  }
-  else if(ph==="intel"){
+  else if(ph==="discuss"){
    if(net&&rnd()<0.3){const unread=JSON.parse(E("JSON.stringify(S.pl.map((p,j)=>j).filter(j=>!S.lv.read[j]))"));const b=btns().find(b=>unread.some(j=>(b.getAttribute("onclick")||"")==="dzLiveShowHand("+j+")"));if(b){b.click();continue}}
-   click("next()",false)||click("dz24FinishBriefings",false)||E("next()")}
-  else if(ph==="break")click("dz21Continue");
-  else if(ph==="council"){
-   if(E("!!S.dl&&!S.dc")){
-    if(btns().some(b=>(b.getAttribute("onclick")||"").includes("dzStartVote"))&&rnd()<0.85){click("dzStartVote");st.votes++}
-    else{click("S.together=1",false);
-     if(E("!!S.dl&&!S.dc")){const o=btns().filter(b=>(b.getAttribute("onclick")||"").startsWith("choose("));if(!o.length)throw new Error("no dilemma options");o[Math.floor(rnd()*o.length)].click();clicks++}}
-   }else click("dzGo('ord')");
+   click("dzGo('decide')")}
+  else if(ph==="decide"&&E("!!S.dl&&!S.dc")){
+   const forced=FORCE[E("S.dl")];
+   if(!forced&&btns().some(b=>(b.getAttribute("onclick")||"").includes("dzStartVote"))&&rnd()<0.85){click("dzStartVote");st.votes++}
+   else{click("S.together=1",false);
+    if(E("!!S.dl&&!S.dc")){const o=btns().filter(b=>(b.getAttribute("onclick")||"").startsWith("choose("));if(!o.length)throw new Error("no dilemma options");
+     let pick=o[Math.floor(rnd()*o.length)];if(forced){const f=o.find(b=>b.getAttribute("onclick")==="choose('"+forced+"')");if(f)pick=f}pick.click();clicks++}}
   }
   else if(["vote","goals","accuse"].includes(ph)&&E("(S.vt&&S.ph==='vote'&&S.vt.i<0)||(S.ph==='goals'&&S.gi.i<0)||(S.ph==='accuse'&&S.ac.i<0)")){
    // live panel: wait for phones, or use the TV for someone without one
@@ -113,7 +124,7 @@ async function playOne(w,cfg,rnd,res,episodeBtn){
     pick.click();clicks++}
   }
   else if(ph==="accrev")click("S.ph='end'");
-  else if(ph==="ord"){
+  else if(ph==="decide"){
    if(net&&same===0&&Object.keys(net.phones).length&&rnd()<0.7)continue; // give phones a moment
    for(const sel of app().querySelectorAll("select[id^=o_]")){const o=[...sel.options].map(x=>x.value);
     let v;const used=[...app().querySelectorAll("select[id^=o_]")].map(x=>x.value);
@@ -122,8 +133,9 @@ async function playOne(w,cfg,rnd,res,episodeBtn){
    for(const r of E("dzRoles().filter(dzIsKid)")){const o=btns().filter(b=>(b.getAttribute("onclick")||"").startsWith("dzKidPick('"+r+"'"));if(o.length&&rnd()<0.95)o[Math.floor(rnd()*o.length)].click()}
    click("dz24LockTeam");
   }
-  else if(ph==="res"){JSON.parse(E("JSON.stringify(S.report||[])")).forEach(r=>r.status==="blocked"?st.blocked++:st.done++);click("escal()")}
-  else if(ph==="esc")click("nextRound()");
+  else if(ph==="night"){JSON.parse(E("JSON.stringify(S.report||[])")).forEach(r=>r.status==="blocked"?st.blocked++:st.done++);
+   if(!app().querySelector(".dz-cliff")&&E("!S.broke"))errs.push("night without cliffhanger on day "+E("dzDayNo()"));
+   st.days++;click("nextRound()")}
   else throw new Error("unknown phase "+ph);
   await null;
  }
@@ -133,13 +145,14 @@ async function playOne(w,cfg,rnd,res,episodeBtn){
  if(BAD.test(app().textContent))res.bad.add("end:"+(app().textContent.match(/.{0,40}(undefined|NaN).{0,20}/)||[""])[0]);
  const line=E("dzEmojiLine()");if(BAD.test(line))errs.push("bad emoji line "+line);
  const z=JSON.parse(E("JSON.stringify(ending())"));
+ allText+=" "+app().textContent;if(!E("S.broke"))for(const x of EXPECT)if(!allText.includes(x))errs.push("expected text missing: "+x);
  return {ending:z.e[0],stars:z.m+z.p+z.c,broke:E("S.broke")||null,seed:E("S.seed"),caught:E("S.caught||false"),insider:E("S.insider"),sab:E("S.sab.length"),
   goals:JSON.parse(E("JSON.stringify(dzGoalResults().map(g=>({k:g.key||'insider',met:g.met})))")),
   fin:JSON.parse(E("JSON.stringify({t:S.t,a:S.a,found:dzFoundCount(),hub:S.hub})")),coldWords,coldClicks,ex:E("S.v.extra.map(e=>e.id).join(',')"),
   phonesIn:net?Object.keys(net.phones).length:0};
 }
 async function game(cfg,seedNum){
- const res={cfg,errs:[],bad:new Set(),st:{blocked:0,done:0,votes:0,events:0,screens:0,phoneOrders:0,phoneVotes:0,drops:0,rejoins:0,tvFallback:0,prev:0}};
+ const res={cfg,errs:[],bad:new Set(),st:{blocked:0,done:0,votes:0,events:0,screens:0,views:0,dayViews:0,days:0,storyCards:0,phoneOrders:0,phoneVotes:0,drops:0,rejoins:0,tvFallback:0,prev:0}};
  let s=seedNum;const rnd=()=>{s=(s*1103515245+12345)%2147483648;return s/2147483648};
  const w=await openGame(res.errs);
  if(SUITE==="campaign"){
@@ -188,6 +201,7 @@ async function game(cfg,seedNum){
  const ins=ok.filter(r=>r.cfg.insider);if(ins.length)console.log("insider games",ins.length,"caught",ins.filter(r=>r.caught).length,"avg sabotage",(ins.reduce((x,r)=>x+r.sab,0)/ins.length).toFixed(2));
  const gm={};ok.forEach(r=>r.goals.forEach(g=>{gm[g.k]=gm[g.k]||[0,0];gm[g.k][1]++;if(g.met)gm[g.k][0]++}));console.log("goal hit rates",JSON.stringify(Object.fromEntries(Object.entries(gm).map(([k,v])=>[k,Math.round(100*v[0]/v[1])+"%/"+v[1]]))));
  const cold=ok.filter(r=>r.coldClicks!=null&&r.cfg.mode!=="live");if(cold.length)console.log("cold open (tv/phones): avg clicks to first orders",(cold.reduce((x,r)=>x+r.coldClicks,0)/cold.length).toFixed(1),"avg words",Math.round(cold.reduce((x,r)=>x+r.coldWords,0)/cold.length));
+ console.log("days played",sum("days"),"distinct screens per Day (excluding votes/goals/accusation)",(sum("dayViews")/Math.max(1,sum("days"))).toFixed(2),"story cards",sum("storyCards"));
  console.log("avg votes/game",(sum("votes")/ok.length).toFixed(2),"avg crossroads/game",(sum("events")/ok.length).toFixed(2),"avg screens",Math.round(sum("screens")/ok.length));
  require("fs").writeFileSync(process.env.DZ_OUT||"sim-results.json",JSON.stringify(res,null,1));
 })();

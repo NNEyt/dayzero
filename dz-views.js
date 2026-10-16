@@ -1,8 +1,7 @@
 /*
   Day Zero views for the main build (index.html).
-  Cold open, compact council, just-in-time tips, Crossroads cards, mode-aware briefings.
-  Old 2.4 views (title/vTeam/vBrief/vPass/vCouncil/vEsc) are replaced here; the story and
-  rules text they used are kept and shown when they matter instead of all at the start.
+  Just-in-time tips, story and Crossroads cards, mode-aware briefings.
+  Every Day has four beats: Morning News (vNews), Discuss (vDiscuss), Decide (vDecide) and Night (vNight).
 */
 function dzToast(msg){
  let t=document.getElementById("dz-toast");
@@ -26,7 +25,7 @@ function title(){
  const sel=(id,opts,cur)=>'<select id="'+id+'">'+opts.map(([v,l])=>'<option value="'+v+'"'+(v===cur?" selected":"")+'>'+l+'</option>').join("")+'</select>';
  return '<h1 class="dz-title">DAY ZERO</h1><p class="c dz-tagline"><i>The lights go out. Nobody has the whole picture.</i></p>'+
  '<div class="pn dz-start"><h2>Who is playing?</h2>'+
- [0,1,2,3].map(row).join("")+'<details class="dz-more"'+((prev.names||[]).length>4?" open":"")+'><summary>➕ 5–8 players (adds Kit 👟, Bea 🫖, Dev 🔧 and Grace 🏛️)</summary>'+[4,5,6,7].map(row).join("")+'<p class="s">Tick 🧒 for younger players (about 7–11): with 5+ players they get Kit or Bea, kid-friendly roles with one simple job a chapter.</p></details>'+
+ [0,1,2,3].map(row).join("")+'<details class="dz-more"'+((prev.names||[]).length>4?" open":"")+'><summary>➕ 5–8 players (adds Kit 👟, Bea 🫖, Dev 🔧 and Grace 🏛️)</summary>'+[4,5,6,7].map(row).join("")+'<p class="s">Tick 🧒 for younger players (about 7–11): with 5+ players they get Kit or Bea, kid-friendly roles with one simple job a Day.</p></details>'+
  '<div class="dz-len" role="radiogroup" aria-label="Game length">'+["full","quick"].map(k=>'<label class="dz-chip-radio"><input type="radio" name="dzlen" value="'+k+'"'+((prev.len||"full")===k?" checked":"")+'> <b>'+DZ_LEN[k].label+'</b><span>'+DZ_LEN[k].mins+'</span></label>').join("")+'</div>'+
  '<div class="c"><button class="btn dz-play" onclick="go()">▶ Play</button>'+(saved?'<button class="btn b" onclick="cont()">Continue saved game</button>':"")+'</div>'+
  '<p class="c dz-rules-link"><a href="rules.html">📖 New here? How to play (a 2-minute teach)</a></p>'+
@@ -51,8 +50,8 @@ function go(x){
 }
 function cont(){
  try{S=JSON.parse(dzSaved())}catch(e){S=null}
- if(!S||!S.v){S=null;dzToast("That save is from an older version. Starting fresh.");try{localStorage.removeItem(DZ_SAVE)}catch(e){}R();return}
- dzInit();dz21Init();R();
+ if(!S||!S.v||S.ver!==DZ_SAVE_VER){S=null;dzToast("That save is from an older version. Starting fresh.");try{localStorage.removeItem(DZ_SAVE)}catch(e){}R();return}
+ dzInit();dz21Init();dzArcPrepDilemmas();R();
 }
 function restart(){if(confirm("Start a new game? The saved game will be deleted.")){try{localStorage.removeItem(DZ_SAVE)}catch(e){}S=null;R()}}
 
@@ -62,7 +61,7 @@ function board(){
  return '<div class="pn c">'+tk("Supplies","supplies","🥫")+tk("Health","health","❤️")+tk("Cohesion","cohesion","🤝")+tk("Trust","trust","🏘️")+
  '<div style="margin:6px 0"><span data-trk="fuel" data-v="'+a.fuel+'">⛽ Fuel <b>'+a.fuel+'</b></span> · <span data-trk="signal" data-v="'+a.signal+'">📻 Signal <b>'+a.signal+'</b></span> · <span data-trk="medkits" data-v="'+a.medkits+'">✚ Medkits <b>'+a.medkits+'</b></span> · <span data-trk="contacts" data-v="'+a.contacts+'">🏠 Contacts <b>'+a.contacts+'</b></span> · ⏳ Crisis <b>'+S.crisis+'/'+dzCrisisMax()+'</b></div>'+
  '<div>MISSION: <span class="hb '+(S.hub.warmth?"on":"")+'">🔥 Warmth</span><span class="hb '+(S.hub.water?"on":"")+'">💧 Water</span><span class="hb '+(S.hub.info?"on":"")+'">📻 Information</span></div>'+
- '<div class="s">Chapter '+dzChapterNo()+' of '+dzChapters()+' · Coordinator: <b>'+esc(S.pl[S.co].n)+'</b> · '+dzDiff().label+' · Town seed <b class="dz-seed">'+esc(S.seed)+'</b></div>'+
+ '<div class="s">'+dzDayLabel()+' · '+esc(dzActLabel())+' · Coordinator: <b>'+esc(S.pl[S.co].n)+'</b> · '+dzDiff().label+' · Town seed <b class="dz-seed">'+esc(S.seed)+'</b></div>'+
  '<button class="btn b sm2" onclick="S.g=!S.g;R()">'+(S.g?"Hide help":"❓ What do these mean?")+'</button><button class="btn b sm2" onclick="S.rr=!S.rr;R()">'+(S.rr?"Hide roles":"📖 Roles & how to win")+'</button></div>'+
  (S.g?guideH():"")+(S.rr?dzRulesPanel():"");
 }
@@ -81,94 +80,152 @@ function dzClockStrip(){
  return '<div class="dz-strip">'+A.map(id=>{const x=S.th[id],n=dzClock(id),hot=x.clock>=n-1;return '<div class="dz-st dz-strip-i'+(hot?" hot":"")+'" data-sfx="'+(S.lastTick&&S.lastTick[id]?"tick":"none")+'" data-wait="450">'+IC[id]+" "+TH[id][0]+'<div class="clk">'+Array.from({length:n},(_,i)=>id==="T3"?"<i>?</i>":'<i class="'+(i<x.clock?"on":"")+(S.lastTick&&S.lastTick[id]&&i===x.clock-1?" dz-newpip":"")+'"></i>').join("")+'</div></div>'}).join("")+'</div>';
 }
 
-/* ---------- Chapter 1: the cold open ---------- */
-const DZ_ONE_LINE={SIG:"knows which rumours are true, and runs the radio",QM:"drives the van and spends the Fuel",MED:"keeps people alive and spots deadly mistakes",LOC:"knows everyone in town, and every back door",RUN:"kid role: runs messages and quick jobs",HST:"kid role: tea, blankets and kindness",MEC:"fixes generators, pumps and radios",LIA:"gets official answers from the council"};
-function vColdOpen(){
- const co=typeof dzColdOpenText==="function"&&dzColdOpenText()||{kick:"",title:"The lights go out.",paras:["Not just your street. The whole town is dark. Someone knocks on the community hall door: “Is anyone organising things here?” You look at each other. It seems you are."],ring:"📞 Then a phone rings. Mr Aldous’s daughter: <i>“Dad’s breathing machine is beeping. He’s on the 9th floor. Please help.”</i>"};
- const team=S.pl.map(p=>'<div class="dz-teamline"><b>'+esc(p.n)+'</b> '+p.r.map(r=>'<span style="color:'+RL[r].c+'">'+RL[r].i+" "+RL[r].ch+'</span> <span class="s">('+RL[r].n+": "+DZ_ONE_LINE[r]+')</span>').join(" & ")+'</div>').join("");
- return '<section class="dz21-page dz-cold"><div class="dz21-head"><div class="dz21-kicker">'+co.kick+'Chapter 1 of '+dzChapters()+' · Thursday 18:04</div><h2>'+co.title+'</h2></div><div class="dz21-hero">'+art("ev1","🌑")+'</div>'+
- '<div class="dz21-prose"><div class="dz21-reader">'+dz21Attribution()+'</div>'+co.paras.map(x=>'<p>'+x+'</p>').join("")+'<p class="dz-st" data-sfx="ring" data-wait="900">'+co.ring+'</p></div></section>'+
- '<div class="row dz-st" data-sfx="alarm">'+thC("T2")+'</div>'+
- '<div class="sec">👥 Who you are</div><div class="pn">'+team+'</div>'+
- '<div class="c"><button class="btn" onclick="dzGo(\'intel\')">See what you each know →</button></div><p class="c s">Everything else, you will learn as it happens.</p>';
+/* ---------- the Day: 📰 Morning News → 🗣️ Discuss → ✋ Decide → 🌙 Night ---------- */
+const DZ_ONE_LINE={SIG:"knows which rumours are true, and runs the radio desk",QM:"drives the van and spends the Fuel",MED:"keeps people alive and spots deadly mistakes",LOC:"knows everyone in town, and every back door",RUN:"kid role: runs messages and quick jobs",HST:"kid role: tea, blankets and kindness",MEC:"fixes generators, pumps and radios",LIA:"gets official answers from the council"};
+function dzTeamBox(){
+ return '<div class="sec">👥 Who you are</div><div class="pn">'+S.pl.map(p=>'<div class="dz-teamline"><b>'+esc(p.n)+'</b> '+p.r.map(r=>'<span style="color:'+RL[r].c+'">'+RL[r].i+" "+RL[r].ch+'</span> <span class="s">('+RL[r].n+": "+DZ_ONE_LINE[r]+')</span>').join(" & ")+'</div>').join("")+'</div>';
 }
-/* Later chapters: the 2.1 story page with a length-aware chapter label. */
-const DZ_BRIDGE={3:"Thursday night passes somehow, in coats and blankets.",5:"Friday passes in a blur of queues, rumours and cold tea…",6:"Friday and most of Saturday pass in a blur of queues, rumours and cold tea…",7:"Saturday is long and cold. Somehow, you get through it."};
-const dz21ChapterBase=dz21Chapter;
-dz21Chapter=function(){
- let h=dz21ChapterBase().replace("CHAPTER "+S.round+" OF 7",(S.ep?"EPISODE "+S.ep+" · ":"")+"CHAPTER "+dzChapterNo()+" OF "+dzChapters()+(S.len==="quick"?" · QUICK NIGHT":""));
- const seq=dzSeq(),prev=seq[dzRoundIdx()-1],extra=[];
- if(prev&&prev<S.round-1&&DZ_BRIDGE[S.round])extra.push('<i>'+DZ_BRIDGE[S.round]+'</i>');
- if(typeof dzEpisodeChapterLine==="function"){const l=dzEpisodeChapterLine();if(l)extra.push(l)}
- if(extra.length)h=h.replace('<div class="dz21-prose">','<div class="dz21-prose">'+extra.map(x=>'<p>'+x+'</p>').join(""));
- return h;
-};
-
-/* ---------- Round brief (chapters 2+) ---------- */
-function dzEventCard(){
- if(!S.ev)return "";const e=dzEventById(S.ev.id);if(!e)return "";const who=dzEventWho(e);
- let body='<div class="fl">'+e.x+'</div><p><b>'+esc(who?who.n:"Coordinator")+'</b> decides'+(e.who!=="ANY"?" ("+RL[e.who].i+" "+RL[e.who].n+")":"")+'. Quickly!</p>';
- if(!S.ev.done)body+=e.o.map((o,i)=>'<button class="btn opt '+(i?"b":"")+'" '+(o[2]&&!o[2]()?"disabled":"")+' onclick="dzEventChoose('+i+')">'+o[0]+'<div>⚡ '+o[1]+'</div></button>').join("");
- else body+='<p class="dz-st" data-sfx="none">✔ <b>'+e.o[S.ev.done.i][0]+'.</b> '+esc(S.ev.done.msg)+'</p>';
- return '<div class="sec">🔀 Crossroads</div>'+dzTip("crossroads","Crossroads cards are small surprises. The named player makes the call, right now, without a long debate.")+'<div class="row"><div class="dz-st" data-sfx="flip">'+card({t:e.t,a:"echo",i:e.i,b:body,g:"CROSSROADS",c:"#c593e5"})+'</div></div>';
+function dzCastRow(names){
+ const n=(names||[]).filter(x=>DZ_CAST[x]);if(!n.length)return "";
+ return '<div class="dz-cast">'+n.map(x=>'<span class="dz-cast-i">'+dzFace(x)+'<b>'+esc(x)+'</b></span>').join("")+'</div>';
 }
-function vBrief(){
- const e=EV[S.round];
- let h='<h2>Chapter '+dzChapterNo()+' · '+e[0]+'</h2>'+goal();
- if(dzRoundIdx()===1)h+=dzTip("two","From now on, each role gets <b>two</b> actions per chapter.");
- if(S.br.length)h+=dzTip("echo","↩️ <b>Echo</b> cards are the consequences of choices you already made.")+'<div class="sec">↩️ Because of earlier choices</div><div class="row">'+S.br.map(b=>'<div class="dz-st" data-sfx="flip">'+card({t:b.t,a:"echo",i:"↩️",f:b.x,b:b.w?"<i>"+b.w+"</i>":"",g:b.w?"ECHO":"NEWS",sm:1})+'</div>').join("")+'</div>';
+/* "Previously…": yesterday's key choice + yesterday's cliffhanger (+ a linking line if a short game skipped ahead). */
+function dzRecap(){
+ const p=dzPrevRound();if(!p)return "";
+ const lines=[],d=(S.decLog||[]).filter(x=>x.round===p).pop();
+ if(d&&typeof DZ_DEC_HEAD!=="undefined"&&(DZ_DEC_HEAD[d.dl]||{})[d.id])lines.push((DZ_DEC_EMOJI[d.dl]||"⚖️")+" Yesterday: "+DZ_DEC_HEAD[d.dl][d.id]+".");
+ else if(S.prevDay&&S.prevDay.sum)lines.push("Yesterday: "+S.prevDay.sum);
+ if(S.prevDay&&S.prevDay.cliff)lines.push(S.prevDay.cliff);
+ const br=dzArcBridge();
+ if(!lines.length&&!br)return "";
+ return '<div class="dz-prevon"><div class="dz-kick">Previously…</div>'+lines.slice(0,2).map(x=>'<p>'+esc(x)+'</p>').join("")+(br?'<p class="dz-bridge"><i>'+esc(br)+'</i></p>':"")+'</div>';
+}
+function vNews(){
+ const r=S.round,a=dzArc(),first=dzRoundIdx()===0;
+ const co=first&&typeof dzColdOpenText==="function"?dzColdOpenText():null;
+ let prose="";
+ if(first){
+  const ring=co&&co.ring||"📞 Then a phone rings. Mr Aldous’s daughter: <i>“Dad’s breathing machine is beeping. He’s on the 9th floor. Please help.”</i>";
+  prose=(co&&co.paras&&S.ep>1?co.paras.map(x=>'<p>'+x+'</p>').join(""):'<p class="dz-lede">'+esc(a.lede)+'</p>')+'<p class="dz-st" data-sfx="ring" data-wait="900">'+ring+'</p>';
+ }else prose=dzRecap()+'<p class="dz-lede">'+esc(a.lede)+'</p>';
+ let h=dzTrack()+'<section class="dz21-page dz-news"><div class="dz21-head"><div class="dz21-kicker">'+(first?"📰 Breaking news":"📰 Morning news")+' · '+dzDayLabel()+'</div><h2>'+esc(a.head)+'</h2><span>'+esc(dzActLabel()+(a.when?" · "+a.when:""))+'</span></div>'+
+  '<div class="dz21-hero">'+art("ev"+r,"📰")+'</div><div class="dz21-prose"><div class="dz21-reader">'+dz21Attribution()+'</div>'+prose+
+  '<div class="dz-question"><span>❓ Today’s question</span>'+esc(a.q)+'</div>'+dzCastRow(a.cast)+'</div></section>';
+ h+=goal();
+ if(first)h+=dzTeamBox();
+ if(S.br.length)h+=dzTip("echo","🔖 <b>Remembered</b> cards are earlier choices coming back. Watch the story track: a ⏳ chip means a choice will come back later.")+'<div class="sec">🔖 Because of earlier choices</div><div class="row">'+S.br.map(b=>'<div class="dz-st" data-sfx="flip">'+card({t:b.t,a:"echo",i:"🔖",f:b.x,b:b.w?"<i>"+b.w+"</i>":"",g:b.w?"REMEMBERED":"NEWS",sm:1})+'</div>').join("")+'</div>';
  if(S.nw.length)h+='<div class="sec">⚠️ New problems</div><div class="row">'+S.nw.map(id=>'<div class="dz-st" data-sfx="alarm">'+thC(id)+'</div>').join("")+'</div>';
  h+=dzEventCard();
  const blocked=S.ev&&!S.ev.done;
- return h+'<div class="sec">🏘️ Your town</div>'+board()+'<div class="c"><button class="btn" '+(blocked?"disabled":"")+' onclick="dzGo(\'intel\')">'+(dz24Mode()==="phones"?"Open role briefings":"Read the role briefings")+'</button>'+(blocked?'<p class="s">Resolve the Crossroads card first.</p>':"")+'</div>'+foot();
+ return h+'<div class="c"><button class="btn" '+(blocked?"disabled":"")+' onclick="dzGo(\'discuss\')">🗣️ Discuss: what do you each know? →</button>'+(blocked?'<p class="s">Settle the card above first.</p>':"")+'</div>'+foot();
 }
 
-/* ---------- Briefings & orders ---------- */
-function vPass(){
- if(S.ph==="ord")return (S.round===dzSeq()[0]?dzTip("orders","Actions happen together at the end of the chapter. If one action needs another (like unlocking the stairs before the climb), choose <b>both</b> now."):"")+dz24Orders();
- if(typeof dzLiveOn==="function"&&dzLiveOn())return dzLivePanel("intel");
- if(dz24Mode()==="phones")return dz24PhoneBriefings();
- if(S.round===dzSeq()[0]){
-  return '<div class="dz24-lead"><div class="dz24-eyebrow">CHAPTER 1 · WHAT YOU EACH KNOW</div><h2>Your role cards</h2><p>Each of you reads your own cards out loud. Some are <b>verified</b>, some are <b>rumours</b>.</p></div>'+
-  S.pl.map(p=>'<h3 class="dz-hand-name">'+esc(p.n)+'</h3>'+dz24PlayerHand(p,S.round)).join("")+
-  '<div class="c"><button class="btn" onclick="S.pi=S.pl.length-1;next()">We\'ve shared · Make a plan</button></div>';
- }
- return dz24SharedBriefing();
-}
-function dz24PhoneUrl(index){
- const p=S.pl[index],path=window.location.href.split("#")[0].split("?")[0],base=path.substring(0,path.lastIndexOf("/")+1);
- let u=base+"phone.html#round="+S.round+"&ch="+dzChapterNo()+"/"+dzChapters()+"&roles="+encodeURIComponent(p.r.join(","))+"&name="+encodeURIComponent(p.n)+"&seed="+encodeURIComponent(S.seed);
- if(S.goalsShown&&(S.goalsOn||index===S.insider))u+="&g="+encodeURIComponent(dzGoalToken(S.seed,S.goals[index],index===S.insider));
- return u;
+/* Story & Crossroads cards */
+function dzEventCard(){
+ if(!S.ev)return "";const e=dzEventById(S.ev.id);if(!e)return "";const who=dzEventWho(e);
+ let body=(e.cast?'<div class="dz-cardcast">'+dzFace(e.cast)+'<b>'+esc(e.cast)+'</b></div>':"")+'<div class="fl">'+e.x+'</div><p><b>'+esc(who?who.n:"The coordinator")+'</b> decides'+(e.who!=="ANY"?" ("+RL[e.who].i+" "+RL[e.who].n+")":"")+'. Quickly!</p>';
+ if(!S.ev.done)body+=e.o.map((o,i)=>'<button class="btn opt '+(i?"b":"")+'" '+(o[2]&&!o[2]()?"disabled":"")+' onclick="dzEventChoose('+i+')">'+o[0]+'<div>⚡ '+o[1]+'</div></button>').join("");
+ else body+='<p class="dz-st" data-sfx="none">✔ <b>'+e.o[S.ev.done.i][0]+'.</b> '+esc(S.ev.done.msg)+'</p>';
+ const story=!!e.story;
+ return '<div class="sec">'+(story?"🔖 Story card":"🔀 Crossroads")+'</div>'+(story?"":dzTip("crossroads","Crossroads cards are small surprises. The named player makes the call, right now, without a long debate."))+'<div class="row"><div class="dz-st" data-sfx="flip">'+card({t:e.t,a:"echo",i:e.i,b:body,g:story?"STORY CARD":"CROSSROADS",c:story?"#ffc24a":"#c593e5"})+'</div></div>';
 }
 
-/* ---------- Council ---------- */
+/* ---------- 🗣️ Discuss ---------- */
+function dzHints(){
+ const advice=[];
+ if(act("T2")&&!S.f.acc)advice.push("Tower block: Marta can ask Mr Osei to unlock the back stairs, and Pavel can climb up the same Day.");
+ if(act("O1")&&!S.f.lind)advice.push("Supermarket: Marta must get Mrs Lindqvist's agreement before Ines collects the freezer food. Both can happen the same Day.");
+ if(!S.f.gTest&&!S.hub.warmth)advice.push("Warmth: test the generator first, then set it up somewhere safe outdoors. Or ask Bram for firewood.");
+ if(S.a.signal<=1&&dzRoundIdx()>=1)advice.push("Signal is low. A working hall radio point gives Theo +1 Signal every morning.");
+ if(act("T10"))advice.push("Grid crew: they need a guide, fuel and someone on the radio, all on the same Day.");
+ if(!advice.length)return "";
+ return '<details class="pn dz22-teamwork"><summary>💡 Stuck? Open a hint</summary>'+advice.slice(0,3).map(x=>'<p>'+esc(x)+'</p>').join("")+'</details>';
+}
+function dzDayQR(){
+ return '<div class="dz24-qr-grid">'+S.pl.map((p,i)=>'<article class="dz24-qr-person"><div class="dz24-player-number">PLAYER '+(i+1)+' OF '+S.pl.length+'</div><h3>'+esc(p.n)+'</h3><div class="dz24-player-roles">'+p.r.map(r=>esc(RL[r].i+" "+RL[r].n)).join(" · ")+'</div><div class="dz24-qr" id="dz24-qr-'+i+'"></div><p class="dz24-qr-caption">Scan for your Day '+dzDayNo()+' cards</p><a class="dz24-openlink" target="_blank" rel="noopener" href="'+esc(dz24PhoneUrl(i))+'">Open on this device ↗</a></article>').join("")+'</div>'+
+ '<p class="c s">Each code is for today only. No phones? <button class="dz24-linkbtn" onclick="dz24SwitchToTV()">Show the cards on the TV instead</button></p>';
+}
+function vDiscuss(){
+ const first=dzRoundIdx()===0,live=typeof dzLiveOn==="function"&&dzLiveOn(),mode=live?"live":dz24Mode();
+ let h=dzTrack()+'<div class="dz24-lead"><div class="dz24-eyebrow">🗣️ Discuss · '+dzDayLabel()+'</div><h2>What do you each know?</h2><p>'+
+  (mode==="live"?"Read your private cards on your phone.":mode==="phones"?"Scan your code to read your private cards on your phone.":"Each of you reads your own cards out loud.")+
+  ' Some are <b>verified</b>, some are <b>rumours</b>. Then agree a plan.</p></div>';
+ if(first)h+=dzTip("first","<b>Your first move:</b> Mr Aldous needs two people. 🏠 Marta can get Mr Osei to unlock the stairs, and ✚ Pavel can climb up. Everyone else: start on the Hub. On Day 1, each role gets <b>one</b> action.");
+ else if(dzRoundIdx()===1)h+=dzTip("two","From Day 2, each role gets <b>two</b> actions a Day.");
+ if(live)h+=dzLivePanel("intel");
+ else if(mode==="phones")h+=dzDayQR();
+ else h+=S.pl.map(p=>'<h3 class="dz-hand-name">'+esc(p.n)+'</h3>'+dz24PlayerHand(p,S.round)).join("");
+ const A=Object.keys(S.th).filter(act);
+ if(A.length)h+='<div class="sec">⚠️ Problems right now</div><div class="row">'+A.map(thC).join("")+'</div>';
+ h+=dzHints()+(first?"":dzPanel());
+ h+='<div class="pn dz-steps"><b>1.</b> Share what you know. <b>2.</b> Which cards are rumours? <b>3.</b> Agree who does what.</div>';
+ return h+'<div class="c"><button class="btn" onclick="dzGo(\'decide\')">✋ We\'ve talked · Decide →</button></div>';
+}
+function dz24FinishBriefings(){if(S.ph==="discuss")dzGo("decide")}
+
+/* ---------- ✋ Decide ---------- */
 function dzDilemmaCard(){
  const d=DL[S.dl],showLater=S.diff==="easy";
- const who=d[0]?'<b>The '+RL[d[0]].n+'</b> breaks ties.':'<b>The Coordinator</b> breaks ties.';
+ const who=d[0]?'<b>The '+RL[d[0]].n+'</b> breaks ties.':'<b>The coordinator</b> breaks ties.';
  let side="";
- if(S.dc){const o=d[4].find(x=>x[0]===S.dc);side='<div class="dz-decided"><div class="dz-kick">DECIDED'+(S.decLog.length&&S.decLog[S.decLog.length-1].tally?" BY SECRET VOTE":"")+'</div><h3>'+o[1]+'</h3><p>⚡ '+o[2]+'</p></div>';}
- else if(S.vote&&!S.together){side=dzTip("vote","<b>Secret vote.</b> Talk it through, then pass the device round. Everyone votes privately; the majority decides. If three or more of you all agree, Cohesion +1.")+'<button class="btn" onclick="dzStartVote()">🗳️ Secret vote</button><p class="s">'+who+' <button class="dz24-linkbtn" onclick="S.together=1;R()">or decide together on this screen</button></p>';}
+ if(S.dc){const o=d[4].find(x=>x[0]===S.dc);side='<div class="dz-decided"><div class="dz-kick">DECIDED'+(S.decLog.length&&S.decLog[S.decLog.length-1].tally?" BY SECRET VOTE":"")+'</div><h3>'+o[1]+'</h3><p>⚡ '+o[2]+'</p><p class="s">🔖 The town will remember this.</p></div>';}
+ else if(S.vote&&!S.together){side=dzTip("vote","<b>Secret vote.</b> Talk it through, then pass the device around. Everyone votes privately; the majority decides. If three or more of you all agree, Cohesion +1.")+'<button class="btn" onclick="dzStartVote()">🗳️ Secret vote</button><p class="s">'+who+' <button class="dz24-linkbtn" onclick="S.together=1;R()">or decide together on this screen</button></p>';}
  else side=d[4].map((o,i)=>'<button class="btn opt '+(i?"b":"")+'" '+(o[0]==="share"&&S.t.supplies<1?"disabled":"")+' onclick="choose(\''+o[0]+'\')">Option '+"ABC"[i]+': '+o[1]+'<div>⚡ <b>Now:</b> '+o[2]+'</div>'+(showLater?'<div>🔮 <b>Later:</b> '+o[5]+'</div>':"")+'</button>').join("");
- return '<div class="sec">⚖️ Decision</div><div class="row">'+card({t:d[1],a:S.dl.toLowerCase(),i:d[2],f:d[3],b:d[0]?'Decided by the '+RL[d[0]].n+' after listening to everyone.':'A group decision.',g:"DILEMMA"})+'<div class="pn" style="max-width:460px">'+side+'</div></div>';
+ return '<div class="sec">⚖️ Today’s big decision</div><div class="row">'+card({t:d[1],a:S.dl.toLowerCase(),i:d[2],f:d[3],b:d[0]?'Decided by the '+RL[d[0]].n+' after listening to everyone.':'A group decision.',g:"DILEMMA"})+'<div class="pn" style="max-width:460px">'+side+'</div></div>';
 }
-function vCouncil(){
- const first=S.round===dzSeq()[0];
- let h='<h2>The Council · Chapter '+dzChapterNo()+'</h2>'+goal();
- if(first)h+=dzTip("first","<b>Your first move:</b> Mr Aldous needs two people. 🏠 Marta can get Mr Osei to unlock the stairs, and ✚ Pavel can climb up. Everyone else: start on the Hub. This chapter, each role gets <b>one</b> action.");
- else h+='<details class="pn dz-scene"><summary>📖 Read the scene &amp; hints</summary>'+dz22CouncilScene()+'</details>';
- h+='<div class="pn dz-steps"><b>1.</b> Share what you know. <b>2.</b> Agree who does what. <b>3.</b> '+(S.dl?"Settle the decision below, then":"")+' choose your actions.</div>';
+function vDecide(){
+ const pending=!!(S.dl&&!S.dc);
+ let h=dzTrack()+'<div class="dz24-lead"><div class="dz24-eyebrow">✋ Decide · '+dzDayLabel()+'</div><h2>'+esc(dzArc().q)+'</h2></div>';
  if(S.dl)h+=dzDilemmaCard();
- const A=Object.keys(S.th).filter(act);if(A.length)h+='<div class="sec">⚠️ Problems right now</div><div class="row">'+A.map(thC).join("")+'</div>';
- return h+'<div class="sec">🏘️ Your town</div>'+board()+(first?"":dzPanel())+'<div class="c"><button class="btn" '+(S.dl&&!S.dc?"disabled":"")+' onclick="dzGo(\'ord\')">Choose team actions</button></div>';
+ if(pending)return h+dzClockStrip()+'<p class="c s">Settle the big decision first. Then each role picks its actions.</p>';
+ if(dzRoundIdx()===0)h+=dzTip("orders","Everything you choose happens together when night falls. If one action needs another (like unlocking the stairs before the climb), choose <b>both</b> now.");
+ return h+dzClockStrip()+dz24Orders();
 }
 
-/* ---------- Time passes ---------- */
-function vEsc(){
- const seq=dzSeq(),i=dzRoundIdx(),nxR=seq[i+1];
- const nx=nxR&&!S.broke?'<div class="goal">🔜 <b>Coming next:</b> Chapter '+(i+2)+': '+EV[nxR][0]+'</div>':"";
- return '<h2>End of Chapter '+(i+1)+'</h2>'+dz21Outro()+'<div class="sec">⏰ Time passes…</div>'+dz22TimePassage()+dzClockStrip()+dif(S.pre)+nx+'<div class="sec">🏘️ Your town</div>'+board()+'<div class="c"><button class="btn" onclick="nextRound()">'+(nxR&&!S.broke?"Next chapter":"See how it ends")+'</button></div>';
+/* ---------- 🌙 Night ---------- */
+function dzOutroParts(){
+ const html=dz21Outro(),t=(html.match(/<h3>([\s\S]*?)<\/h3>/)||[])[1]||"Night falls",b=(html.match(/<p>([\s\S]*?)<\/p>/)||[])[1]||"";
+ const un=x=>x.replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"');
+ return {title:un(t),body:un(b)};
 }
+function dzNightStory(){
+ const rs=Array.isArray(S.report)?S.report:[],ok=rs.filter(x=>x.status==="done"),miss=rs.filter(x=>x.status!=="done");
+ const first=s=>{const m=String(s).match(/^.*?[.!?](\s|$)/);return (m?m[0]:String(s)).trim()};
+ const paras=[];
+ const o=S.prevDay&&S.prevDay.r===S.round?S.prevDay:dzOutroParts();
+ if(o.body||o.sum)paras.push(o.sum||o.body);
+ const hi=ok.filter(x=>!["cmf","trt"].includes(x.id)).slice(0,2).map(x=>first(dz22ResultText(x)));
+ if(hi.length)paras.push(hi.join(" "));
+ if(!rs.length)paras.push("Nobody made it out of the hall today.");
+ else if(miss.length)paras.push(miss.length===1?"One plan fell through.":miss.length+" plans fell through.");
+ const notes=(S.esc||[]).map(dz22Plain),bad=notes.filter((x,i)=>/clock full|Bitter cold|shivers|freezing|Nobody climbed|Rain soaks/.test(S.esc[i]));
+ if(bad.length)paras.push("Then the night closed in. "+bad.slice(0,2).map(x=>x.replace(/: clock full!/,": time ran out.")).join(" "));
+ else if(notes.some((x,i)=>/✅/.test(S.esc[i])))paras.push(notes.filter((x,i)=>/✅/.test(S.esc[i]))[0]);
+ return paras;
+}
+function vNight(){
+ const seq=dzSeq(),i=dzRoundIdx(),nxR=seq[i+1],more=nxR&&!S.broke;
+ const pd=S.prevDay&&S.prevDay.r===S.round?S.prevDay:{title:dzOutroParts().title,cliff:dzArc().cliff};
+ let h=dzTrack()+'<section class="dz21-page dz-night"><div class="dz21-head"><div class="dz21-kicker">🌙 Night · '+dzDayLabel()+'</div><h2>'+esc(pd.title||"Night falls")+'</h2><span>'+esc(dzArc().head)+'</span></div>'+
+  '<div class="dz21-prose"><div class="dz21-reader">'+dz21Attribution()+'</div>'+dzNightStory().map(p=>'<p>'+esc(p)+'</p>').join("")+'</div></section>';
+ h+='<div class="sec">🃏 How each plan went</div>'+dz22ResultCards();
+ if((S.esc||[]).length)h+='<div class="sec">⏳ While you slept</div>'+dzClockStrip()+lg(S.esc);
+ h+=dif(S.pre);
+ if(pd.cliff)h+='<div class="dz-cliff dz-st" data-sfx="drum" data-wait="1200"><div class="dz-kick">'+(more?"To be continued…":"And then…")+'</div><p>'+esc(pd.cliff)+'</p>'+(more?'<p class="dz-tomorrow">☀️ Tomorrow: <b>Day '+(i+2)+' · '+esc(dzArc(nxR).head)+'</b></p>':"")+'</div>';
+ h+='<div class="sec">🏘️ Your town</div>'+board();
+ return h+'<div class="c"><button class="btn" onclick="nextRound()">'+(more?"☀️ Next morning: Day "+(i+2)+" →":"📰 See how it ends →")+'</button></div>';
+}
+/* Lock-in resolves the actions AND the night in one go, so the Night is one screen. */
+const dzResolveBase=resolve;
+resolve=function(){
+ const pre=snap(),r0=R;R=function(){};
+ try{dzResolveBase();if(S.ph==="res")escal()}finally{R=r0}
+ if(S.ph==="esc"){
+  S.pre=pre;S.ph="night";const o=dzOutroParts(),a=dzArc();
+  S.prevDay={r:S.round,head:a.head,title:o.title,sum:o.body,cliff:a.cliff};
+ }
+ sv();R();
+};
 function nextRound(){
  const seq=dzSeq(),i=dzRoundIdx();
  if(S.broke){S.ph="end";sv();R();return}
@@ -183,12 +240,18 @@ function dzFinish(){
  sv();R();
 }
 
+function dz24PhoneUrl(index){
+ const p=S.pl[index],path=window.location.href.split("#")[0].split("?")[0],base=path.substring(0,path.lastIndexOf("/")+1);
+ let u=base+"phone.html#round="+S.round+"&day="+dzDayNo()+"/"+dzDays()+"&act="+encodeURIComponent(dzActLabel())+"&roles="+encodeURIComponent(p.r.join(","))+"&name="+encodeURIComponent(p.n)+"&seed="+encodeURIComponent(S.seed);
+ if(S.goalsShown&&(S.goalsOn||index===S.insider))u+="&g="+encodeURIComponent(dzGoalToken(S.seed,S.goals[index],index===S.insider));
+ return u;
+}
 /* ---------- result & time cards: staged, with rumour stamps ---------- */
 const DZ_VERDICT={iMid:"FALSE",iArm:"FALSE",iEva:"FALSE",iWat:"OUT OF DATE",iBrk:"FALSE",iSab:"UNPROVEN"};
 function dzVerdict(id){if(id==="iTan")return S.v&&S.v.tanker==="tomorrow"?"HALF TRUE":"FALSE";return DZ_VERDICT[id]}
 function dz22ResultCards(){
  const reports=Array.isArray(S.report)?S.report:[];
- if(!reports.length)return '<div class="pn"><p>No orders were completed this round.</p></div>';
+ if(!reports.length)return '<div class="pn"><p>Nobody acted today.</p></div>';
  return '<div class="dz22-grid">'+reports.map(r=>{
   const role=RL[r.role]||{ch:"Neighbour",c:"#ffd166",i:"🎒"},blocked=r.status==="blocked",color=blocked?"#d9855f":role.c;
   const ttl=r.found?.length?DZ_ITEMS[r.found[0]]?.name:r.id==="gTest"?"Generator Tested":r.id==="info"?"Radio Point Ready":r.id==="fill"&&r.changes?.some(c=>c.includes("Water running"))?"Water Reserve Ready":r.id==="osei"?"Access Secured":r.id==="frz"?"Food Collected":blocked?"Plan Blocked":r.label;
@@ -206,7 +269,7 @@ function dz22TimePassage(){
  return '<div class="dz22-grid">'+notes.map(note=>{
   const msg=dz22Plain(note),good=/✅/.test(note),warn=/✖/.test(note),full=/clock full/.test(note);
   const heading=good?"A welcome development":full?"Time ran out":warn?"Trouble in Kelderwick":"The hours pass";
-  return '<article class="dz-st dz22-result'+(full?" dz-alarm":"")+'" data-sfx="'+(full?"alarm":good?"success":warn?"fail":"tick")+'" data-wait="'+(full?1400:900)+'"'+(full?' data-shake="1"':"")+' style="--dz22:'+(good?"#6bd59f":warn?"#e39b75":"#9bb4df")+'"><div class="dz22-art">'+art(artFor(note),"⏳")+'</div><div class="dz22-details"><div class="dz22-kicker">TIME PASSES · CHAPTER '+dzChapterNo()+'</div><h4>'+heading+'</h4><p>'+esc(msg)+'</p></div></article>';
+  return '<article class="dz-st dz22-result'+(full?" dz-alarm":"")+'" data-sfx="'+(full?"alarm":good?"success":warn?"fail":"tick")+'" data-wait="'+(full?1400:900)+'"'+(full?' data-shake="1"':"")+' style="--dz22:'+(good?"#6bd59f":warn?"#e39b75":"#9bb4df")+'"><div class="dz22-art">'+art(artFor(note),"⏳")+'</div><div class="dz22-details"><div class="dz22-kicker">NIGHT · DAY '+dzDayNo()+'</div><h4>'+heading+'</h4><p>'+esc(msg)+'</p></div></article>';
  }).join("")+'</div>';
 }
 const dz22ResultTextBase=dz22ResultText;
@@ -224,12 +287,12 @@ function R(){
  const A=document.getElementById("app");let html;
  if(!S)html=title();
  else{
-  const V={chapter:S.round===dzSeq()[0]?(S.lobby&&typeof vLobby==="function"?vLobby:S.prevPending?vPrev:vColdOpen):dz21Chapter,brief:vBrief,intel:vPass,break:dz21Break,council:vCouncil,ord:vPass,res:vRes,esc:vEsc,end:dzChronicle,
+  const V={news:S.lobby&&typeof vLobby==="function"?vLobby:S.prevPending?vPrev:vNews,discuss:vDiscuss,decide:vDecide,night:vNight,end:dzChronicle,
    goals:dzGoalsView,vote:dzVoteView,vreveal:dzVoteReveal,accuse:dzAccuseView,accrev:dzAccuseReveal}[S.ph];
   html=V?V():'<p>Something went wrong. <button class="btn" onclick="restart()">New game</button></p>';
   html=dzVText(S.v,html);
  }
  A.innerHTML=html;window.scrollTo(0,0);
- if(S&&S.ph==="intel"&&dz24Mode()==="phones")dz24QR();
+ if(S&&S.ph==="discuss"&&dz24Mode()==="phones")dz24QR();
  dzAfterRender(S?S.ph+":"+S.round:"title");
 }

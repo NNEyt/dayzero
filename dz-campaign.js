@@ -1,16 +1,16 @@
 /*
   Day Zero: "The Kelderwick Files", a three-episode campaign.
-  Each episode is a complete ~30-minute game (four chapters). A few consequences carry
+  Each episode is a complete game told Day by Day (Episode 1: 7 Days, Episodes 2 and 3: 5 Days). A few consequences carry
   forward in localStorage (key dz_campaign): Hillside remembers, Mr Aldous remembers,
   the street remembers what the radio told it, and the evidence piles up for Episode 3.
 */
 const DZ_CAMP_KEY="dz_campaign";
 const DZ_EPISODES={
- 1:{t:"Blackout",month:"November",seq:[1,2,6,7],blurb:"The night the lights went out. Help Mr Aldous, save the clinic, and get the repair crew to the substation."},
- 2:{t:"The Water Week",month:"January",seq:[1,3,4,7],blurb:"An ice storm, frozen mains, and a town that runs dry while the phones fall silent."},
- 3:{t:"Who Had the Key?",month:"March",seq:[1,5,6,7],blurb:"A grid inspector comes to town. The lights go out a third time. Somebody had a key."}
+ 1:{t:"Blackout",month:"November",days:7,mins:"about 60 min",seq:[1,2,3,4,5,6,7],blurb:"The night the lights went out. Help Mr Aldous, save the clinic, and get the repair crew to the substation."},
+ 2:{t:"The Water Week",month:"January",days:5,mins:"about 40 min",seq:[1,2,3,4,7],blurb:"An ice storm, frozen mains, and a town that runs dry while the phones fall silent."},
+ 3:{t:"Who Had the Key?",month:"March",days:5,mins:"about 40 min",seq:[1,4,5,6,7],blurb:"A grid inspector comes to town. The lights go out a third time. Somebody had a key."}
 };
-for(const n in DZ_EPISODES)DZ_LEN["ep"+n]={label:"Episode "+n+": "+DZ_EPISODES[n].t,mins:"about 30 min",seq:DZ_EPISODES[n].seq,episode:+n};
+for(const n in DZ_EPISODES)DZ_LEN["ep"+n]={label:"Episode "+n+": "+DZ_EPISODES[n].t+" · "+DZ_EPISODES[n].days+" Days",mins:DZ_EPISODES[n].mins,seq:DZ_EPISODES[n].seq,episode:+n};
 
 function dzCamp(){try{const c=JSON.parse(localStorage.getItem(DZ_CAMP_KEY)||"null");return c&&c.v===1?c:null}catch(e){return null}}
 function dzCampSave(c){try{localStorage.setItem(DZ_CAMP_KEY,JSON.stringify(c))}catch(e){}}
@@ -38,7 +38,7 @@ const DZ_CARRY=[
 ];
 function dzCarryList(flags){return DZ_CARRY.filter(x=>x[0](flags||{}))}
 
-/* Called from start() when o.episode is set (after roles, before Chapter 1). */
+/* Called from start() when o.episode is set (after roles, before Day 1). */
 function dzEpisodeSetup(o){
  const c=dzCamp()||dzCampNew(o.diff);
  S.ep=o.episode;S.camp={flags:JSON.parse(JSON.stringify(c.flags||{})),eps:c.eps.map(e=>({n:e.n,t:e.t,head:e.head,stars:e.stars}))};
@@ -53,9 +53,6 @@ function dzColdOpenText(){
  if(S.ep===2)return {kick:"Episode 2 · ",title:"Not again.",paras:["January. Seven weeks after the blackout, an ice storm coats every wire in Kelderwick with glass. At six minutes past six, the lights go out again.","Nobody knocks on the hall door this time. They just come in, stamping snow off their boots. "+(f.stores==="open"||f.early?"“We knew you'd be here,” says Mrs Grant.":"“Is it you lot again?” says Mrs Grant. It's hard to tell if she's pleased.")],ring:"📞 The phone rings. Mr Aldous’s daughter: "+ald};
  return {kick:"Episode 3 · ",title:"Third time.",paras:["March. Spring is late, and Kelderwick has questions. A grid inspector has come from the city to find out why the town keeps going dark.","That evening, as the inspector's car pulls up at the substation, the lights go out for the third time. Minutes later she is at the hall door: “I'm told this is where things get done. I'd like to know what you've seen.”"],ring:"📞 Before anyone can answer, the phone rings. Mr Aldous’s daughter: "+ald};
 }
-const DZ_EP_LINES={2:{3:"The ice storm has frozen the mains on the hill. In January, a dry tap isn't an inconvenience. It's dangerous.",4:"With ice on the masts, the phones fall silent a day early this time.",7:"The thaw comes on Sunday. So does the grid crew, if somebody can get them through."},
- 3:{5:"The inspector asks to see the hall's noticeboard. “People here check things,” Marta tells her. “Mostly.”",6:"The crew's lead engineer is the same one as in November. She remembers Mill Lane.",7:"Before the power comes back, the inspector wants a word with everyone who saw anything."}};
-function dzEpisodeChapterLine(){return S.ep&&DZ_EP_LINES[S.ep]&&DZ_EP_LINES[S.ep][S.round]||""}
 
 /* ---------- "previously on" ---------- */
 function vPrev(){
@@ -82,6 +79,7 @@ function dzEpisodeFlags(){
  if(S.broke)f.broke=true;
  f.clues=Object.keys(dzInit().clues||{}).filter(k=>dzInit().clues[k]);
  if(S.insider>=0&&!S.broke)f.insider=S.caught?"caught":"escaped";
+ if(S.f.samAlly)f.sam="ally";else if(S.f.samRival)f.sam="rival";
  return f;
 }
 function dzEpisodeRecord(){
@@ -91,7 +89,7 @@ function dzEpisodeRecord(){
  // consequences that are one-off fade; long memories (Hillside, Aldous, clues) persist
  ["tankerLie","claim","broke","early"].forEach(k=>delete merged[k]);
  Object.assign(merged,nf);merged.clues=[...new Set([...(of.clues||[]),...(nf.clues||[])])];
- if(!nf.hillside&&of.hillside)merged.hillside=of.hillside;if(!nf.stores&&of.stores)merged.stores=of.stores;
+ if(!nf.hillside&&of.hillside)merged.hillside=of.hillside;if(!nf.sam&&of.sam)merged.sam=of.sam;if(!nf.stores&&of.stores)merged.stores=of.stores;
  const rec={n:S.ep,t:DZ_EPISODES[S.ep].t,head:z.e[0],recap:z.e[1],stars:z.m+z.p+z.c,decs:(S.decLog||[]).map(d=>({dl:d.dl,id:d.id})),names:S.pl.map(p=>p.n),seed:S.seed};
  c.eps=c.eps.filter(e=>e.n!==S.ep);c.eps.push(rec);c.eps.sort((a,b)=>a.n-b.n);
  c.flags=merged;c.next=Math.min(4,S.ep+1);dzCampSave(c);
@@ -134,8 +132,8 @@ function dzCampaignBox(){
 /* ---------- title-screen panel ---------- */
 function dzCampPanel(){
  const c=dzCamp(),n=c?c.next:1;
- let h='<details class="pn dz-camp"'+(c&&n<=3?" open":"")+'><summary>📚 Campaign: <b>The Kelderwick Files</b> · 3 episodes · about 30 min each</summary>';
- h+='<ol class="dz-eplist">'+[1,2,3].map(i=>{const e=DZ_EPISODES[i],done=c&&c.eps.find(x=>x.n===i);return '<li class="'+(done?"done":i===n?"next":"")+'"><b>'+esc(e.t)+'</b> <span class="s">'+e.month+'</span>'+(done?' · <i>'+esc(done.head)+'</i> '+"⭐".repeat(done.stars):"")+'<br><span class="s">'+esc(e.blurb)+'</span></li>'}).join("")+'</ol>';
+ let h='<details class="pn dz-camp"'+(c&&n<=3?" open":"")+'><summary>📚 Campaign: <b>The Kelderwick Files</b> · 3 episodes · 7, 5 and 5 Days</summary>';
+ h+='<ol class="dz-eplist">'+[1,2,3].map(i=>{const e=DZ_EPISODES[i],done=c&&c.eps.find(x=>x.n===i);return '<li class="'+(done?"done":i===n?"next":"")+'"><b>'+esc(e.t)+'</b> <span class="s">'+e.month+'</span>'+(done?' · <i>'+esc(done.head)+'</i> '+"⭐".repeat(done.stars):"")+' · '+e.days+' Days<br><span class="s">'+esc(e.blurb)+'</span></li>'}).join("")+'</ol>';
  if(c&&n<=3)h+='<button class="btn" onclick="dzCampPlay('+n+')">▶ Play Episode '+n+'</button>';
  else if(c)h+='<p>Campaign complete! '+c.eps.reduce((a,e)=>a+e.stars,0)+' / 27 ⭐</p>';
  h+=c?'<button class="btn b" onclick="dzCampReset()">'+(n<=3?"Restart campaign":"Start a new campaign")+'</button>':'<button class="btn" onclick="dzCampPlay(1)">▶ Start the campaign</button>';

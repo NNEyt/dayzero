@@ -36,7 +36,7 @@ footer{color:#9babc8;font-size:12px;text-align:center;padding:12px 22px 28px}
 .goalbox{margin:22px 0;padding:14px;border:2px dashed #c593e5;border-radius:12px;background:#1d1533}.goalbox h2{margin:4px 0;color:#e4c6ff}
 </style>
 <link rel="stylesheet" href="fonts/fonts.css"><link rel="stylesheet" href="dz-phone.css"></head>
-<body><header><div class="logo">DAY ZERO · PRIVATE BRIEFING</div><p>TV + PHONES EDITION</p></header><main id="phone">Loading your briefing…</main><footer>Your phone shows a fixed briefing for this chapter. Scan the next QR code when the TV advances. No app or account required.</footer>
+<body><header><div class="logo">DAY ZERO · PRIVATE BRIEFING</div><p>TV + PHONES EDITION</p></header><main id="phone">Loading your briefing…</main><footer>Your phone shows your cards for today. Scan a new code each morning. No app or account required.</footer>
 <script>const esc=s=>String(s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));</script>
 <script src="dz24.js"></script>
 <script src="dz-content.js"></script>
@@ -45,10 +45,10 @@ function phoneRender(){
  const q=new URLSearchParams(window.location.hash.slice(1));
  const round=Number(q.get("round"));
  const roles=(q.get("roles")||"").split(",").filter(r=>Object.prototype.hasOwnProperty.call(RL,r));
- const name=q.get("name")||"Player",ch=(q.get("ch")||"").match(/^(\d+)\/(\d+)$/),seed=dzCleanSeed(q.get("seed")||"");
+ const name=q.get("name")||"Player",ch=(q.get("day")||q.get("ch")||"").match(/^(\d+)\/(\d+)$/),act=(q.get("act")||"").slice(0,60),seed=dzCleanSeed(q.get("seed")||"");
  const app=document.getElementById("phone");
  if(!Number.isInteger(round)||round<1||round>7||!roles.length){
-  app.innerHTML='<h1>Briefing not found</h1><p>Scan the QR code beside your name on the main TV screen to open your chapter’s briefing.</p>';
+  app.innerHTML='<h1>Briefing not found</h1><p>Scan the QR code beside your name on the main TV screen to open today’s cards.</p>';
   return;
  }
  const v=seed?dzVariant(seed):null;window.DZ_PHONE_V=v;
@@ -58,9 +58,9 @@ function phoneRender(){
   const g=tok.insider?DZ_INSIDER:DZ_GOALS[tok.goal];
   if(g)goal='<div class="goalbox"><div class="centre" id="goalbtnwrap"><button onclick="document.getElementById(\'goal\').classList.toggle(\'hidden\')">🤫 My secret '+(tok.insider?"role":"goal")+' (tap to show/hide)</button></div><div id="goal" class="hidden"><h2>'+g.i+" "+esc(g.t)+'</h2><p>'+esc(g.x)+'</p></div></div>';
  }
- const label=ch?"CHAPTER "+ch[1]+" OF "+ch[2]:"CHAPTER "+round;
- app.innerHTML=dzVText(v,'<div class="dz24-eyebrow" style="color:#a8c2e9;font-size:13px;font-weight:800;letter-spacing:.09em">'+label+(seed?" · TOWN "+esc(seed):"")+'</div><h1>'+esc(name)+'’s briefing</h1><p class="subtitle">Only your role’s information is shown here. Share what you learn at the council, but consider whether each source is verified, unconfirmed or a rumour.</p>'+
- '<div class="instructions">Read your cards, then keep your phone face down until the council. You can reveal them again whenever you need to check a detail.</div>'+
+ const label=(ch?"DAY "+ch[1]+" OF "+ch[2]:"TODAY")+(act?" · "+esc(act.toUpperCase()):"");
+ app.innerHTML=dzVText(v,'<div class="dz24-eyebrow" style="color:#a8c2e9;font-size:13px;font-weight:800;letter-spacing:.09em">'+label+(seed?" · TOWN "+esc(seed):"")+'</div><h1>'+esc(name)+'’s briefing</h1><p class="subtitle">Only your role’s information is shown here. Share what you learn with the table, but consider whether each source is verified, unconfirmed or a rumour.</p>'+
+ '<div class="instructions">Read your cards, then keep your phone face down until you all talk. You can reveal them again whenever you need to check a detail.</div>'+
  '<div id="briefing">'+dz24PlayerHand({r:roles},round)+'</div>'+
  '<div id="mask" class="mask hidden"><h1>Briefing hidden</h1><p>Tap below to view your cards again.</p></div>'+
  '<div class="centre"><button id="hidebtn" onclick="phoneToggle()">Hide my briefing</button></div>'+goal);

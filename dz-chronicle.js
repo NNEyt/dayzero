@@ -49,11 +49,11 @@ function dzReplay(same){
  try{localStorage.removeItem(DZ_SAVE)}catch(e){}start(names,o);
 }
 function dzChronicle(){
- const z=ending(),names=S.pl.map(p=>p.n),days=["Monday"],heroes=dzHeroes(),goals=dzGoalResults();
+ const z=ending(),names=S.pl.map(p=>p.n),days=["Special"],heroes=dzHeroes(),goals=dzGoalResults();
  const hubN=["warmth","water","info"].filter(k=>S.hub[k]).length;
- const lead=dzNames(names)+(names.length>1?" never planned to be in charge.":" never planned to be in charge.")+" But when Kelderwick went dark on Thursday evening, the Mill Lane community hall had to be run by somebody. "+
+ const lead=dzNames(names)+(names.length>1?" never planned to be in charge.":" never planned to be in charge.")+" But when Kelderwick went dark, the Mill Lane community hall had to be run by somebody. "+
   (S.broke?"It did not end the way anyone hoped.":hubN===3?"By the end, the hall was warm, watered and on the radio: a real community hub.":hubN===2?"By the end, two of the three hub systems were running.":"The hub was never really finished, but the doors stayed open.")+
-  (S.f.pw===6?" Thanks to neighbours who guided a repair crew through the dark, the power came back a whole night early.":S.f.pw?" The power returned on Sunday.":"");
+  (S.f.pw===6?" Thanks to neighbours who guided a repair crew through the dark, the power came back a whole day early.":S.f.pw?" The power returned on Day "+dzDays()+".":"");
  const decs=(S.decLog||[]).map(x=>{const h=(DZ_DEC_HEAD[x.dl]||{})[x.id]||x.id;const t=x.tally?Object.values(x.tally).sort((a,b)=>b-a).filter(n=>n>0).join("–"):"";
   return '<li class="dz-st" data-sfx="flip" data-wait="600"><b>'+(DZ_DEC_EMOJI[x.dl]||"")+" "+h+'</b>'+(t?' <span class="dz-vote-chip">secret vote '+t+'</span>':' <span class="dz-vote-chip">agreed together</span>')+'</li>'}).join("");
  const town=outc().concat(S.codas||[]).filter(Boolean).slice(0,6).map(x=>'<li>'+esc(x)+'</li>').join("");
@@ -69,12 +69,12 @@ function dzChronicle(){
  '<header class="dz-mast dz-st" data-sfx="press" data-wait="900"><div class="dz-mast-top"><span>'+(S.ep?'The Kelderwick Files · Episode '+S.ep+' of 3':days[0]+' Edition')+'</span><span>Kelderwick &amp; District</span><span>Price: one kind word</span></div><h1>The Mill Lane Chronicle</h1></header>'+
  '<div class="dz-st" data-sfx="press" data-wait="1100"><h2 class="dz-head">'+esc(z.e[0])+'</h2><p class="dz-stand">'+esc(z.e[1]+z.x)+'</p></div>'+
  '<div class="dz-stars dz-st" data-sfx="success" data-wait="900">Mission '+dzStars(z.m)+' · People '+dzStars(z.p)+' · Community '+dzStars(z.c)+'</div>'+
- '<div class="dz-cols"><div class="dz-col dz-lead"><h3>“We Just Kept the Kettle On”</h3><p>'+lead+'</p>'+(heroHtml?'<h3>Heroes of the Weekend</h3><ul>'+heroHtml+'</ul>':"")+'</div>'+
+ '<div class="dz-cols"><div class="dz-col dz-lead"><h3>“We Just Kept the Kettle On”</h3><p>'+lead+'</p>'+(heroHtml?'<h3>Heroes of the Blackout</h3><ul>'+heroHtml+'</ul>':"")+'</div>'+
  '<div class="dz-col"><h3>The Big Decisions</h3>'+(decs?'<ul>'+decs+'</ul>':'<p>No big decisions were reached.</p>')+(cross?'<h3>Around the Hall</h3><ul>'+cross+'</ul>':"")+(town?'<h3>Around Town</h3><ul>'+town+'</ul>':"")+
- '<h3>Rumour Watch</h3><p>Theo checked '+dzRumoursChecked()+' rumour'+(dzRumoursChecked()===1?"":"s")+' this weekend. How many fooled you? See below, if you dare.</p></div>'+
+ '<h3>Rumour Watch</h3><p>Theo checked '+dzRumoursChecked()+' rumour'+(dzRumoursChecked()===1?"":"s")+' this time. How many fooled you? See below, if you dare.</p></div>'+
  goalHtml+insider+'</div>'+
  '<footer class="dz-foot">'+esc(DZ_LEN[S.len].label)+' · '+dzDiff().label+' · Town seed <b>'+esc(S.seed)+'</b>'+(mins?' · played in about '+mins+' min':"")+'</footer></article>'+
- '<div class="pn c dz-sharebox"><h3>📣 Tell the group chat</h3><textarea id="dz-emoji" readonly rows="5">'+esc(dzEmojiLine())+'</textarea><div><button class="btn" onclick="dzShare()">Share</button><button class="btn b" onclick="dzCopy()">Copy</button></div><p class="s">No spoilers: friends can replay the same town with the seed.</p></div>'+
+ (typeof dzArcEndingBox==="function"?dzArcEndingBox():"")+'<div class="pn c dz-sharebox"><h3>📣 Tell the group chat</h3><textarea id="dz-emoji" readonly rows="5">'+esc(dzEmojiLine())+'</textarea><div><button class="btn" onclick="dzShare()">Share</button><button class="btn b" onclick="dzCopy()">Copy</button></div><p class="s">No spoilers: friends can replay the same town with the seed.</p></div>'+
  '<details class="pn dz-missed"><summary>🔍 Show what you missed (spoilers for this town)</summary><h3>What Fooled You?</h3>'+fool.map(f=>'<p><b>'+f[0]+'</b>: '+f[1]+'</p>').join("")+'<p><i>Rumours spread fastest when people are scared. Always ask: how do we know?</i></p>'+
  '<h3>Field Notes</h3>'+NOTES.map(n=>'<p><span class="rel '+(n[0]==="Real"?"V":"U")+'">'+n[0]+'</span> '+n[1]+'</p>').join("")+'<p class="s">General guidance only. Check your local official advice.</p>'+
  '<h3>Talk About It</h3><p>1. Which rumour fooled you, and why?</p><p>2. What would our household need for 72 hours?</p><p>3. Who in our street might need help in a blackout?</p><p>4. Which decision would you change?</p><p>5. When is it right to share something you can\'t prove?</p>'+

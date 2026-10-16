@@ -1,0 +1,56 @@
+/* Day Zero: the Day-by-Day story track, Morning News and Night (index.html only). */
+.dz-track{max-width:920px;margin:10px auto 14px;background:var(--bg-1,#121a2e);border:3px solid #090b18;border-radius:16px;box-shadow:0 6px 0 #0008;padding:10px 14px 12px;text-align:left}
+.dz-track-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.dz-track-top>b{font:italic 900 26px/1 'Barlow Condensed',Impact,sans-serif;color:var(--amber,#ffc24a);letter-spacing:.02em;text-transform:uppercase}
+.dz-track-act{font:800 16px/1.2 'Barlow Condensed',Impact,sans-serif;color:#f3f0e8;text-transform:uppercase;letter-spacing:.06em}
+.dz-track-ep{font-size:13px;color:var(--muted,#bcc5da)}
+.dz-track-beat{margin-left:auto}
+.dz-beats{display:inline-flex;gap:4px;flex-wrap:wrap}
+.dz-beats i{font-style:normal;font-size:12px;padding:3px 8px;border-radius:999px;border:1px solid var(--line,#2f3d63);color:var(--faint,#9aa6c2);white-space:nowrap}
+.dz-beats i.on{background:var(--amber,#ffc24a);color:var(--amber-ink,#1d1500);border-color:#000;font-weight:800;box-shadow:2px 2px 0 #000}
+.dz-dots{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.dz-act{flex:1 1 0;min-width:120px;background:#0d1428;border:1px solid var(--line,#2f3d63);border-radius:12px;padding:6px 8px}
+.dz-act.now{border-color:var(--amber,#ffc24a);box-shadow:inset 0 0 0 1px var(--amber,#ffc24a)}
+.dz-act-name{font:800 12px/1.2 var(--body,system-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--faint,#9aa6c2);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dz-act.now .dz-act-name{color:var(--amber-2,#ffd77f)}
+.dz-act ol{list-style:none;margin:0;padding:0;display:flex;gap:6px;align-items:center}
+.dz-act li{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:800 14px/1 var(--body,system-ui);border:2px solid var(--line-2,#435381);color:var(--faint,#9aa6c2);background:#121a2e}
+.dz-act li.done{background:#2f6b4c;border-color:#000;color:#fff}
+.dz-act li.done span::before{content:"✓";display:none}
+.dz-act li.now{background:var(--amber,#ffc24a);border-color:#000;color:#1d1500;transform:scale(1.15);box-shadow:2px 2px 0 #000}
+.dz-mem{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
+.dz-mem-k{font:800 12px/1 var(--body,system-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--amber-2,#ffd77f);margin-right:2px}
+.dz-chip-mem{font-size:13px;padding:3px 9px;border-radius:999px;background:#1b2440;border:1px solid var(--line,#2f3d63);color:var(--muted,#bcc5da)}
+.dz-chip-mem.live{background:#3a2a08;border-color:var(--amber,#ffc24a);color:#ffe7a8;font-weight:700}
+.dz-chip-mem.carried{border-style:dashed}
+/* Morning News */
+.dz-prevon{border-left:5px solid #c593e5;background:#efe3ff;color:#2a1f3d;border-radius:8px;padding:8px 12px;margin:0 0 14px}
+.dz-prevon .dz-kick{color:#6b3fa0}
+.dz-prevon p{margin:4px 0}
+.dz-prevon .dz-bridge{color:#5a4a72}
+.dz-lede{font-size:1.12em}
+.dz-question{margin:14px 0 4px;padding:10px 14px;background:#fff4d1;border:2px solid #231f19;border-radius:10px;box-shadow:3px 3px 0 #231f19;font-weight:800;font-size:1.1em;color:#231f19}
+.dz-question span{display:block;font:800 12px/1.2 var(--body,system-ui);letter-spacing:.1em;text-transform:uppercase;color:#a0470f;margin-bottom:3px}
+.dz-cast{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+.dz-cast-i{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:#3b3226}
+.dz-cast-i .dz-portrait{width:40px;height:40px}
+.dz-cardcast{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.dz-cardcast .dz-portrait{width:34px;height:34px}
+/* Night */
+.dz-night .dz21-head{background:linear-gradient(115deg,#0f1838,#1b1240)}
+.dz-cliff{max-width:920px;margin:16px auto;background:linear-gradient(115deg,#2a1745,#121d3f);border:3px solid #000;border-radius:16px;box-shadow:5px 5px 0 #000;padding:14px 18px;text-align:left}
+.dz-cliff p{font-size:1.15em;margin:6px 0}
+.dz-cliff .dz-tomorrow{font-size:1em;color:var(--amber-2,#ffd77f)}
+.dz-story-end{max-width:920px;margin:14px auto}
+@media(max-width:600px){
+ .dz-track{padding:8px 10px;margin:6px 4px 10px}
+ .dz-track-top>b{font-size:22px}
+ .dz-track-beat{margin-left:0;width:100%}
+ .dz-beats i{font-size:11px;padding:2px 6px}
+ .dz-dots{gap:6px}
+ .dz-act{min-width:0;padding:5px 6px}
+ .dz-act-name{font-size:10px}
+ .dz-act li{width:24px;height:24px;font-size:12px}
+ .dz-act ol{gap:4px}
+ .dz-chip-mem{font-size:12px}
+}
