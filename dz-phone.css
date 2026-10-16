@@ -53,3 +53,6 @@ label.lab{color:var(--amber-2);font-weight:700;font-size:13px;letter-spacing:.04
 footer{color:#a3aec8;font-size:13px;padding-bottom:90px}
 .dz-ico{width:1.15em;height:1.15em;vertical-align:-.2em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* Disabled buttons read as "not yet", not as broken: solid muted surface (7.7:1 text contrast) + a plain hint. */
+button.big:disabled{opacity:1;background:var(--bg-3);color:var(--muted);border:2px dashed var(--line-2);box-shadow:none;cursor:not-allowed}
+.pick-hint{margin:8px 0 0;font-size:15px;font-weight:700;color:var(--amber-2);text-align:center}

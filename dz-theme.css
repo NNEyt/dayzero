@@ -252,3 +252,7 @@ input[type=checkbox],input[type=radio]{width:22px;height:22px;min-height:0;paddi
 .dz-check input{margin-top:2px}
 .dz-opts label{color:var(--text)}
 .dz-opts .s{display:block}
+/* Disabled "Cast my vote" reads as "pick an option first": solid muted surface (7.7:1 text contrast) + a plain hint. */
+.dz-ballot .c .btn:disabled{opacity:1;background:var(--bg-3);color:var(--muted);border:2px dashed var(--line-2);box-shadow:none}
+.dz-pick-hint{margin:var(--sp-2,8px) 0 0;font-size:15px;font-weight:700;color:var(--amber-2);text-align:center}
+.dz-rules-link{margin:var(--sp-2) 0 0;font-size:var(--fs-s);font-weight:700}

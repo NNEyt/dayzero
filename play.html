@@ -119,7 +119,7 @@ function render(){
   if(v.voted)h+='<div class="panel"><p class="done">🗳️ Vote cast. Watch the TV for the reveal.</p></div>';
   else{h+='<div class="panel"><h2>'+v.d.i+" "+esc(v.d.t)+'</h2><p>'+esc(v.d.x)+'</p><div class="opts">'+v.d.opts.map(o=>'<button '+(o.dis?"disabled":"")+' class="'+(pick.vote===o.id?"on":"")+'" onclick="pick.vote=\''+o.id+'\';render()">'+(pick.vote===o.id?"☑ ":"☐ ")+esc(o.l)+'<span class="now">⚡ '+esc(o.now)+'</span></button>').join("")+'</div>'+
    (v.extra&&v.extra.length?'<label class="lab">🤫 Private note (nobody sees this until the end)</label><select id="x">'+v.extra.map(x=>'<option value="'+esc(x.v)+'"'+(pick.x===x.v?" selected":"")+'>'+esc(x.l)+'</option>').join("")+'</select>':"")+
-   '<div class="centre"><button class="big" '+(pick.vote?"":"disabled")+' onclick="castVote()">Cast my secret vote</button></div></div>'}
+   '<div class="centre"><button class="big" '+(pick.vote?"":'disabled aria-describedby="vote-hint"')+' onclick="castVote()">Cast my secret vote</button>'+(pick.vote?"":'<p class="pick-hint" id="vote-hint">☝️ Pick an option above first</p>')+'</div></div>'}
  }else if(v.k==="accuse"){
   if(v.done)h+='<div class="panel"><p class="done">🫵 Accusation made. Watch the TV.</p></div>';
   else h+='<div class="panel"><h2>🕵️ Who had the key?</h2>'+(v.ruled.length?'<p>📋 Your evidence rules out: <b>'+v.ruled.map(esc).join(", ")+'</b>.</p>':'<p>No hard evidence. Trust your instincts.</p>')+'<div class="opts">'+v.list.map(x=>'<button onclick="if(confirm(\'Accuse \'+'+JSON.stringify(x.n).replace(/"/g,"&quot;")+'+\'?\'))send({t:\'accuse\',j:'+x.j+'})">🫵 '+esc(x.n)+'</button>').join("")+'</div></div>';
