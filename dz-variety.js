@@ -21,7 +21,7 @@ function dzDiff(){return DZ_DIFF[S&&S.diff]||DZ_DIFF.normal}
 function dzCrisisMax(){return dzDiff().crisisMax}
 /* Threat clock length after difficulty and the seeded water timing. */
 function dzClock(id){
- const base=TH[id][2];if(!base)return 0;
+ const base=TH[id][2]+(id==="T2"&&S.campT2?1:0);if(!base)return 0;
  if(id==="T3")return (S.v&&S.v.water)||base;
  const adj=dzDiff().clock;
  if(adj<0)return base>=3?base-1:base;
@@ -39,12 +39,16 @@ function start(names,o){
   t:{supplies:(n<=2?5:4)+(D.supplies||0),health:5+(D.health||0),cohesion:4,trust:3+(D.trust||0)},
   a:{fuel:3+(D.fuel||0),signal:3,medkits:2,contacts:3},
   hub:{warmth:false,water:false,info:false},wt:null,f:{},th:{},dec:{},codas:[],crisis:0,ph:"chapter",nw:[],r:{},br:[],log:[],ord:{},pi:0,show:false,esc:[],
-  mode:o.mode==="phones"?"phones":"tv",seed,diff,len,
+  mode:["phones","live"].includes(o.mode)?o.mode:"tv",seed,diff,len,
   vote:o.vote!==false&&n>1,goalsOn:o.goals!==false,insiderOn:!!o.insider&&n>=3,
   v:dzVariant(seed),tips:{},rallies:0,decLog:[],hist:[],evLog:[],sab:[],sus:[],goals:[],insider:-1,startedAt:Date.now()};
  for(const k of Object.keys(S.t))S.t[k]=Math.max(1,Math.min(6,S.t[k]));
  S.a.fuel=Math.max(1,S.a.fuel);
- RO.forEach((r,i)=>S.pl[i%n].r.push(r));
+ dzAssignRoles(n,o.kids).forEach((rs,i)=>S.pl[i].r=rs);
+ S.kids=(o.kids||[]).slice(0,n);
+ dzBigTable();
+ if(o.episode&&typeof dzEpisodeSetup==="function")dzEpisodeSetup(o);
+ if(typeof dzLiveSetup==="function")dzLiveSetup(o);
  dzDealGoals();
  startRound();
 }
@@ -54,7 +58,7 @@ function dzDealGoals(){
  const ok=Object.keys(DZ_GOALS).filter(k=>seq.some(r=>r>=DZ_GOALS[k].need)&&(DZ_GOALS[k].need<=1||seq.includes(DZ_GOALS[k].need)));
  const deck=dzShuffle(rng,ok);
  S.goals=S.pl.map((p,i)=>deck[i%deck.length]);
- S.insider=S.insiderOn?Math.floor(dzRng(S.seed,"insider"+S.pl.length)()*S.pl.length):-1;
+ {const adults=S.pl.map((p,i)=>i).filter(i=>!(S.kids||[])[i]);if(!adults.length)S.insiderOn=false;S.insider=S.insiderOn?adults[Math.floor(dzRng(S.seed,"insider"+S.pl.length)()*adults.length)]:-1;}
  S.goalsShown=!(S.goalsOn||S.insiderOn);
 }
 function dzNeedGoals(){return !S.goalsShown&&dzRoundIdx()>=1}
@@ -92,7 +96,9 @@ function dzEventWho(e){if(e.who==="ANY")return S.pl[S.co];return S.pl.find(p=>p.
 /* Called by startRound() before the dilemma is chosen. */
 function dzRoundExtras(r,B){
  S.ev=null;
- if(S.len==="quick"&&r===6&&!S.th.T7)add("T7");
+ if(!dzSeq().includes(5)&&(r===6||(r===4&&!dzSeq().includes(6)))&&!S.th.T7)add("T7");
+ if(r===7&&!S.th.T10&&!dzSeq().includes(6))add("T10");
+ if(typeof dzEpisodeRound==="function")dzEpisodeRound(r,B);
  // catch-up: neighbours rally (Easy twice, Normal once, Hard never)
  if(r>1&&S.t.health<=2&&S.rallies<dzDiff().rally){S.rallies++;tr("health",2);B("The Neighbours Rally","Word spreads that the hall is struggling. People bring soup, blankets and a spare heater. Health +2.","Because the town noticed you were in trouble.");}
  // Crossroads: most rounds after the first draw one card
@@ -121,12 +127,12 @@ const DZ_GOAL_CHECK={
  truth:()=>!S.f.e6s&&S.dec.DL4!=="claim"&&!(S.hist||[]).some(h=>h.rep.some(x=>x.id==="bA"&&x.status==="done")),
  reserve:()=>S.a.fuel>=1,
  warm:()=>!!S.hub.warmth,
- aldous:()=>!!S.th.T2&&!S.th.T2.fail,
- clinic:()=>!!S.th.T1&&!S.th.T1.fail,
+ aldous:()=>!!S.th.T2&&!(S.th.T2||DZ_NOTH).fail,
+ clinic:()=>!!S.th.T1&&!(S.th.T1||DZ_NOTH).fail,
  rumour:()=>dzRumoursChecked()>=2,
  trust:()=>S.t.trust>=4,
- peace:()=>S.t.cohesion>=5,
- scav:()=>dzFoundCount()>=4,
+ peace:()=>S.t.cohesion>=6,
+ scav:()=>dzFoundCount()>=5,
  tower:()=>S.dec.DL6==="tower",
  health:()=>S.t.health>=4,
  hub:()=>S.hub.warmth&&S.hub.water&&S.hub.info

@@ -22,27 +22,30 @@ function dzSaved(){try{return localStorage.getItem(DZ_SAVE)}catch(e){return null
 function title(){
  const saved=dzSaved(),q=new URLSearchParams(location.search),seedQ=dzCleanSeed(q.get("seed")||"");
  const prev=(()=>{try{return JSON.parse(localStorage.getItem("dz_last_setup")||"{}")}catch(e){return {}}})();
+ const row=i=>'<div class="dz-namerow"><input id="n'+i+'" maxlength="16" autocomplete="off" placeholder="Player '+(i+1)+' name'+(i?" (optional)":"")+'" value="'+esc((prev.names||[])[i]||"")+'"><label class="dz-kidchk" title="Younger player"><input type="checkbox" id="k'+i+'"'+((prev.kids||[])[i]?" checked":"")+'> 🧒</label></div>';
  const sel=(id,opts,cur)=>'<select id="'+id+'">'+opts.map(([v,l])=>'<option value="'+v+'"'+(v===cur?" selected":"")+'>'+l+'</option>').join("")+'</select>';
  return '<h1 class="dz-title">DAY ZERO</h1><p class="c dz-tagline"><i>The lights go out. Nobody has the whole picture.</i></p>'+
  '<div class="pn dz-start"><h2>Who is playing?</h2>'+
- [0,1,2,3].map(i=>'<input id="n'+i+'" maxlength="16" autocomplete="off" placeholder="Player '+(i+1)+' name'+(i?" (optional)":"")+'" value="'+esc((prev.names||[])[i]||"")+'">').join("")+
- '<div class="dz-len" role="radiogroup" aria-label="Game length">'+Object.keys(DZ_LEN).map(k=>'<label class="dz-chip-radio"><input type="radio" name="dzlen" value="'+k+'"'+((prev.len||"full")===k?" checked":"")+'> <b>'+DZ_LEN[k].label+'</b><span>'+DZ_LEN[k].mins+'</span></label>').join("")+'</div>'+
+ [0,1,2,3].map(row).join("")+'<details class="dz-more"'+((prev.names||[]).length>4?" open":"")+'><summary>➕ 5–8 players (adds Kit 👟, Bea 🫖, Dev 🔧 and Grace 🏛️)</summary>'+[4,5,6,7].map(row).join("")+'<p class="s">Tick 🧒 for younger players (about 7–11): with 5+ players they get Kit or Bea, kid-friendly roles with one simple job a chapter.</p></details>'+
+ '<div class="dz-len" role="radiogroup" aria-label="Game length">'+["full","quick"].map(k=>'<label class="dz-chip-radio"><input type="radio" name="dzlen" value="'+k+'"'+((prev.len||"full")===k?" checked":"")+'> <b>'+DZ_LEN[k].label+'</b><span>'+DZ_LEN[k].mins+'</span></label>').join("")+'</div>'+
  '<div class="c"><button class="btn dz-play" onclick="go()">▶ Play</button>'+(saved?'<button class="btn b" onclick="cont()">Continue saved game</button>':"")+'</div>'+
  '<details class="dz-opts"'+(seedQ?" open":"")+'><summary>⚙️ Game options</summary>'+
- '<label>Screens'+sel("dz-mode",[["tv","TV only · everyone sees the role briefings"],["phones","TV + phones · private briefings by QR code"]],prev.mode||"tv")+'</label>'+
+ '<label>Screens'+sel("dz-mode",[["tv","TV only · everyone sees the role briefings"],["phones","TV + phone briefings · private briefings by QR code"],["live","📱 TV + phone controllers · phones vote and act (beta, needs internet)"]],prev.mode||"tv")+'</label>'+
  '<label>Difficulty'+sel("dz-diff",Object.keys(DZ_DIFF).map(k=>[k,DZ_DIFF[k].label+" · "+DZ_DIFF[k].blurb]),prev.diff||"normal")+'</label>'+
  '<label class="dz-check"><input type="checkbox" id="dz-goals"'+(prev.goals===false?"":" checked")+'> Personal goals: each player gets a private goal, revealed at the end</label>'+
  '<label class="dz-check"><input type="checkbox" id="dz-vote"'+(prev.vote===false?"":" checked")+'> Secret votes on big decisions (pass the device)</label>'+
  '<label class="dz-check"><input type="checkbox" id="dz-insider"'+(prev.insider?" checked":"")+'> 🕵️ The Insider: one player is secretly working against you (3–4 players, ages 12+)</label>'+
  '<label>Town seed <span class="s">(leave blank for a new town; share a seed to replay the same one)</span><input id="dz-seed" maxlength="8" placeholder="e.g. K7Q2" value="'+esc(seedQ)+'"></label>'+
- '</details><p class="s c">1–4 players · best with 3–4 · one player = practice mode · <a href="versions.html">older versions</a></p></div>';
+ '</details>'+(typeof dzCampPanel==="function"?dzCampPanel():"")+'<p class="s c">1–8 players · best with 3–6 · one player = practice mode · <a href="versions.html">older versions</a></p></div>';
 }
-function go(){
- const names=[0,1,2,3].map(i=>document.getElementById("n"+i).value.trim()).filter(Boolean);if(!names.length)names.push("Player 1");
+function go(x){
+ const rows=[0,1,2,3,4,5,6,7].map(i=>({n:(document.getElementById("n"+i)||{value:""}).value.trim(),k:!!(document.getElementById("k"+i)||{}).checked})).filter(x=>x.n);
+ if(!rows.length)rows.push({n:"Player 1",k:false});const names=rows.map(x=>x.n),kids=rows.map(x=>x.k);
  const val=id=>{const e=document.getElementById(id);return e?e.value:undefined},chk=id=>{const e=document.getElementById(id);return e?e.checked:undefined};
  const lenEl=document.querySelector('input[name="dzlen"]:checked');
- const o={mode:val("dz-mode"),diff:val("dz-diff"),len:lenEl?lenEl.value:"full",goals:chk("dz-goals"),vote:chk("dz-vote"),insider:chk("dz-insider"),seed:val("dz-seed")};
+ const o={kids,mode:val("dz-mode"),diff:val("dz-diff"),len:lenEl?lenEl.value:"full",goals:chk("dz-goals"),vote:chk("dz-vote"),insider:chk("dz-insider"),seed:val("dz-seed")};
  try{localStorage.setItem("dz_last_setup",JSON.stringify(Object.assign({names},o,{seed:""})))}catch(e){}
+ Object.assign(o,x||{});
  dzSfx("page");start(names,o);
 }
 function cont(){
@@ -65,7 +68,7 @@ function board(){
 function dzRulesPanel(){
  const own=r=>(S.pl.find(p=>p.r.includes(r))||{}).n||"";
  return '<div class="pn"><p><b>🏆 How you win:</b> get 🔥 Warmth, 💧 Water and 📻 Information running at the hall, keep ❤️ Health high, and keep 🤝 Cohesion and 🏘️ Trust high. Up to 9 stars and 7 different endings. If Health or Cohesion hits 0, the game ends early.</p>'+
- RO.map(r=>'<div class="rb" style="border-color:'+RL[r].c+'"><h3 style="color:'+RL[r].c+'">'+RL[r].i+" "+RL[r].n+": "+esc(own(r))+'</h3><b>Who:</b> '+ROLEX[r].who+'<br><b>Knows:</b> '+ROLEX[r].knows+'<br><b>Can do:</b> '+ROLEX[r].does+'</div>').join("")+'</div>';
+ dzRoles().map(r=>'<div class="rb" style="border-color:'+RL[r].c+'"><h3 style="color:'+RL[r].c+'">'+RL[r].i+" "+RL[r].n+": "+esc(own(r))+'</h3><b>Who:</b> '+ROLEX[r].who+'<br><b>Knows:</b> '+ROLEX[r].knows+'<br><b>Can do:</b> '+ROLEX[r].does+'</div>').join("")+'</div>';
 }
 function thC(id){
  const d=TH[id],x=S.th[id],n=dzClock(id);let cl="";
@@ -78,21 +81,25 @@ function dzClockStrip(){
 }
 
 /* ---------- Chapter 1: the cold open ---------- */
-const DZ_ONE_LINE={SIG:"knows which rumours are true, and runs the radio",QM:"drives the van and spends the Fuel",MED:"keeps people alive and spots deadly mistakes",LOC:"knows everyone in town, and every back door"};
+const DZ_ONE_LINE={SIG:"knows which rumours are true, and runs the radio",QM:"drives the van and spends the Fuel",MED:"keeps people alive and spots deadly mistakes",LOC:"knows everyone in town, and every back door",RUN:"kid role: runs messages and quick jobs",HST:"kid role: tea, blankets and kindness",MEC:"fixes generators, pumps and radios",LIA:"gets official answers from the council"};
 function vColdOpen(){
+ const co=typeof dzColdOpenText==="function"&&dzColdOpenText()||{kick:"",title:"The lights go out.",paras:["Not just your street. The whole town is dark. Someone knocks on the community hall door: “Is anyone organising things here?” You look at each other. It seems you are."],ring:"📞 Then a phone rings. Mr Aldous’s daughter: <i>“Dad’s breathing machine is beeping. He’s on the 9th floor. Please help.”</i>"};
  const team=S.pl.map(p=>'<div class="dz-teamline"><b>'+esc(p.n)+'</b> '+p.r.map(r=>'<span style="color:'+RL[r].c+'">'+RL[r].i+" "+RL[r].ch+'</span> <span class="s">('+RL[r].n+": "+DZ_ONE_LINE[r]+')</span>').join(" & ")+'</div>').join("");
- return '<section class="dz21-page dz-cold"><div class="dz21-head"><div class="dz21-kicker">Chapter 1 of '+dzChapters()+' · Thursday 18:04</div><h2>The lights go out.</h2></div><div class="dz21-hero">'+art("ev1","🌑")+'</div>'+
- '<div class="dz21-prose"><div class="dz21-reader">'+dz21Attribution()+'</div><p>Not just your street. The whole town is dark. Someone knocks on the community hall door: “Is anyone organising things here?” You look at each other. It seems you are.</p>'+
- '<p class="dz-st" data-sfx="ring" data-wait="900">📞 Then a phone rings. Mr Aldous’s daughter: <i>“Dad’s breathing machine is beeping. He’s on the 9th floor. Please help.”</i></p></div></section>'+
+ return '<section class="dz21-page dz-cold"><div class="dz21-head"><div class="dz21-kicker">'+co.kick+'Chapter 1 of '+dzChapters()+' · Thursday 18:04</div><h2>'+co.title+'</h2></div><div class="dz21-hero">'+art("ev1","🌑")+'</div>'+
+ '<div class="dz21-prose"><div class="dz21-reader">'+dz21Attribution()+'</div>'+co.paras.map(x=>'<p>'+x+'</p>').join("")+'<p class="dz-st" data-sfx="ring" data-wait="900">'+co.ring+'</p></div></section>'+
  '<div class="row dz-st" data-sfx="alarm">'+thC("T2")+'</div>'+
  '<div class="sec">👥 Who you are</div><div class="pn">'+team+'</div>'+
  '<div class="c"><button class="btn" onclick="dzGo(\'intel\')">See what you each know →</button></div><p class="c s">Everything else, you will learn as it happens.</p>';
 }
 /* Later chapters: the 2.1 story page with a length-aware chapter label. */
+const DZ_BRIDGE={3:"Thursday night passes somehow, in coats and blankets.",5:"Friday passes in a blur of queues, rumours and cold tea…",6:"Friday and most of Saturday pass in a blur of queues, rumours and cold tea…",7:"Saturday is long and cold. Somehow, you get through it."};
 const dz21ChapterBase=dz21Chapter;
 dz21Chapter=function(){
- let h=dz21ChapterBase().replace("CHAPTER "+S.round+" OF 7","CHAPTER "+dzChapterNo()+" OF "+dzChapters()+(S.len==="quick"?" · QUICK NIGHT":""));
- if(S.len==="quick"&&S.round===6)h=h.replace('<div class="dz21-prose">','<div class="dz21-prose"><p><i>Friday and most of Saturday pass in a blur of queues, rumours and cold tea…</i></p>');
+ let h=dz21ChapterBase().replace("CHAPTER "+S.round+" OF 7",(S.ep?"EPISODE "+S.ep+" · ":"")+"CHAPTER "+dzChapterNo()+" OF "+dzChapters()+(S.len==="quick"?" · QUICK NIGHT":""));
+ const seq=dzSeq(),prev=seq[dzRoundIdx()-1],extra=[];
+ if(prev&&prev<S.round-1&&DZ_BRIDGE[S.round])extra.push('<i>'+DZ_BRIDGE[S.round]+'</i>');
+ if(typeof dzEpisodeChapterLine==="function"){const l=dzEpisodeChapterLine();if(l)extra.push(l)}
+ if(extra.length)h=h.replace('<div class="dz21-prose">','<div class="dz21-prose">'+extra.map(x=>'<p>'+x+'</p>').join(""));
  return h;
 };
 
@@ -118,6 +125,7 @@ function vBrief(){
 /* ---------- Briefings & orders ---------- */
 function vPass(){
  if(S.ph==="ord")return (S.round===dzSeq()[0]?dzTip("orders","Actions happen together at the end of the chapter. If one action needs another (like unlocking the stairs before the climb), choose <b>both</b> now."):"")+dz24Orders();
+ if(typeof dzLiveOn==="function"&&dzLiveOn())return dzLivePanel("intel");
  if(dz24Mode()==="phones")return dz24PhoneBriefings();
  if(S.round===dzSeq()[0]){
   return '<div class="dz24-lead"><div class="dz24-eyebrow">CHAPTER 1 · WHAT YOU EACH KNOW</div><h2>Your role cards</h2><p>Each of you reads your own cards out loud. Some are <b>verified</b>, some are <b>rumours</b>.</p></div>'+
@@ -166,11 +174,11 @@ function nextRound(){
  if(i>=seq.length-1){dzFinish();return}
  let nx=seq[i+1];if(S.crisis>=dzCrisisMax())nx=seq[seq.length-1];
  S.round=nx;S.together=0;
- if(dzNeedGoals()){S.ph="goals";S.gi={i:0,show:false};sv();R();return}
+ if(dzNeedGoals()){S.ph="goals";S.gi={i:typeof dzLiveOn==="function"&&dzLiveOn()?-1:0,show:false,seen:{}};sv();R();return}
  startRound();
 }
 function dzFinish(){
- if(S.insider>=0&&!S.broke&&!S.accDone){S.ph="accuse";S.ac={i:0,show:false,b:{}};}else S.ph="end";
+ if(S.insider>=0&&!S.broke&&!S.accDone){S.ph="accuse";S.ac={i:typeof dzLiveOn==="function"&&dzLiveOn()?-1:0,show:false,b:{}};}else S.ph="end";
  sv();R();
 }
 
@@ -215,7 +223,7 @@ function R(){
  const A=document.getElementById("app");let html;
  if(!S)html=title();
  else{
-  const V={chapter:S.round===dzSeq()[0]?vColdOpen:dz21Chapter,brief:vBrief,intel:vPass,break:dz21Break,council:vCouncil,ord:vPass,res:vRes,esc:vEsc,end:dzChronicle,
+  const V={chapter:S.round===dzSeq()[0]?(S.lobby&&typeof vLobby==="function"?vLobby:S.prevPending?vPrev:vColdOpen):dz21Chapter,brief:vBrief,intel:vPass,break:dz21Break,council:vCouncil,ord:vPass,res:vRes,esc:vEsc,end:dzChronicle,
    goals:dzGoalsView,vote:dzVoteView,vreveal:dzVoteReveal,accuse:dzAccuseView,accrev:dzAccuseReveal}[S.ph];
   html=V?V():'<p>Something went wrong. <button class="btn" onclick="restart()">New game</button></p>';
   html=dzVText(S.v,html);
