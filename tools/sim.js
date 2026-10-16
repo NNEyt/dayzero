@@ -82,7 +82,7 @@ async function playOne(w,cfg,rnd,res,episodeBtn){
    else click("dzGo('intel')");
   }
   else if(ph==="intel"){
-   if(net&&rnd()<0.3){const b=btns().find(b=>(b.getAttribute("onclick")||"").includes("dzLiveShowHand"));if(b){b.click();continue}}
+   if(net&&rnd()<0.3){const unread=JSON.parse(E("JSON.stringify(S.pl.map((p,j)=>j).filter(j=>!S.lv.read[j]))"));const b=btns().find(b=>unread.some(j=>(b.getAttribute("onclick")||"")==="dzLiveShowHand("+j+")"));if(b){b.click();continue}}
    click("next()",false)||click("dz24FinishBriefings",false)||E("next()")}
   else if(ph==="break")click("dz21Continue");
   else if(ph==="council"){
@@ -166,7 +166,8 @@ async function game(cfg,seedNum){
    if(Object.entries(ONLY).every(([k,v])=>c[k]===v))cfgs.push(c)}
   if(!Object.keys(ONLY).length){cfgs.push({diff:"normal",len:"full",mode:"tv",insider:false,players:3,goals:false,vote:false,kids:0});cfgs.push({diff:"hard",len:"quick",mode:"live",insider:true,players:8,goals:false,vote:true,kids:2})}
  }
- const res=[];let g=0;
+ if(process.env.DZ_CFG){cfgs.length=0;cfgs.push(JSON.parse(process.env.DZ_CFG))}
+ const res=[];let g=Number(process.env.DZ_G0||0);
  for(const cfg of cfgs)for(let i=0;i<N;i++){g++;try{res.push(await game(cfg,g*7919+i))}catch(e){res.push({cfg,fatal:e.message})}}
  const ok=res.filter(r=>!r.fatal),fat=res.filter(r=>r.fatal);
  console.log("suite",SUITE,"policy",POLICY,"configs",cfgs.length,"runs",res.length,"fatal",fat.length);
