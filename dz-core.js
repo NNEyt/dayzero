@@ -37,6 +37,7 @@ const IC={T2:"🫁",T1:"🏥",O1:"🧊",T3:"💧",T4:"🏢",T6:"⛽",O2:"🛢️
 let S=null;
 const DZ_SAVE="dayzero_save_main";
 const sv=()=>{try{localStorage.setItem(DZ_SAVE,JSON.stringify(S))}catch(e){}};
+const DZ_NOTH=Object.freeze({});
 const tr=(k,n)=>{S.t[k]=Math.max(0,Math.min(6,S.t[k]+n))};
 const act=id=>{const x=S.th[id];return !!x&&!x.res&&!x.fail};
 const esc=s=>String(s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
@@ -73,7 +74,7 @@ function dzHas(id){return dzInit().inventory.includes(id)}
 function dzOpen(id){
  if(id==="hall")return S.round>=1;
  if(id==="tower")return !!S.f.acc;
- if(id==="clinic")return S.round>=2&&!!(S.th.T1&&S.th.T1.res);
+ if(id==="clinic")return S.round>=2&&!!(S.th.T1&&(S.th.T1||DZ_NOTH).res);
  return false;
 }
 function dzNext(id){
@@ -177,7 +178,7 @@ K("info","SIG",2,"Set up the hall's radio point and noticeboard",()=>!S.hub.info
 K("osei","LOC",2,"Ask Mr Osei to unlock the tower block stairs",()=>act("T2")&&!S.f.acc,()=>{S.f.acc=1;S.r.osei=1;return "🔑 Mr Osei unlocks the back stairs and leaves the door open."});
 K("aldT","MED",3,"Climb to Mr Aldous and help him",()=>act("T2")&&!S.f.stab,()=>{if(!S.f.acc)return "🚪 The back door is locked. Pavel can't get in.";S.f.stab=1;S.th.T2.clock=0;S.f.pT2=Math.max(3,S.round+1);return "🫁 Pavel finds the backup cylinder. Mr Aldous is stable — for now."});
 K("aldW","MED",2,"Travel with Mr Aldous to the clinic",()=>act("T2")&&S.dec.DL3==="aldous",()=>{S.r.withA=1;return "🧳 Pavel gets ready to travel."});
-K("aldV","QM",3,"Drive Mr Aldous to the clinic",()=>act("T2")&&S.r.withA&&S.th.T1.res,()=>{S.th.T2.res=true;return "✅ Mr Aldous reaches the clinic safely."},{cost:{fuel:2},sh:()=>act("T2")&&S.dec.DL3==="aldous",no:"He needs the Medic with him, and the clinic needs power."});
+K("aldV","QM",3,"Drive Mr Aldous to the clinic",()=>act("T2")&&S.r.withA&&!!(S.th.T1&&(S.th.T1||DZ_NOTH).res),()=>{S.th.T2.res=true;return "✅ Mr Aldous reaches the clinic safely."},{cost:{fuel:2},sh:()=>act("T2")&&S.dec.DL3==="aldous",no:"He needs the Medic with him, and the clinic needs power."});
 K("aldC","MED",3,"Climb to Mr Aldous with a medkit",()=>S.f.care&&S.round===6&&!S.f.cared,()=>{S.f.cared=1;return "🩺 Mr Aldous is safe tonight."},{cost:{medkits:1}});
 K("fW","QM",3,"Deliver fuel to the clinic via the WEST Bridge",()=>act("T1"),()=>{S.th.T1.res=true;return "✅ The clinic generator is refuelled."},{cost:{fuel:2}});
 K("fE","QM",3,"Deliver fuel to the clinic via the EAST Bridge",()=>act("T1"),()=>{S.a.fuel++;return "🌊 The East Bridge is flooded! The van turns back."},{cost:{fuel:3}});
@@ -224,11 +225,11 @@ const pay=c=>{for(const k in c)k==="supplies"?tr("supplies",-c[k]):S.a[k]-=c[k]}
 const GRP={"🏠 Build the Hub":["gTest","gN","gS","gST","gMH","wood","woodV","fill","cw","cwV","info"],"🫁 Mr Aldous":["osei","aldT","aldW","aldV","aldC"],"🏥 Clinic":["fW","fE"],"🧊 Freezer food":["lind","frz"],"🏢 Tower block water":["t4w","t4p","t4u"],"⛽ Petrol crowd":["iTan","bA","bB","bC","had"],"🛢️ Fuel reserve":["dep","depV"],"🔥 Candle fire":["fR","fH"],"🚨 Break-in rumour":["iBrk","bT","wat","wel","welM"],"⚡ Grid crew":["gM","gW","gE","cF","cR","calm"],"🔎 Check rumours":["iMid","iArm","iEva","iWat","iSab"],"❤️ Look after people":["trt","cmf"],"🎒 Search for equipment":["exHall","exTower","exClinic"],"🧩 Combine & use items":["useReceiver","useBlankets","useLogSIG","useLogLOC","useRoute"]};
 const DL={DL1:["QM","Open the Stores?","🥫","Neighbours at the door: “The hall has food. Will you share it now?” Some are scared. Some are angry.",[["open","Open to the street","Supplies −1, Cohesion +1, Trust +1",()=>{tr("supplies",-1);tr("cohesion",1);tr("trust",1);S.f.e3=1},"People still talk about the night the hall opened its doors.","A crowd may come to the hall (calmer if Information is running)."],["keep","Keep for the Hub","No change",()=>{S.f.e4=1},"The Hub had enough. Not everyone understood why.","Some people may say the hall is hoarding."]]],
 DL2:[0,"Hillside Water","🚱","Hillside residents with empty bottles: “Our tank is broken. Our children need water. Can you share?”",[["share","Share our water","Supplies −1, Trust +2",()=>{tr("supplies",-1);tr("trust",2);S.f.e1=1},"Hillside still talks about the water you shared.","Hillside may return the favour."],["cont","Give containers only","Trust +1",()=>tr("trust",1),"You gave Hillside a way to help themselves.","Nothing special."],["ref","Refuse","No change",()=>{S.f.e2s=1},"Hillside remembers the door that stayed closed.","Hillside may not forget this."]]],
-DL3:["MED","One Bed","🛏️","The clinic radios: “One bed left. Who gets it?” Mr Aldous needs oxygen. Mrs Petrova is 88, alone and freezing.",[["aldous","Mr Aldous","Mrs Petrova moves to the hall",()=>{S.f.petH=1},"Mr Aldous's daughter flew home on Monday. She brought Pavel a card.","Drive him to the clinic (Medic travels + Quartermaster drives). Mrs Petrova needs Warmth at the hall tomorrow night."],["petrova","Mrs Petrova","The clinic collects her",()=>{S.th.T2.res=true;S.f.care=1},"Mrs Petrova slept warm at the clinic. Pavel climbed nine floors twice more.","On the coldest night, the Medic must climb to Mr Aldous with a medkit."]]],
+DL3:["MED","One Bed","🛏️","The clinic radios: “One bed left. Who gets it?” Mr Aldous needs oxygen. Mrs Petrova is 88, alone and freezing.",[["aldous","Mr Aldous","Mrs Petrova moves to the hall",()=>{S.f.petH=1},"Mr Aldous's daughter flew home on Monday. She brought Pavel a card.","Drive him to the clinic (Medic travels + Quartermaster drives). Mrs Petrova needs Warmth at the hall tomorrow night."],["petrova","Mrs Petrova","The clinic collects her",()=>{if(S.th.T2)S.th.T2.res=true;S.f.care=1},"Mrs Petrova slept warm at the clinic. Pavel climbed nine floors twice more.","On the coldest night, the Medic must climb to Mr Aldous with a medkit."]]],
 DL3A:["MED","The Clinic Is Closed","🏥","The clinic's generator stopped. Its patients were moved away. Pavel can't be in two places.",[["visit","Visit people at home","No cost now",()=>{if(S.th.T2)S.th.T2.res=true;S.f.mL=1},"Pavel walked every street of Mill Lane that weekend.","The Medic has 1 action fewer in the next two rounds."],["hall","Bring everyone to the hall","Fuel −1, Supplies −1",()=>{if(S.th.T2)S.th.T2.res=true;S.a.fuel=Math.max(0,S.a.fuel-1);tr("supplies",-1);S.f.hC=1},"The hall became a small hospital.","The hall needs Warmth tomorrow night."]]],
 DL4:[0,"The Sabotage Claim","📡","Theo's contact says the blackout was sabotage. Theo: “People deserve to know!” Nobody can prove it.",[["claim","Broadcast the claim","Cohesion −1",()=>{tr("cohesion",-1);S.f.e6s=1},"The sabotage story spread faster than the facts.","Unproven claims can cause trouble later."],["known","Broadcast only what we know","Cohesion +1",()=>tr("cohesion",1),"Mill Lane trusted the hall's radio. It never said more than it knew.","Nothing special."],["sil","Stay silent","No change",()=>{},"You kept quiet. Some wondered what you knew.","Nothing special."]]],
 DL5:["LOC","The Old Mill Path","🌉","The crew could go tonight by the old mill path through Hillside, or wait for daylight and a bridge. Waiting means another freezing night.",[["tonight","Go tonight","The crew can be guided this round",()=>{},"The crew still tells the story of the night neighbours led them over the footbridge.","Power could come back a night early."],["wait","Wait for daylight","The crew waits",()=>{},"You chose the safe way. The town waited one more cold night.","The crew can only be guided in the final round."]]],
-DL6:[0,"Who Gets Power First?","⚡","The council asks where power goes first.",[["tower","The tower block","—",()=>{tr("health",1);tr("trust",1)},"When the lift started, the 9th floor cheered.","If the crew fixes the substation: Health +1, Trust +1."],["clinic","The clinic street","—",()=>{S.th.T1.fail?tr("health",2):tr("cohesion",1)},"The clinic lit up first, like the town's heart starting again.","If the crew fixes the substation: Health +2 if the clinic closed, otherwise Cohesion +1."],["hallp","Our hall","—",()=>{S.f.hb=1},"The hall lit up first. Some said that was fair.","If the crew fixes the substation: one missing Hub system counts as running."]]]};
+DL6:[0,"Who Gets Power First?","⚡","The council asks where power goes first.",[["tower","The tower block","—",()=>{tr("health",1);tr("trust",1)},"When the lift started, the 9th floor cheered.","If the crew fixes the substation: Health +1, Trust +1."],["clinic","The clinic street","—",()=>{(S.th.T1||DZ_NOTH).fail?tr("health",2):tr("cohesion",1)},"The clinic lit up first, like the town's heart starting again.","If the crew fixes the substation: Health +2 if the clinic closed, otherwise Cohesion +1."],["hallp","Our hall","—",()=>{S.f.hb=1},"The hall lit up first. Some said that was fair.","If the crew fixes the substation: one missing Hub system counts as running."]]]};
 const TEACH1="<b>How it works:</b> The narrator reads the chapter and new problems aloud. Every role gets information: shared on the TV in TV-only mode, or shown on an individual phone in TV + phones mode. Cards are labelled VERIFIED, UNCONFIRMED or RUMOUR. <b>Read or explain your cards however you like.</b> Compare what you know before planning.<br>Choose actions as a team, then choose each role’s actions together on the TV. Round 1 gives each role <b>one action</b>; later rounds give two.<br>Some actions depend on another role or scarce supplies. If a threat clock fills, consequences follow. The narrator can read the illustrated results aloud.";
 const TEACH2="From this chapter onwards, each role may choose <b>2 actions</b>. You are a team: talk first and plan who does what, then lock in the orders.<br><b>Example:</b> Marta can ask the caretaker to unlock the tower, while Pavel chooses to climb to Mr Aldous in the same round. If the unlocking does not happen, the climb cannot succeed.<br>Read important decisions aloud together before voting. Some consequences only become clear later.";
 const FOOL=[["“Power back by midnight” (R1)","False."],["“Army generators” (R2)","False."],["Marta: “The East Bridge floods” (R2)","True this time."],["Clinic: “Fuel until morning” (R2)","True."],["Water board: “until Saturday” (R3)","Roughly right, but the message was old."],["“The clinic is evacuating” (R3)","False."],["“A fuel tanker is coming” (R4)","False."],["“Thieves on Mill Lane” (R5)","False: a video game."],["“It was sabotage” (R5)","Unknown. Nobody could prove it."]];
@@ -259,7 +260,7 @@ function startRound(){const r=S.round;S.r={};S.nw=[];S.br=[];S.ord={};S.co=dzRou
 const B=(t,x,w)=>S.br.push({t,x,w});
 if(r>1&&S.hub.info&&S.a.signal<6){S.a.signal++;B("A Fresh Radio Shift","With the hall radio point staffed and organised, Theo gains 1 Signal for this round (up to 6).","Because you established the Information hub.");}
 if(S.f.e5===r){tr("health",-2);S.hub.warmth=false;B("Headaches at the Hall","People feel dizzy and sick. The generator was running indoors: carbon monoxide. Health −2. The generator is off until someone sets it up outside.","Because the generator was set up indoors.")}
-if((r===3||r===6)&&S.hub.warmth&&S.wt==="gen"){if(S.a.fuel>0){S.a.fuel--;B("Generator","The generator uses 1 Fuel to keep running.")}else{S.hub.warmth=false;S.f.gFuel=0;B("Generator","No fuel left. The generator stops.")}}
+if((r===3||r===6)&&S.hub.warmth&&S.wt==="gen"){if(S.f.tuned&&!S.f.tunedUsed){S.f.tunedUsed=1;B("Generator","Dev's tune-up pays off: the generator sips its fuel. No Fuel needed this time.","Because the Mechanic tuned the generator.")}else if(S.a.fuel>0){S.a.fuel--;B("Generator","The generator uses 1 Fuel to keep running.")}else{S.hub.warmth=false;S.f.gFuel=0;B("Generator","No fuel left. The generator stops.")}}
 if(r===1)add("T2");
 if(r===2){add("T1");add("O1")}
 if(r===3){add("T3");if(S.pl.length>2)add("T4")}
@@ -273,7 +274,7 @@ add("T10")}
 if(r===7&&S.f.pw===6)B("Early Restoration","Across town, a streetlight flickers on. Power is coming back a night early!");
 dzRoundExtras(r,B);
 let d=null;if(r===2)d="DL1";if(r===3)d="DL2";
-if(r===4){if(S.th.T1.fail)d="DL3A";else if(act("T2"))d="DL3";else{S.codas.push("Mrs Petrova got the last clinic bed.");B("The Clinic Bed","Mrs Petrova gets the last clinic bed.")}}
+if(r===4){if(S.th.T1&&(S.th.T1||DZ_NOTH).fail)d="DL3A";else if(act("T2"))d="DL3";else{S.codas.push("Mrs Petrova got the last clinic bed.");B("The Clinic Bed","Mrs Petrova gets the last clinic bed.")}}
 if(r===5)d="DL4";
 if(r===6){if(S.f.e2){S.dec.DL5="wait";S.codas.push("The Hillside barrier blocked the old mill path.")}else d="DL5"}
 if(r===7)d="DL6";
@@ -288,7 +289,7 @@ function nA(r){let n=S.round===1?1:2;if(r==="MED"&&S.f.mL&&(S.round===5||S.round
 function opts(r){return T.filter(t=>(t.who===r||t.who==="ANY")&&(t.sh?t.sh():t.av()))}
 function lock(){S.pl[S.pi].r.forEach(r=>{S.ord[r]=[];for(let i=0;i<nA(r);i++){const v=document.getElementById("o_"+r+"_"+i).value;if(v)S.ord[r].push(v)}});next()}
 function next(){S.show=false;S.pi++;if(S.pi>=S.pl.length){S.pi=0;if(S.ph==="intel"){if(DZ21_BREAK_ROUNDS.includes(S.round)&&!S.story.seen[S.round]){S.story.seen[S.round]=1;S.ph="break"}else S.ph="council"}else if(S.ph==="ord"){resolve();return}}sv();R()}
-function resolve(){S.pre=snap();dzSfx("drum");S.log=[];S.report=[];const L=[];RO.forEach(r=>(S.ord[r]||[]).forEach(id=>L.push({r,id})));
+function resolve(){S.pre=snap();dzSfx("drum");S.log=[];S.report=[];const L=[];dzRoles().forEach(r=>(S.ord[r]||[]).forEach(id=>L.push({r,id})));
 S.rev=L.map(o=>RL[o.r].i+" "+RL[o.r].ch+": "+TI[o.id].label);
 L.sort((a,b)=>TI[a.id].step-TI[b.id].step||TI[a.id].ix-TI[b.id].ix);
 L.forEach(o=>{
@@ -315,7 +316,7 @@ if(!L.length)S.log.push("No actions were taken.");
 (S.hist=S.hist||[]).push({round:S.round,rep:S.report.map(x=>({id:x.id,role:x.role,status:x.status,label:x.label}))});
 S.ph="res";chk();sv();R()}
 function escal(){S.pre=snap();const r=S.round,E=[];S.crisis++;S.lastTick={};
-const FX={T2:()=>{tr("health",-2);tr("cohesion",-1)},T1:()=>{tr("health",-2);if(act("T2")){S.th.T2.clock++;if(S.th.T2.clock>=3)fail("T2")}},T3:()=>{tr("supplies",-1);S.f.dry=1},T4:()=>{tr("health",-1);tr("trust",-1)},T6:()=>{tr("trust",-2);tr("cohesion",-1)},T8:()=>{tr("health",-2);tr("supplies",-1);tr("cohesion",-1)},T9:()=>{tr("cohesion",-2);tr("trust",-1)},T10:()=>{tr("health",-1)}};
+const FX={T2:()=>{tr("health",-2);tr("cohesion",-1)},T1:()=>{tr("health",-2);if(act("T2")){S.th.T2.clock++;if((S.th.T2||DZ_NOTH).clock>=3)fail("T2")}},T3:()=>{tr("supplies",-1);S.f.dry=1},T4:()=>{tr("health",-1);tr("trust",-1)},T6:()=>{tr("trust",-2);tr("cohesion",-1)},T8:()=>{tr("health",-2);tr("supplies",-1);tr("cohesion",-1)},T9:()=>{tr("cohesion",-2);tr("trust",-1)},T10:()=>{tr("health",-1)}};
 function fail(id){S.th[id].fail=true;if(id[0]!=="O")S.crisis++;E.push("✖ ⏰ "+TH[id][0]+": clock full! "+TH[id][4]);if(FX[id])FX[id]()}
 const tk=(id,skip)=>{if(!act(id)||skip||!dzClock(id))return;S.th[id].clock++;S.lastTick[id]=1;if(S.th[id].clock>=dzClock(id))fail(id);else if(id!=="T3")E.push("⏳ "+TH[id][0]+": clock "+S.th[id].clock+"/"+TH[id][2])};
 tk("T2",r<(S.f.pT2||0)||(S.r.osei&&!S.f.stab));tk("T1");tk("O1");
@@ -338,11 +339,11 @@ else if(c>=2&&m===1)e=["Together in the Dark","The hall was never really ready. 
 else if(tot<=4)e=["Barely Through","You made it. Just. Some mistakes cost more than they should have. But you survived, and you learned."];
 else e=["The Long Weekend","Not perfect. Not a disaster. Mill Lane got through three days without power, mostly together."];
 const x=S.broke?"":S.f.pw===6?" And thanks to you, the power came back a whole night early.":S.f.pw?"":" The power finally returned two days later.";return {e,x,m,p,c}}
-function outc(){const o=[];if(S.th.T2){if(S.th.T2.fail)o.push("Mr Aldous was taken to hospital. His daughter is with him now.");else if(S.dec.DL3==="aldous"&&S.th.T2.res)o.push("Mr Aldous made it to the clinic, nine floors down.")}
-if(S.th.T1)o.push(S.th.T1.fail?"The clinic's patients were moved out of town in the night.":S.th.T1.res?"The clinic never went dark.":"");
-if(S.th.T8)o.push(S.th.T8.res?"Mrs Petrova's house was damaged, but everyone got out.":S.th.T8.fail?"The fire spread to two houses. Everyone got out, but some lost everything.":"");
+function outc(){const o=[];if(S.th.T2){if((S.th.T2||DZ_NOTH).fail)o.push("Mr Aldous was taken to hospital. His daughter is with him now.");else if(S.dec.DL3==="aldous"&&(S.th.T2||DZ_NOTH).res)o.push("Mr Aldous made it to the clinic, nine floors down.")}
+if(S.th.T1)o.push((S.th.T1||DZ_NOTH).fail?"The clinic's patients were moved out of town in the night.":(S.th.T1||DZ_NOTH).res?"The clinic never went dark.":"");
+if(S.th.T8)o.push((S.th.T8||DZ_NOTH).res?"Mrs Petrova's house was damaged, but everyone got out.":(S.th.T8||DZ_NOTH).fail?"The fire spread to two houses. Everyone got out, but some lost everything.":"");
 if(S.hub.water&&!S.f.dry)o.push("You filled the containers before the taps went dry.");
-if(S.th.T9&&S.th.T9.res)o.push("The thieves story stopped with the hall's radio.");return o}
+if(S.th.T9&&(S.th.T9||DZ_NOTH).res)o.push("The thieves story stopped with the hall's radio.");return o}
 const goal=()=>`<div class="goal">🎯 <b>This round:</b> ${GOAL[S.round]}</div>`;
 const foot=()=>`<p class="c"><button class="btn b sm2" onclick="restart()">New game</button></p>`;
 function roleBox(r){return `<div class="rb" style="border-color:${RL[r].c}"><h3 style="color:${RL[r].c}">${RL[r].i} You are the ${RL[r].n} (${RL[r].ch})</h3><b>Your job:</b> ${ROLEX[r].does}<br><span class="s">${ROLEX[r].why}</span></div>`}
