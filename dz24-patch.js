@@ -3,7 +3,7 @@
  const oldTitle=title,oldGo=go,oldStart=start,oldTeam=vTeam,oldBrief=vBrief,oldCouncil=vCouncil,oldContinue=cont,oldRender=R;
  title=function(){
   let h=oldTitle();
-  h=h.replace("pass this device around for private cards.","play on a shared TV, with optional private briefings on phones.");
+  h=h.replace("1–4 players · about 75 minutes · choose your TV setup.","1–4 players · about 75 minutes · play on a shared TV, with optional private briefings on phones.");
   const original='<div class="c"><button class="btn" onclick="go()">Start</button>';
   const selection='<div class="sec">📺 Choose how to play</div>'+
    '<label class="dz24-mode-select">Play setup<select id="dz24-play-mode">'+
@@ -24,7 +24,7 @@
  };
  cont=function(){oldContinue();if(!S.mode){S.mode="tv";sv();R()}};
  vTeam=function(){
-  return oldTeam().replace("Each role gets different private cards every round. You only succeed if you share what you know.",
+  return oldTeam().replace("Each role receives different information each round. Cooperate by sharing what you learn.",
    dz24Mode()==="phones"?"Each role receives different information on their player’s phone. Share it with your teammates at the council.":"Each role receives different information. In TV-only mode you read the role briefings together before deciding what to do.");
  };
  vBrief=function(){
