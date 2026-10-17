@@ -92,8 +92,10 @@ function thC(id){
 }
 function dzClockStrip(){
  const A=Object.keys(S.th).filter(id=>act(id)&&dzClock(id));if(!A.length)return "";
- return '<div class="dz-strip">'+A.map(id=>{const x=S.th[id],n=dzClock(id),hot=x.clock>=n-1;return '<div class="dz-st dz-strip-i'+(hot?" hot":"")+'" data-sfx="'+(S.lastTick&&S.lastTick[id]?"tick":"none")+'" data-wait="450"><span class="dz-strip-art" aria-hidden="true" style="background-image:url(art/'+id.toLowerCase()+'.jpg)"></span><b class="dz-strip-n">'+IC[id]+" "+TH[id][0]+'</b><div class="clk">'+Array.from({length:n},(_,i)=>id==="T3"?"<i>?</i>":'<i class="'+(i<x.clock?"on":"")+(S.lastTick&&S.lastTick[id]&&i===x.clock-1?" dz-newpip":"")+'"></i>').join("")+'</div></div>'}).join("")+'</div>';
+ return '<div class="dz-strip">'+A.map(id=>{const x=S.th[id],n=dzClock(id),hot=x.clock>=n-1;return '<div class="dz-st dz-strip-i'+(hot?" hot":"")+'" data-sfx="'+(S.lastTick&&S.lastTick[id]?"tick":"none")+'" data-wait="450"><span class="dz-strip-art" aria-hidden="true" style="background-image:url(art/'+(DZ_CLOCK_ART[id]||id.toLowerCase())+'.jpg)"></span><b class="dz-strip-n">'+IC[id]+" "+TH[id][0]+'</b><div class="clk">'+Array.from({length:n},(_,i)=>id==="T3"?"<i>?</i>":'<i class="'+(i<x.clock?"on":"")+(S.lastTick&&S.lastTick[id]&&i===x.clock-1?" dz-newpip":"")+'"></i>').join("")+'</div></div>'}).join("")+'</div>';
 }
+/* Every problem clock's picture (art/<key>.jpg); unknown ids fall back to their own key. */
+const DZ_CLOCK_ART={T1:"t1",T2:"t2",T3:"t3",T4:"t4",T6:"t6",T7:"t7",T8:"t8",T9:"t9",T10:"t10",O1:"o1",O2:"o2"};
 /* A framed booklet panel for an existing picture (colour art, caption box, numbered corner tab). */
 function dzFrame(key,cap,cls){return '<figure class="dz-panel'+(cls?" "+cls:"")+'">'+art(key,"").replace('class="art"','class="art"'+(cap?' data-cap="'+esc(cap)+'"':""))+'</figure>'}
 
@@ -224,22 +226,27 @@ function dzNightStory(){
 /* "While you slept": a night picture, the night told as short story lines, then the problem clocks. */
 const DZ_TICK={T2:"Up on the 9th floor, Mr Aldous's oxygen machine beeps a little faster.",T1:"Across the river, the clinic's generator coughs through another night.",O1:"Mrs Lindqvist's freezers creep a few degrees warmer.",T4:"The tower block's upper floors go another night without water.",T6:"The queue at the petrol station grows longer, and angrier.",O2:"Somewhere in town, the hidden fuel is slowly being used up.",T8:"On Marta's street, another candle burns too close to the curtains.",T9:"The break-in rumour creeps from door to door.",T10:"The grid crew waits another night at the council point."};
 const DZ_FULL={T2:"Time ran out for Mr Aldous. An ambulance took him to hospital.",T1:"The clinic generator died in the night.",O1:"Mrs Lindqvist's freezers thawed. The food is spoiled.",T3:"The water tower ran dry.",T4:"The tower block's upper floors ran out of water.",T6:"The crowd at the petrol station boiled over.",O2:"The hidden fuel is gone.",T8:"The candle fire took hold on Marta's street.",T9:"Scared neighbours started guarding their doors against each other.",T10:"The grid crew gave up waiting."};
-/* Per-Day night pictures (art/<key>.jpg), filled in as new art arrives; until then every night uses the snowy window. */
-const DZ_NIGHT_ART={};
+/* Night pictures by story Day. S.round is the story Day, so Day 3 of a 5-Day quick game shows its own story night.
+   Campaign episodes 2 and 3 replay the same story beats (ep 2: Not Again/Frozen Stores/Running Dry/Silent Masts/Thaw;
+   ep 3: Third Time/Inspector/Sam's Secret/Cold Trail/Who Had the Key?), so the same Day-to-picture map fits them too. */
+const DZ_NIGHT_ART={1:"n1",2:"n2",3:"n3",4:"n4",5:"n5",6:"n6",7:"n7"};
+function dzNightArt(){return DZ_NIGHT_ART[S.round]||"echo"}
 function dzNightLine(x){
  const t=String(x||""),idOf=n=>Object.keys(TH).find(k=>TH[k][0]===n);
  let m=t.match(/^⏳\s*(.+): clock (\d+)\/(\d+)$/);
  if(m){const id=idOf(m[1]);return {cls:"",txt:DZ_TICK[id]||m[1]+" gets worse ("+m[2]+" of "+m[3]+")."}}
  m=t.match(/^✖\s*⏰\s*(.+): clock full! (.*)$/);
  if(m){const id=idOf(m[1]);return {cls:"no",txt:(DZ_FULL[id]||"Time ran out: "+m[1]+".")+" "+m[2]}}
+ if(/^A quiet hour/.test(t))return {cls:"",txt:"A quiet night on Mill Lane. Nothing new went wrong."};
  return {cls:/✖/.test(t)?"no":/✅/.test(t)?"ok":"",txt:dz22Plain(t)};
 }
 function dzSlept(){
- const told=dzNightStory().join(" "),key=DZ_NIGHT_ART[S.round]||"echo";
+ const told=dzNightStory().join(" "),key=dzNightArt();
  let L=(S.esc||[]).map(dzNightLine).filter(l=>!(l.cls!=="no"&&l.txt&&told.includes(l.txt)));
  if(!L.length)L=[{cls:"",txt:"A quiet night on Mill Lane. Nothing new went wrong."}];
+ const clocks=dzClockStrip();
  return '<div class="sec">⏳ While you slept</div><div class="dz-slept">'+dzFrame(key,"Night "+dzDayNo()+" on Mill Lane","dz-night-panel")+
-  '<div class="dz-slept-txt">'+L.map(l=>'<p class="dz-st'+(l.cls?" "+l.cls:"")+'" data-sfx="'+(l.cls==="no"?"fail":l.cls==="ok"?"success":"tick")+'" data-wait="500">'+esc(l.txt)+'</p>').join("")+dzClockStrip()+'</div></div>';
+  '<div class="dz-slept-row'+(clocks?"":" solo")+'"><div class="dz-slept-txt">'+L.map(l=>'<p class="dz-st'+(l.cls?" "+l.cls:"")+'" data-sfx="'+(l.cls==="no"?"fail":l.cls==="ok"?"success":"tick")+'" data-wait="500">'+esc(l.txt)+'</p>').join("")+'</div>'+(clocks?'<div class="dz-slept-clocks">'+clocks+'</div>':"")+'</div></div>';
 }
 function vNight(){
  const seq=dzSeq(),i=dzRoundIdx(),nxR=seq[i+1],more=nxR&&!S.broke;

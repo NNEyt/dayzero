@@ -47,14 +47,14 @@ label.lab{display:block;font-size:13px;color:#bfcbe3;margin-top:8px}
 .goalcard{border:2px dashed #c593e5;background:#1d1533;border-radius:12px;padding:14px}.goalcard h2{margin:4px 0;color:#e4c6ff}
 .insider{border-color:#e4572e;background:#2b1010}
 </style>
-<link rel="stylesheet" href="fonts/fonts.css"><link rel="stylesheet" href="dz-phone.css"><link rel="stylesheet" href="dz-booklet-phone.css"></head>
+<link rel="stylesheet" href="fonts/fonts.css?v=fbd2c5de20"><link rel="stylesheet" href="dz-phone.css?v=fbd2c5de20"><link rel="stylesheet" href="dz-booklet-phone.css?v=fbd2c5de20"></head>
 <body><header><div class="logo">DAY ZERO<span>Controller</span></div><div id="status">Connecting…</div></header><main id="phone">Loading…</main>
 <footer>Your phone talks straight to the TV (WebRTC via the free PeerJS service). Nothing is stored online. If anything goes wrong, just play on the TV.</footer>
 <script>const esc=s=>String(s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));</script>
-<script src="vendor/peerjs.min.js"></script>
-<script src="dz24.js"></script>
-<script src="dz-content.js"></script>
-<script src="dz-art.js"></script><script src="dz-polish.js"></script>
+<script src="vendor/peerjs.min.js?v=fbd2c5de20"></script>
+<script src="dz24.js?v=fbd2c5de20"></script>
+<script src="dz-content.js?v=fbd2c5de20"></script>
+<script src="dz-art.js?v=fbd2c5de20"></script><script src="dz-polish.js?v=fbd2c5de20"></script>
 <script>
 /* Day Zero phone controller: joins the TV's game over a PeerJS data channel. */
 const Q=new URLSearchParams(location.hash.slice(1)),HOST=Q.get("h")||"",P=Number(Q.get("p")),KEY=Q.get("k")||"";
@@ -135,4 +135,4 @@ document.addEventListener("click",()=>{if(!wake&&navigator.wakeLock)navigator.wa
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!(conn&&conn.open)&&tries>=0){tries=0;connect()}});
 connect();
 </script>
-<script src="dz-booklet.js"></script></body></html>
+<script src="dz-booklet.js?v=fbd2c5de20"></script></body></html>

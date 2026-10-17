@@ -35,11 +35,11 @@ footer{color:#9babc8;font-size:12px;text-align:center;padding:12px 22px 28px}
 @media (max-width:400px){.dz24-intel-card{grid-template-columns:86px minmax(0,1fr)}.dz24-artwrap,.dz24-artwrap img{min-height:145px}.dz24-card-copy p{font-size:15px}}
 .goalbox{margin:22px 0;padding:14px;border:2px dashed #c593e5;border-radius:12px;background:#1d1533}.goalbox h2{margin:4px 0;color:#e4c6ff}
 </style>
-<link rel="stylesheet" href="fonts/fonts.css"><link rel="stylesheet" href="dz-phone.css"><link rel="stylesheet" href="dz-booklet-phone.css"></head>
+<link rel="stylesheet" href="fonts/fonts.css?v=fbd2c5de20"><link rel="stylesheet" href="dz-phone.css?v=fbd2c5de20"><link rel="stylesheet" href="dz-booklet-phone.css?v=fbd2c5de20"></head>
 <body><header><div class="logo">DAY ZERO<span>Private briefing</span></div></header><main id="phone">Loading your briefing…</main><footer>Your phone shows your cards for today. Scan a new code each morning. No app or account required.</footer>
 <script>const esc=s=>String(s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));</script>
-<script src="dz24.js"></script>
-<script src="dz-content.js"></script>
+<script src="dz24.js?v=fbd2c5de20"></script>
+<script src="dz-content.js?v=fbd2c5de20"></script>
 <script>
 function phoneRender(){
  const q=new URLSearchParams(window.location.hash.slice(1));
@@ -74,4 +74,4 @@ function phoneToggle(){
 }
 phoneRender();window.addEventListener("hashchange",phoneRender);
 </script>
-<script src="dz-booklet.js"></script></body></html>
+<script src="dz-booklet.js?v=fbd2c5de20"></script></body></html>
