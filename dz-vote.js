@@ -45,7 +45,7 @@ function dzVoteView(){
  else extra+='<option value="">Nothing to note</option>'+others.map(j=>'<option value="sus:'+j+'">I don\'t fully trust '+esc(S.pl[j].n)+'</option>').join("");
  extra+='</select></label>';
  if(!S.insiderOn)extra="";
- return '<div class="dz24-lead"><div class="dz24-eyebrow">SECRET BALLOT · '+esc(p.n).toUpperCase()+'</div><h2>'+d[2]+" "+d[1]+'</h2><p>'+d[3]+'</p></div><div class="pn dz-ballot">'+
+ return '<div class="dz24-lead"><div class="dz24-eyebrow">SECRET BALLOT · '+esc(p.n).toUpperCase()+'</div><h2>'+d[2]+" "+d[1]+'</h2><p>'+d[3]+'</p></div>'+(typeof dzFrame==="function"?dzFrame(S.dl.toLowerCase(),d[1],"dz-vote-panel"):"")+'<div class="pn dz-ballot">'+
  d[4].map((o,i)=>'<button class="btn opt '+(vt.sel===o[0]?"":"b")+'" '+(dzVoteOptionOk(o)?"":"disabled")+' onclick="S.vt.sel=\''+o[0]+'\';dzSfx(\'tick\');R()">'+(vt.sel===o[0]?"☑ ":"☐ ")+'Option '+"ABC"[i]+': '+o[1]+'<div>⚡ '+o[2]+'</div></button>').join("")+extra+
  '<div class="c"><button class="btn" '+(vt.sel?"":'disabled aria-describedby="dz-vote-hint"')+' onclick="dzCast()">Cast my vote &amp; hide</button>'+(vt.sel?"":'<p class="dz-pick-hint" id="dz-vote-hint">☝️ Pick an option above first</p>')+'</div></div>';
 }
@@ -79,7 +79,7 @@ function dzTally(){
 }
 function dzVoteReveal(){
  const d=DL[S.dl],vr=S.vr,n=S.pl.length,o=d[4].find(x=>x[0]===vr.winner),label=k=>{const i=d[4].findIndex(x=>x[0]===k);return "ABC"[i]+": "+d[4][i][1]};
- let h='<h2>'+d[2]+' The votes are in…</h2><div class="dz-ballots">'+vr.order.map((k,i)=>'<div class="dz-st dz-ballotcard" data-sfx="flip" data-wait="900"><div class="dz-bk">BALLOT '+(i+1)+'</div><div class="dz-bv">'+label(k)+'</div></div>').join("")+'</div>';
+ let h=(typeof dzFrame==="function"?dzFrame(S.dl.toLowerCase(),d[1],"dz-vote-panel"):"")+'<h2>'+d[2]+' The votes are in…</h2><div class="dz-ballots">'+vr.order.map((k,i)=>'<div class="dz-st dz-ballotcard" data-sfx="flip" data-wait="900"><div class="dz-bk">BALLOT '+(i+1)+'</div><div class="dz-bv">'+label(k)+'</div></div>').join("")+'</div>';
  h+='<div class="pn dz-st dz-tally" data-sfx="drum" data-wait="1500">'+d[4].map(x=>'<div class="dz-bar"><span>'+label(x[0])+'</span><i style="--w:'+(100*vr.counts[x[0]]/n)+'%"></i><b>'+vr.counts[x[0]]+'</b></div>').join("")+(vr.tieBy?'<p>⚖️ A tie. <b>'+esc(vr.tieBy)+'</b> casts the deciding vote.</p>':"")+'</div>';
  h+='<div class="dz-st dz-verdict" data-sfx="success" data-wait="1200"><div class="dz-kick">THE HALL DECIDES</div><h3>'+o[1]+'</h3><p>⚡ '+o[2]+'</p>'+(vr.unanimous?'<p class="dz-uni">🤝 Unanimous! The hall speaks with one voice. Cohesion +1.</p>':"")+'</div>';
  if(vr.sab.length)h+=vr.sab.map(s=>'<div class="dz-st dz-sab" data-sfx="alarm" data-shake="1" data-wait="1400">🕵️ While everyone was voting, someone slipped into the storeroom. '+(s.what==="fuel"?"<b>1 Fuel is missing from the van.</b>":"<b>1 Supplies has been spoiled.</b>")+'</div>').join("");

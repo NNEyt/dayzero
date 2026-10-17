@@ -62,3 +62,4 @@ header p{color:#f3ead2!important;font-style:italic}
 .dz-ph-day{white-space:normal}
 .dz-ph-title{font:italic 400 20px/1.25 var(--bk-serif);color:var(--bk-ink);margin:2px 0 4px;border-bottom:.75px solid var(--bk-ink);padding-bottom:6px}
 @media (max-width:420px){.logo span{display:none}#status{max-width:62vw!important;letter-spacing:.06em!important}}
+.ph-art{aspect-ratio:2/1;background-size:cover;background-position:center;border:1.5px solid var(--bk-ink);outline:.75px solid var(--bk-ink);outline-offset:3px;margin:4px 4px 16px}

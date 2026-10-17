@@ -92,13 +92,15 @@ function thC(id){
 }
 function dzClockStrip(){
  const A=Object.keys(S.th).filter(id=>act(id)&&dzClock(id));if(!A.length)return "";
- return '<div class="dz-strip">'+A.map(id=>{const x=S.th[id],n=dzClock(id),hot=x.clock>=n-1;return '<div class="dz-st dz-strip-i'+(hot?" hot":"")+'" data-sfx="'+(S.lastTick&&S.lastTick[id]?"tick":"none")+'" data-wait="450">'+IC[id]+" "+TH[id][0]+'<div class="clk">'+Array.from({length:n},(_,i)=>id==="T3"?"<i>?</i>":'<i class="'+(i<x.clock?"on":"")+(S.lastTick&&S.lastTick[id]&&i===x.clock-1?" dz-newpip":"")+'"></i>').join("")+'</div></div>'}).join("")+'</div>';
+ return '<div class="dz-strip">'+A.map(id=>{const x=S.th[id],n=dzClock(id),hot=x.clock>=n-1;return '<div class="dz-st dz-strip-i'+(hot?" hot":"")+'" data-sfx="'+(S.lastTick&&S.lastTick[id]?"tick":"none")+'" data-wait="450"><span class="dz-strip-art" aria-hidden="true" style="background-image:url(art/'+id.toLowerCase()+'.jpg)"></span><b class="dz-strip-n">'+IC[id]+" "+TH[id][0]+'</b><div class="clk">'+Array.from({length:n},(_,i)=>id==="T3"?"<i>?</i>":'<i class="'+(i<x.clock?"on":"")+(S.lastTick&&S.lastTick[id]&&i===x.clock-1?" dz-newpip":"")+'"></i>').join("")+'</div></div>'}).join("")+'</div>';
 }
+/* A framed booklet panel for an existing picture (colour art, caption box, numbered corner tab). */
+function dzFrame(key,cap,cls){return '<figure class="dz-panel'+(cls?" "+cls:"")+'">'+art(key,"").replace('class="art"','class="art"'+(cap?' data-cap="'+esc(cap)+'"':""))+'</figure>'}
 
 /* ---------- the Day: 📰 Morning News → 🗣️ Discuss → ✋ Decide → 🌙 Night ---------- */
 const DZ_ONE_LINE={SIG:"knows which rumours are true, and runs the radio desk",QM:"drives the van and spends the Fuel",MED:"keeps people alive and spots deadly mistakes",LOC:"knows everyone in town, and every back door",RUN:"kid role: runs messages and quick jobs",HST:"kid role: tea, blankets and kindness",MEC:"fixes generators, pumps and radios",LIA:"gets official answers from the council"};
 function dzTeamBox(){
- return '<div class="sec">👥 Who you are</div><div class="pn">'+S.pl.map(p=>'<div class="dz-teamline"><b>'+esc(p.n)+'</b> '+p.r.map(r=>'<span style="color:'+RL[r].c+'">'+RL[r].i+" "+RL[r].ch+'</span> <span class="s">('+RL[r].n+": "+DZ_ONE_LINE[r]+')</span>').join(" & ")+'</div>').join("")+'</div>';
+ return '<div class="sec">👥 Who you are</div><div class="pn">'+S.pl.map(p=>'<div class="dz-teamline">'+(typeof dzPortrait==="function"?dzPortrait(RL[p.r[0]].ch):"")+'<b>'+esc(p.n)+'</b> '+p.r.map(r=>'<span style="color:'+RL[r].c+'">'+RL[r].i+" "+RL[r].ch+'</span> <span class="s">('+RL[r].n+": "+DZ_ONE_LINE[r]+')</span>').join(" & ")+'</div>').join("")+'</div>';
 }
 function dzCastRow(names){
  const n=(names||[]).filter(x=>DZ_CAST[x]);if(!n.length)return "";
@@ -192,6 +194,7 @@ function vDecide(){
  const pending=!!(S.dl&&!S.dc);
  let h=dzTrack()+'<div class="dz24-lead"><div class="dz24-eyebrow">✋ Decide · '+dzDayLabel()+'</div><h2>'+esc(dzArc().q)+'</h2></div>';
  if(S.dl)h+=dzDilemmaCard();
+ else h+=dzFrame(dzRoundIdx()===0?"teach":"ev"+S.round,dzRoundIdx()===0?"Planning by candlelight at the hall.":dzArc().head+" · making the plan","dz-decide-panel");
  if(pending)return h+dzClockStrip()+'<p class="c s">Settle the big decision first. Then each role picks its actions.</p>';
  if(dzRoundIdx()===0)h+=dzTip("orders","Everything you choose happens together when night falls. If one action needs another (like unlocking the stairs before the climb), choose <b>both</b> now.");
  return h+dzClockStrip()+dz24Orders();
@@ -218,13 +221,33 @@ function dzNightStory(){
  else if(notes.some((x,i)=>/✅/.test(S.esc[i])))paras.push(notes.filter((x,i)=>/✅/.test(S.esc[i]))[0]);
  return paras;
 }
+/* "While you slept": a night picture, the night told as short story lines, then the problem clocks. */
+const DZ_TICK={T2:"Up on the 9th floor, Mr Aldous's oxygen machine beeps a little faster.",T1:"Across the river, the clinic's generator coughs through another night.",O1:"Mrs Lindqvist's freezers creep a few degrees warmer.",T4:"The tower block's upper floors go another night without water.",T6:"The queue at the petrol station grows longer, and angrier.",O2:"Somewhere in town, the hidden fuel is slowly being used up.",T8:"On Marta's street, another candle burns too close to the curtains.",T9:"The break-in rumour creeps from door to door.",T10:"The grid crew waits another night at the council point."};
+const DZ_FULL={T2:"Time ran out for Mr Aldous. An ambulance took him to hospital.",T1:"The clinic generator died in the night.",O1:"Mrs Lindqvist's freezers thawed. The food is spoiled.",T3:"The water tower ran dry.",T4:"The tower block's upper floors ran out of water.",T6:"The crowd at the petrol station boiled over.",O2:"The hidden fuel is gone.",T8:"The candle fire took hold on Marta's street.",T9:"Scared neighbours started guarding their doors against each other.",T10:"The grid crew gave up waiting."};
+/* Per-Day night pictures (art/<key>.jpg), filled in as new art arrives; until then every night uses the snowy window. */
+const DZ_NIGHT_ART={};
+function dzNightLine(x){
+ const t=String(x||""),idOf=n=>Object.keys(TH).find(k=>TH[k][0]===n);
+ let m=t.match(/^⏳\s*(.+): clock (\d+)\/(\d+)$/);
+ if(m){const id=idOf(m[1]);return {cls:"",txt:DZ_TICK[id]||m[1]+" gets worse ("+m[2]+" of "+m[3]+")."}}
+ m=t.match(/^✖\s*⏰\s*(.+): clock full! (.*)$/);
+ if(m){const id=idOf(m[1]);return {cls:"no",txt:(DZ_FULL[id]||"Time ran out: "+m[1]+".")+" "+m[2]}}
+ return {cls:/✖/.test(t)?"no":/✅/.test(t)?"ok":"",txt:dz22Plain(t)};
+}
+function dzSlept(){
+ const told=dzNightStory().join(" "),key=DZ_NIGHT_ART[S.round]||"echo";
+ let L=(S.esc||[]).map(dzNightLine).filter(l=>!(l.cls!=="no"&&l.txt&&told.includes(l.txt)));
+ if(!L.length)L=[{cls:"",txt:"A quiet night on Mill Lane. Nothing new went wrong."}];
+ return '<div class="sec">⏳ While you slept</div><div class="dz-slept">'+dzFrame(key,"Night "+dzDayNo()+" on Mill Lane","dz-night-panel")+
+  '<div class="dz-slept-txt">'+L.map(l=>'<p class="dz-st'+(l.cls?" "+l.cls:"")+'" data-sfx="'+(l.cls==="no"?"fail":l.cls==="ok"?"success":"tick")+'" data-wait="500">'+esc(l.txt)+'</p>').join("")+dzClockStrip()+'</div></div>';
+}
 function vNight(){
  const seq=dzSeq(),i=dzRoundIdx(),nxR=seq[i+1],more=nxR&&!S.broke;
  const pd=S.prevDay&&S.prevDay.r===S.round?S.prevDay:{title:dzOutroParts().title,cliff:dzArc().cliff};
  let h=dzTrack()+'<section class="dz21-page dz-night"><div class="dz21-head"><div class="dz21-kicker">🌙 Night · '+dzDayLabel()+'</div><h2>'+esc(pd.title||"Night falls")+'</h2><span>'+esc(dzArc().head)+'</span></div>'+
   '<div class="dz21-prose"><div class="dz21-reader">'+dz21Attribution()+'</div>'+dzNightStory().map(p=>'<p>'+esc(p)+'</p>').join("")+'</div></section>';
  h+='<div class="sec">🃏 How each plan went</div>'+dz22ResultCards();
- if((S.esc||[]).length)h+='<div class="sec">⏳ While you slept</div>'+dzClockStrip()+lg(S.esc);
+ if((S.esc||[]).length)h+=dzSlept();
  h+=dif(S.pre);
  if(pd.cliff)h+='<div class="dz-cliff dz-st" data-sfx="drum" data-wait="1200"><div class="dz-kick">'+(more?"To be continued…":"And then…")+'</div><p>'+esc(pd.cliff)+'</p>'+(more?'<p class="dz-tomorrow">☀️ Tomorrow: <b>Day '+(i+2)+' · '+esc(dzArc(nxR).head)+'</b></p>':"")+'</div>';
  h+='<div class="sec">🏘️ Your town</div>'+board();

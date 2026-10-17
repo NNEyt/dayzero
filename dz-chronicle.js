@@ -68,6 +68,7 @@ function dzChronicle(){
  return '<article class="dz-paper">'+
  '<header class="dz-mast dz-st" data-sfx="press" data-wait="900"><div class="dz-mast-top"><span>'+(S.ep?'The Kelderwick Files · Episode '+S.ep+' of 3':days[0]+' Edition')+'</span><span>Kelderwick &amp; District</span><span>Price: one kind word</span></div><h1>The Mill Lane Chronicle</h1></header>'+
  '<div class="dz-st" data-sfx="press" data-wait="1100"><h2 class="dz-head">'+esc(z.e[0])+'</h2><p class="dz-stand">'+esc(z.e[1]+z.x)+'</p></div>'+
+ (typeof dzFrame==="function"?'<div class="dz-st dz-chron-photo" data-sfx="flip" data-wait="700">'+dzFrame.apply(null,S.broke==="h"?["t1","The clinic, before dawn."]:S.broke==="c"?["t9","Mill Lane, the night the doors stayed shut."]:["end","Mill Lane, the evening the lights came back."])+'</div>':"")+
  '<div class="dz-stars dz-st" data-sfx="success" data-wait="900">Mission '+dzStars(z.m)+' · People '+dzStars(z.p)+' · Community '+dzStars(z.c)+'</div>'+
  '<div class="dz-cols"><div class="dz-col dz-lead"><h3>“We Just Kept the Kettle On”</h3><p>'+lead+'</p>'+(heroHtml?'<h3>Heroes of the Blackout</h3><ul>'+heroHtml+'</ul>':"")+'</div>'+
  '<div class="dz-col"><h3>The Big Decisions</h3>'+(decs?'<ul>'+decs+'</ul>':'<p>No big decisions were reached.</p>')+(cross?'<h3>Around the Hall</h3><ul>'+cross+'</ul>':"")+(town?'<h3>Around Town</h3><ul>'+town+'</ul>':"")+

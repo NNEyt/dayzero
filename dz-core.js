@@ -239,7 +239,7 @@ function dif(p){
  const changes=dz22Changes(p,dz22Frame());
  return '<div class="sec">📊 What changed</div><div class="pn">'+
  (changes.length?'<div class="dz22-delta-list">'+changes.map(t=>{const neg=/[−-]\d|stopped|Used/.test(t);return '<span class="dz-st dz-chip '+(neg?"neg":"pos")+'" data-sfx="'+(neg?"down":"up")+'" data-wait="380">'+esc(t)+'</span>'}).join("")+'</div>':
- '<p>No resource counters or inventory totals changed. The team may still have unlocked access, tested equipment or advanced the story; see the illustrated action cards above.</p>')+
+ '<p>The stores and the town held steady tonight.</p>')+
  '</div>';
 }
 

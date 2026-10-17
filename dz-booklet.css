@@ -219,7 +219,7 @@ details>summary::marker{color:var(--bk-amber-d)}
 
 /* ---------------- votes, verdicts, Chronicle ---------------- */
 .dz-ballotcard,.dz-bk{background:var(--bk-paper-hi)!important;color:var(--bk-ink)!important;border:1.5px solid var(--bk-ink)!important;border-radius:0!important;box-shadow:4px 4px 0 var(--bk-ink)!important}
-.dz-bar i{background:var(--bk-gold)!important;border:1px solid var(--bk-ink);border-radius:0!important}
+.dz-bar i{background:linear-gradient(90deg,var(--bk-gold) var(--w),var(--bk-paper-hi) var(--w))!important;border:1.5px solid var(--bk-ink)!important;border-radius:0!important}
 .dz-verdict.dz-bad,.dz-sab{background:#f6dcd2!important}
 .dz-lvrow{background:var(--bk-paper-hi)!important;border:1px solid var(--bk-ink)!important;border-radius:0!important;color:var(--bk-ink)!important}
 .dz-lv.on{background:var(--bk-gold)!important;color:var(--bk-ink)!important}
@@ -392,3 +392,37 @@ ol.bk-setup h3{font:400 24px/1.1 var(--bk-fell)!important;margin:4px 0 10px}
 .rb{border-color:var(--bk-ink)!important}
 .dz-pass p b[style]{color:var(--bk-ink)!important;font:400 52px/1.1 var(--bk-fell)!important;display:inline-block;margin-top:6px;border-bottom:3px solid var(--bk-gold)}
 [style*="color:#ffd"],[style*="color:#ffe"]{color:var(--bk-ink)!important}
+
+/* ---------- pictures for Decide, Night, problem clocks, ballots and the Chronicle (colour art, booklet frames) ---------- */
+#app .dz-panel{margin:22px auto 38px;max-width:820px;padding:0 10px;box-sizing:border-box}
+#app .dz-panel .art{height:auto!important;aspect-ratio:21/9;font-size:0;margin:6px}
+#app .dz-decide-panel{max-width:860px}
+#app .dz-vote-panel{max-width:640px}
+#app .dz-vote-panel .art{aspect-ratio:2/1}
+.dz-slept{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:30px;align-items:center;max-width:1040px;margin:12px auto 20px}
+#app .dz-slept .dz-panel{margin:8px 0 24px;max-width:none;padding:0}
+#app .dz-slept .dz-panel .art{aspect-ratio:4/3}
+.dz-slept-txt p{font:400 20px/1.5 var(--bk-serif);margin:0 0 12px;padding-left:24px;position:relative;color:var(--bk-ink)}
+.dz-slept-txt p::before{content:"";position:absolute;left:3px;top:.5em;width:9px;height:9px;transform:rotate(45deg);background:var(--bk-gold);border:1px solid var(--bk-ink)}
+.dz-slept-txt p.no::before{background:var(--bk-red)}
+.dz-slept-txt p.ok::before{background:var(--bk-green)}
+@media (max-width:760px){.dz-slept{grid-template-columns:1fr;gap:4px}.dz-slept-txt p{font-size:18px}}
+/* problem clocks: small framed cards with their threat picture */
+.dz-strip{gap:18px!important;margin:16px 0 22px!important}
+.dz-strip-i{width:196px;min-width:0!important;box-sizing:border-box;padding:8px 8px 10px!important;gap:6px!important;align-items:stretch!important;outline:.75px solid var(--bk-ink);outline-offset:-5px}
+.dz-strip-art{display:block;aspect-ratio:16/10;background-size:cover;background-position:center;border:1.5px solid var(--bk-ink);margin:4px 4px 2px}
+.dz-strip-i.hot .dz-strip-art{border-color:var(--bk-red)}
+.dz-strip-n{display:block;font:600 17px/1.2 var(--bk-serif);text-align:center;color:var(--bk-ink)}
+.dz-strip-i .dz-ring{align-self:center}
+@media (max-width:600px){.dz-strip{gap:12px!important}.dz-strip-i{width:calc(50% - 6px)}.dz-strip-n{font-size:15px}}
+#app .dz-chron-photo .dz-panel{max-width:760px;margin:6px auto 28px}
+#app .dz-chron-photo .art{aspect-ratio:16/7}
+.dz-teamline .dz-portrait{width:40px;height:40px;vertical-align:middle;margin-right:10px;border:1.5px solid var(--bk-ink);border-radius:50%}
+.dz-slept{align-items:start}
+.dz-slept-txt{padding-top:6px}
+.dz-slept-txt .dz-strip{justify-content:flex-start!important;margin:18px 0 0!important}
+.dz-slept-txt .dz-strip-i{width:178px}
+@media (max-width:760px){.dz-slept-txt .dz-strip{justify-content:center!important}.dz-slept-txt .dz-strip-i{width:calc(50% - 6px)}}
+.dz-strip-i .dz-ring{gap:6px}
+.dz-strip-i .dz-ring-cap{font-size:12px!important;letter-spacing:.05em!important;white-space:normal!important;line-height:1.15}
+@media (max-width:600px){#app .dz-panel{padding:0 4px;margin:18px auto 34px}#app .dz-panel .art{aspect-ratio:16/10}#app .dz-panel .art[data-cap]::before{font-size:11px;max-width:calc(100% - 40px);line-height:1.25}}

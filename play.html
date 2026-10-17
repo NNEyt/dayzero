@@ -117,7 +117,7 @@ function render(){
    return o+'</div>'}).join("")+'<div class="centre"><button class="big" onclick="lockIn()">Lock in my actions</button></div>'}
  }else if(v.k==="vote"){
   if(v.voted)h+='<div class="panel"><p class="done">🗳️ Vote cast. Watch the TV for the reveal.</p></div>';
-  else{h+='<div class="panel"><h2>'+v.d.i+" "+esc(v.d.t)+'</h2><p>'+esc(v.d.x)+'</p><div class="opts">'+v.d.opts.map(o=>'<button '+(o.dis?"disabled":"")+' class="'+(pick.vote===o.id?"on":"")+'" onclick="pick.vote=\''+o.id+'\';render()">'+(pick.vote===o.id?"☑ ":"☐ ")+esc(o.l)+'<span class="now">⚡ '+esc(o.now)+'</span></button>').join("")+'</div>'+
+  else{h+='<div class="panel">'+(v.d.a&&/^[a-z0-9]+$/.test(v.d.a)?'<div class="ph-art" aria-hidden="true" style="background-image:url(art/'+v.d.a+'.jpg)"></div>':"")+'<h2>'+v.d.i+" "+esc(v.d.t)+'</h2><p>'+esc(v.d.x)+'</p><div class="opts">'+v.d.opts.map(o=>'<button '+(o.dis?"disabled":"")+' class="'+(pick.vote===o.id?"on":"")+'" onclick="pick.vote=\''+o.id+'\';render()">'+(pick.vote===o.id?"☑ ":"☐ ")+esc(o.l)+'<span class="now">⚡ '+esc(o.now)+'</span></button>').join("")+'</div>'+
    (v.extra&&v.extra.length?'<label class="lab">🤫 Private note (nobody sees this until the end)</label><select id="x">'+v.extra.map(x=>'<option value="'+esc(x.v)+'"'+(pick.x===x.v?" selected":"")+'>'+esc(x.l)+'</option>').join("")+'</select>':"")+
    '<div class="centre"><button class="big" '+(pick.vote?"":'disabled aria-describedby="vote-hint"')+' onclick="castVote()">Cast my secret vote</button>'+(pick.vote?"":'<p class="pick-hint" id="vote-hint">☝️ Pick an option above first</p>')+'</div></div>'}
  }else if(v.k==="accuse"){
