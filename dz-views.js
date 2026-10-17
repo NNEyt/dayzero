@@ -17,26 +17,41 @@ function dzTip(key,html){
 function dzGo(ph){S.ph=ph;S.pi=0;S.show=false;sv();R()}
 function dzSaved(){try{return localStorage.getItem(DZ_SAVE)}catch(e){return null}}
 
-/* ---------- title: names, Play, everything else tucked away ---------- */
+/* ---------- title: the booklet cover, then a "Setting Up" page ---------- */
+const DZ_BULB='<svg class="bk-bulb" viewBox="0 0 64 84" aria-hidden="true"><g class="rays"><path d="M6 20l7 4M2 36h8M58 20l-7 4M62 36h-8M14 6l5 6M50 6l-5 6M32 0v7"/></g><path d="M32 12a19 19 0 0 0-11 34.5c3 2.3 4.5 5 4.5 8.5v3h13v-3c0-3.5 1.5-6.2 4.5-8.5A19 19 0 0 0 32 12z"/><path d="M25.5 63h13M26.5 68h11M29 73h6"/><path class="fil" d="M27.5 47V38c0-2 1.5-3 2.2-1.5l2.3 4.5 2.3-4.5c.7-1.5 2.2-.5 2.2 1.5v9"/></svg>';
+function dzOrn(){return '<div class="bk-orn" aria-hidden="true"><i></i><b></b><i></i></div>'}
 function title(){
  const saved=dzSaved(),q=new URLSearchParams(location.search),seedQ=dzCleanSeed(q.get("seed")||"");
  const prev=(()=>{try{return JSON.parse(localStorage.getItem("dz_last_setup")||"{}")}catch(e){return {}}})();
- const row=i=>'<div class="dz-namerow"><input id="n'+i+'" maxlength="16" autocomplete="off" placeholder="Player '+(i+1)+' name'+(i?" (optional)":"")+'" value="'+esc((prev.names||[])[i]||"")+'"><label class="dz-kidchk" title="Younger player"><input type="checkbox" id="k'+i+'"'+((prev.kids||[])[i]?" checked":"")+'> 🧒</label></div>';
+ const row=i=>'<div class="dz-namerow"><input id="n'+i+'" maxlength="16" autocomplete="off" aria-label="Player '+(i+1)+' name" placeholder="Player '+(i+1)+' name'+(i?" (optional)":"")+'" value="'+esc((prev.names||[])[i]||"")+'"><label class="dz-kidchk" title="Younger player (about 7–11)"><input type="checkbox" id="k'+i+'"'+((prev.kids||[])[i]?" checked":"")+'> Kid</label></div>';
  const sel=(id,opts,cur)=>'<select id="'+id+'">'+opts.map(([v,l])=>'<option value="'+v+'"'+(v===cur?" selected":"")+'>'+l+'</option>').join("")+'</select>';
- return '<h1 class="dz-title">DAY ZERO</h1><p class="c dz-tagline"><i>The lights go out. Nobody has the whole picture.</i></p>'+
- '<div class="pn dz-start"><h2>Who is playing?</h2>'+
- [0,1,2,3].map(row).join("")+'<details class="dz-more"'+((prev.names||[]).length>4?" open":"")+'><summary>➕ 5–8 players (adds Kit 👟, Bea 🫖, Dev 🔧 and Grace 🏛️)</summary>'+[4,5,6,7].map(row).join("")+'<p class="s">Tick 🧒 for younger players (about 7–11): with 5+ players they get Kit or Bea, kid-friendly roles with one simple job a Day.</p></details>'+
- '<div class="dz-len" role="radiogroup" aria-label="Game length">'+["full","quick"].map(k=>'<label class="dz-chip-radio"><input type="radio" name="dzlen" value="'+k+'"'+((prev.len||"full")===k?" checked":"")+'> <b>'+DZ_LEN[k].label+'</b><span>'+DZ_LEN[k].mins+'</span></label>').join("")+'</div>'+
- '<div class="c"><button class="btn dz-play" onclick="go()">▶ Play</button>'+(saved?'<button class="btn b" onclick="cont()">Continue saved game</button>':"")+'</div>'+
- '<p class="c dz-rules-link"><a href="rules.html">📖 New here? How to play (a 2-minute teach)</a></p>'+
- '<details class="dz-opts"'+(seedQ?" open":"")+'><summary>⚙️ Game options</summary>'+
- '<label>Screens'+sel("dz-mode",[["tv","TV only · everyone sees the role briefings"],["phones","TV + phone briefings · private briefings by QR code"],["live","📱 TV + phone controllers · phones vote and act (beta, needs internet)"]],prev.mode||"tv")+'</label>'+
- '<label>Difficulty'+sel("dz-diff",Object.keys(DZ_DIFF).map(k=>[k,DZ_DIFF[k].label+" · "+DZ_DIFF[k].blurb]),prev.diff||"normal")+'</label>'+
- '<label class="dz-check"><input type="checkbox" id="dz-goals"'+(prev.goals===false?"":" checked")+'> Personal goals: each player gets a private goal, revealed at the end</label>'+
- '<label class="dz-check"><input type="checkbox" id="dz-vote"'+(prev.vote===false?"":" checked")+'> Secret votes on big decisions (pass the device)</label>'+
- '<label class="dz-check"><input type="checkbox" id="dz-insider"'+(prev.insider?" checked":"")+'> 🕵️ The Insider: one player is secretly working against you (3+ players, ages 12+)</label>'+
- '<label>Town seed <span class="s">(leave blank for a new town; share a seed to replay the same one)</span><input id="dz-seed" maxlength="8" placeholder="e.g. K7Q2" value="'+esc(seedQ)+'"></label>'+
- '</details>'+(typeof dzCampPanel==="function"?dzCampPanel():"")+'<p class="s c">1–8 players · best with 3–6 · one player = practice mode · <a href="versions.html">older versions</a></p></div>';
+ const cover='<section class="bk-cover" aria-label="Day Zero"><div class="bk-cv-frame">'+
+  '<div class="bk-cv-top"><span>A Game of the Long Blackout</span><span>Family Edition</span></div>'+
+  '<div class="bk-logo">'+DZ_BULB+'<h1 class="dz-title"><span class="w1">DAY</span><span class="w2">ZERO</span></h1></div>'+
+  '<p class="dz-tagline">The lights go out. Nobody has the whole picture.</p>'+
+  '<figure class="bk-panel bk-cv-art"><div class="bk-img" style="background-image:url(art/t9.jpg)"></div><figcaption>Mill Lane, the night the lights went out.</figcaption></figure>'+
+  '<div class="bk-cv-bot"><div class="bk-cv-meta"><b>1&ndash;8</b><span>Players</span></div><div class="bk-cv-meta"><b>40&ndash;75</b><span>Minutes</span></div><div class="bk-cv-meta"><b>Co-op</b><span>Family</span></div>'+
+  '<div class="bk-cv-by">Day by Day<span>a game by Non Native Entrepreneur</span></div></div>'+
+ '</div></section>';
+ const setup='<section class="pn dz-start bk-page" aria-label="Setting up">'+
+  '<header class="bk-chap"><div class="bk-no">I</div><h2>Setting Up</h2>'+dzOrn()+'</header>'+
+  '<ol class="bk-setup">'+
+  '<li><h3>Who is playing?</h3>'+[0,1,2,3].map(row).join("")+
+   '<details class="dz-more"'+((prev.names||[]).length>4?" open":"")+'><summary>5–8 players <span>(adds Kit, Bea, Dev and Grace)</span></summary>'+[4,5,6,7].map(row).join("")+'<p class="s">Tick <b>Kid</b> for younger players (about 7–11): with 5+ players they get Kit or Bea, kid-friendly roles with one simple job a Day.</p></details></li>'+
+  '<li><h3>Choose a length</h3><div class="dz-len" role="radiogroup" aria-label="Game length">'+["full","quick"].map(k=>'<label class="dz-chip-radio"><input type="radio" name="dzlen" value="'+k+'"'+((prev.len||"full")===k?" checked":"")+'> <b>'+DZ_LEN[k].label+'</b><span>'+DZ_LEN[k].mins+'</span></label>').join("")+'</div></li>'+
+  '<li><h3>Press play</h3><div class="bk-go"><button class="btn dz-play" onclick="go()">Play</button>'+(saved?'<button class="btn b" onclick="cont()">Continue saved game</button>':"")+'</div></li>'+
+  '</ol>'+
+  '<p class="dz-rules-link"><a href="rules.html">New here? How to play</a><span aria-hidden="true">&#8226;</span><a href="booklet.pdf" target="_blank" rel="noopener">Rules booklet (PDF)</a></p>'+
+  '<details class="dz-opts"'+(seedQ?" open":"")+'><summary>Game options</summary>'+
+  '<label>Screens'+sel("dz-mode",[["tv","TV only · everyone sees the role briefings"],["phones","TV + phone briefings · private briefings by QR code"],["live","TV + phone controllers · phones vote and act (beta, needs internet)"]],prev.mode||"tv")+'</label>'+
+  '<label>Difficulty'+sel("dz-diff",Object.keys(DZ_DIFF).map(k=>[k,DZ_DIFF[k].label+" · "+DZ_DIFF[k].blurb]),prev.diff||"normal")+'</label>'+
+  '<label class="dz-check"><input type="checkbox" id="dz-goals"'+(prev.goals===false?"":" checked")+'> Personal goals: each player gets a private goal, revealed at the end</label>'+
+  '<label class="dz-check"><input type="checkbox" id="dz-vote"'+(prev.vote===false?"":" checked")+'> Secret votes on big decisions (pass the device)</label>'+
+  '<label class="dz-check"><input type="checkbox" id="dz-insider"'+(prev.insider?" checked":"")+'> The Insider: one player is secretly working against you (3+ players, ages 12+)</label>'+
+  '<label>Town seed <span class="s">(leave blank for a new town; share a seed to replay the same one)</span><input id="dz-seed" maxlength="8" placeholder="e.g. K7Q2" value="'+esc(seedQ)+'"></label>'+
+  '</details>'+(typeof dzCampPanel==="function"?dzCampPanel():"")+
+  '<p class="s c bk-small">1–8 players · best with 3–6 · one player = practice mode · <a href="versions.html">older versions</a></p></section>';
+ return '<div class="bk-spread">'+cover+setup+'</div>';
 }
 function go(x){
  const rows=[0,1,2,3,4,5,6,7].map(i=>({n:(document.getElementById("n"+i)||{value:""}).value.trim(),k:!!(document.getElementById("k"+i)||{}).checked})).filter(x=>x.n);

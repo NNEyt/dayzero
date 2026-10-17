@@ -149,13 +149,13 @@ function dzTrack(){
  const ep=S.ep&&typeof DZ_EPISODES!=="undefined"?'Episode '+S.ep+': '+esc(DZ_EPISODES[S.ep].t):"";
  return '<nav class="dz-track" aria-label="Story track"><div class="dz-track-top"><b>'+dzDayLabel()+'</b><span class="dz-track-act">'+esc(dzActLabel())+'</span>'+(ep?'<span class="dz-track-ep">'+ep+'</span>':"")+'<span class="dz-track-beat">'+dzBeat()+'</span></div>'+
  '<div class="dz-dots">'+dots+'</div>'+
- (mem.length?'<div class="dz-mem"><span class="dz-mem-k">🔖 Remembered</span>'+mem.map(m=>'<span class="dz-chip-mem'+(m[1]?" live":"")+(m[2]?" carried":"")+'" title="'+(m[1]?"Still in play: this will come back":"")+'">'+esc(m[0])+(m[1]?" ⏳":"")+'</span>').join("")+'</div>':"")+
+ (mem.length?'<div class="dz-mem"><span class="dz-mem-k">Remembered</span>'+mem.map(m=>'<span class="dz-chip-mem'+(m[1]?" live":"")+(m[2]?" carried":"")+'" title="'+(m[1]?"Still in play: this will come back":"")+'">'+esc(m[0])+'</span>').join("")+'</div>':"")+
  '</nav>';
 }
-const DZ_BEATS=[["news","📰 Morning News"],["discuss","🗣️ Discuss"],["decide","✋ Decide"],["night","🌙 Night"]];
+const DZ_BEATS=[["news","Morning News","I"],["discuss","Discuss","II"],["decide","Decide","III"],["night","Night","IV"]];
 function dzBeat(){
- const ph={vote:"decide",vreveal:"decide"}[S.ph]||S.ph;
- return '<span class="dz-beats">'+DZ_BEATS.map(([k,l])=>'<i class="'+(k===ph?"on":"")+'">'+l+'</i>').join("")+'</span>';
+ const ph={vote:"decide",vreveal:"decide"}[S.ph]||S.ph,at=DZ_BEATS.findIndex(x=>x[0]===ph);
+ return '<span class="dz-beats" aria-label="Beats of the Day">'+DZ_BEATS.map(([k,l,n],i)=>'<i class="'+(i===at?"on":i<at?"done":"")+'"'+(i===at?' aria-current="step"':"")+'><em>'+n+'</em>'+l+'</i>').join("")+'</span>';
 }
 
 /* ---------- callbacks: earlier choices change later Days ---------- */

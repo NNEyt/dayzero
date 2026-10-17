@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Day Zero · Your private briefing</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="alternate icon" href="favicon.ico">
-<meta name="theme-color" content="#0a0f1e">
+<meta name="theme-color" content="#0b1226">
 <style>
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 60% -15%,#283769,#080b18 76%);color:#f5f1e8;font:17px/1.48 system-ui,-apple-system,'Segoe UI',sans-serif}
 header{padding:22px 18px 14px;text-align:center;border-bottom:3px solid #f0b953;background:#0d162e}
@@ -35,8 +35,8 @@ footer{color:#9babc8;font-size:12px;text-align:center;padding:12px 22px 28px}
 @media (max-width:400px){.dz24-intel-card{grid-template-columns:86px minmax(0,1fr)}.dz24-artwrap,.dz24-artwrap img{min-height:145px}.dz24-card-copy p{font-size:15px}}
 .goalbox{margin:22px 0;padding:14px;border:2px dashed #c593e5;border-radius:12px;background:#1d1533}.goalbox h2{margin:4px 0;color:#e4c6ff}
 </style>
-<link rel="stylesheet" href="fonts/fonts.css"><link rel="stylesheet" href="dz-phone.css"></head>
-<body><header><div class="logo">DAY ZERO · PRIVATE BRIEFING</div><p>TV + PHONES EDITION</p></header><main id="phone">Loading your briefing…</main><footer>Your phone shows your cards for today. Scan a new code each morning. No app or account required.</footer>
+<link rel="stylesheet" href="fonts/fonts.css"><link rel="stylesheet" href="dz-phone.css"><link rel="stylesheet" href="dz-booklet-phone.css"></head>
+<body><header><div class="logo">DAY ZERO<span>Private briefing</span></div></header><main id="phone">Loading your briefing…</main><footer>Your phone shows your cards for today. Scan a new code each morning. No app or account required.</footer>
 <script>const esc=s=>String(s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));</script>
 <script src="dz24.js"></script>
 <script src="dz-content.js"></script>
@@ -59,7 +59,7 @@ function phoneRender(){
   if(g)goal='<div class="goalbox"><div class="centre" id="goalbtnwrap"><button onclick="document.getElementById(\'goal\').classList.toggle(\'hidden\')">🤫 My secret '+(tok.insider?"role":"goal")+' (tap to show/hide)</button></div><div id="goal" class="hidden"><h2>'+g.i+" "+esc(g.t)+'</h2><p>'+esc(g.x)+'</p></div></div>';
  }
  const label=(ch?"DAY "+ch[1]+" OF "+ch[2]:"TODAY")+(act?" · "+esc(act.toUpperCase()):"");
- app.innerHTML=dzVText(v,'<div class="dz24-eyebrow" style="color:#a8c2e9;font-size:13px;font-weight:800;letter-spacing:.09em">'+label+(seed?" · TOWN "+esc(seed):"")+'</div><h1>'+esc(name)+'’s briefing</h1><p class="subtitle">Only your role’s information is shown here. Share what you learn with the table, but consider whether each source is verified, unconfirmed or a rumour.</p>'+
+ app.innerHTML=dzVText(v,'<div class="dz24-eyebrow">'+label+(seed?" · TOWN "+esc(seed):"")+'</div><h1>'+esc(name)+'’s briefing</h1><p class="subtitle">Only your role’s information is shown here. Share what you learn with the table, but consider whether each source is verified, unconfirmed or a rumour.</p>'+
  '<div class="instructions">Read your cards, then keep your phone face down until you all talk. You can reveal them again whenever you need to check a detail.</div>'+
  '<div id="briefing">'+dz24PlayerHand({r:roles},round)+'</div>'+
  '<div id="mask" class="mask hidden"><h1>Briefing hidden</h1><p>Tap below to view your cards again.</p></div>'+
@@ -73,4 +73,5 @@ function phoneToggle(){
  window.scrollTo(0,0);
 }
 phoneRender();window.addEventListener("hashchange",phoneRender);
-</script></body></html>
+</script>
+<script src="dz-booklet.js"></script></body></html>
