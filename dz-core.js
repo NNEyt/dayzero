@@ -236,11 +236,20 @@ const HN={warmth:"🔥 Warmth",water:"💧 Water",info:"📻 Information"};
 const snap=()=>JSON.parse(JSON.stringify({t:S.t,a:S.a,hub:S.hub,items:dzInit().inventory}));
 function dif(p){
  if(!p)return "";
- const changes=dz22Changes(p,dz22Frame());
- return '<div class="sec">📊 What changed</div><div class="pn">'+
- (changes.length?'<div class="dz22-delta-list">'+changes.map(t=>{const neg=/[−-]\d|stopped|Used/.test(t);return '<span class="dz-st dz-chip '+(neg?"neg":"pos")+'" data-sfx="'+(neg?"down":"up")+'" data-wait="380">'+esc(t)+'</span>'}).join("")+'</div>':
- '<p>No resource counters or inventory totals changed. The team may still have unlocked access, tested equipment or advanced the story; see the illustrated action cards above.</p>')+
- '</div>';
+ const f=dz22Frame(),cards=[];
+ const NAME={supplies:"Supplies",health:"Health",cohesion:"Cohesion",trust:"Trust",fuel:"Fuel",signal:"Signal",medkits:"Medkits",contacts:"Contacts",warmth:"Warmth",water:"Water",info:"Information"};
+ const LINE={supplies:["More food and kit in the stores.","The stores run a little lower."],health:["People are on the mend.","Someone is hurt, sick or cold."],cohesion:["The street pulls together.","Tempers fray in the hall."],trust:["The town trusts the hall more.","Trust in the hall slips."],
+  fuel:["More fuel for the van and generator.","Fuel burned for the van or generator."],signal:["The radio has power to spare.","Radio power spent on broadcasts."],medkits:["Fresh medical kit on the shelf.","A medkit was used up."],contacts:["A new friend in town.","A favour was called in."]};
+ const HUBL={warmth:["The hall is warm tonight.","The hall has gone cold."],water:["Clean water at the hall.","The hall's water has stopped."],info:["The hall radio is on air.","The hall radio has gone quiet."]};
+ const ico=k=>typeof dzIcon==="function"?dzIcon(k):"";
+ const mk=(o)=>cards.push('<div class="dz-st dz-chg '+o.cls+'" data-sfx="'+(o.cls==="neg"?"down":"up")+'" data-wait="380"><div class="dz-chg-pic">'+o.pic+'</div><div class="dz-chg-txt"><b>'+esc(o.t)+'</b><span>'+esc(o.l)+'</span></div></div>');
+ for(const d of ["t","a"])for(const k of Object.keys(f[d])){const v=f[d][k]-((p[d]||{})[k]??f[d][k]);if(v&&NAME[k])mk({cls:v>0?"pos":"neg",pic:ico(k),t:NAME[k]+" "+(v>0?"+":"−")+Math.abs(v),l:(LINE[k]||["",""])[v>0?0:1]})}
+ for(const k of Object.keys(f.hub))if(!!f.hub[k]!==!!(p.hub||{})[k])mk({cls:f.hub[k]?"pos":"neg",pic:ico(k),t:NAME[k]+(f.hub[k]?" running":" stopped"),l:HUBL[k]?HUBL[k][f.hub[k]?0:1]:""});
+ const art23=id=>'<span class="dz-chg-img" style="background-image:url(art/dz23/'+id+'.svg)"></span>',first=x=>String(x||"").split(/(?<=\.)\s/)[0];
+ for(const id of f.items.filter(id=>!(p.items||[]).includes(id)))mk({cls:"pos item",pic:art23(id),t:"Found: "+((DZ_ITEMS[id]||{}).name||id),l:first((DZ_ITEMS[id]||{}).use)});
+ for(const id of (p.items||[]).filter(id=>!f.items.includes(id)))mk({cls:"neg item",pic:art23(id),t:"Used: "+((DZ_ITEMS[id]||{}).name||id),l:"It did its job tonight."});
+ if(!cards.length)cards.push('<div class="dz-chg calm"><div class="dz-chg-pic">'+ico("trust")+'</div><div class="dz-chg-txt"><b>All steady</b><span>The stores and the town held steady tonight.</span></div></div>');
+ return '<div class="sec">📊 What changed</div><div class="dz-chg-grid'+(cards.length===1?" one":cards.length===2?" two":"")+'">'+cards.join("")+'</div>';
 }
 
 function art(k,ic){const url=k.endsWith(".svg")?`art/${k}`:`art/${k}.jpg`;return `<div class="art">${ic}<div style="background-image:url(${url})"></div></div>`}

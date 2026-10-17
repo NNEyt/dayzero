@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Day Zero · Phone controller</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="alternate icon" href="favicon.ico">
-<meta name="theme-color" content="#0a0f1e">
+<meta name="theme-color" content="#0b1226">
 <style>
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 60% -15%,#283769,#080b18 76%);color:#f5f1e8;font:17px/1.48 system-ui,-apple-system,'Segoe UI',sans-serif}
 header{padding:22px 18px 14px;text-align:center;border-bottom:3px solid #f0b953;background:#0d162e}
@@ -47,14 +47,14 @@ label.lab{display:block;font-size:13px;color:#bfcbe3;margin-top:8px}
 .goalcard{border:2px dashed #c593e5;background:#1d1533;border-radius:12px;padding:14px}.goalcard h2{margin:4px 0;color:#e4c6ff}
 .insider{border-color:#e4572e;background:#2b1010}
 </style>
-<link rel="stylesheet" href="fonts/fonts.css"><link rel="stylesheet" href="dz-phone.css"></head>
-<body><header><div class="logo">DAY ZERO · CONTROLLER</div><div id="status">Connecting…</div></header><main id="phone">Loading…</main>
+<link rel="stylesheet" href="fonts/fonts.css?v=fbd2c5de20"><link rel="stylesheet" href="dz-phone.css?v=fbd2c5de20"><link rel="stylesheet" href="dz-booklet-phone.css?v=fbd2c5de20"></head>
+<body><header><div class="logo">DAY ZERO<span>Controller</span></div><div id="status">Connecting…</div></header><main id="phone">Loading…</main>
 <footer>Your phone talks straight to the TV (WebRTC via the free PeerJS service). Nothing is stored online. If anything goes wrong, just play on the TV.</footer>
 <script>const esc=s=>String(s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));</script>
-<script src="vendor/peerjs.min.js"></script>
-<script src="dz24.js"></script>
-<script src="dz-content.js"></script>
-<script src="dz-art.js"></script><script src="dz-polish.js"></script>
+<script src="vendor/peerjs.min.js?v=fbd2c5de20"></script>
+<script src="dz24.js?v=fbd2c5de20"></script>
+<script src="dz-content.js?v=fbd2c5de20"></script>
+<script src="dz-art.js?v=fbd2c5de20"></script><script src="dz-polish.js?v=fbd2c5de20"></script>
 <script>
 /* Day Zero phone controller: joins the TV's game over a PeerJS data channel. */
 const Q=new URLSearchParams(location.hash.slice(1)),HOST=Q.get("h")||"",P=Number(Q.get("p")),KEY=Q.get("k")||"";
@@ -101,7 +101,7 @@ function tools(v){
  t+='</div>';let x="";if(ui.cards&&v.cards&&v.k!=="intel")x+=hand(v);if(ui.goal&&v.goal&&v.k!=="goal")x+=goalHtml(v);return t+x;
 }
 function render(){
- const v=V;if(!v)return;const dd=String(v.day||v.ch||"").split("/");let h='<div class="dz24-eyebrow" style="color:#a8c2e9;font-size:13px;font-weight:800;letter-spacing:.09em">'+(v.ep?"EPISODE "+v.ep+" · ":"")+"DAY "+esc(dd[0])+(dd[1]?" OF "+esc(dd[1]):"")+(v.act?" · "+esc(v.act):"")+'</div>'+(v.title?'<div style="color:#ffd77f;font-weight:800;margin-top:2px">📰 '+esc(v.title)+'</div>':"")+'<h1>'+esc(v.name)+'</h1><p class="subtitle">'+esc(roleLine(v))+'</p>';
+ const v=V;if(!v)return;const dd=String(v.day||v.ch||"").split("/");let h='<div class="dz24-eyebrow dz-ph-day">'+(v.ep?"EPISODE "+v.ep+" · ":"")+"DAY "+esc(dd[0])+(dd[1]?" OF "+esc(dd[1]):"")+(v.act?" · "+esc(v.act):"")+'</div>'+(v.title?'<div class="dz-ph-title">'+esc(v.title)+'</div>':"")+'<h1>'+esc(v.name)+'</h1><p class="subtitle">'+esc(roleLine(v))+'</p>';
  if(v.k==="lobby")h+='<div class="panel big">✅ You\'re in! Watch the TV. When it\'s your turn to do something, it will appear here.</div>';
  else if(v.k==="watch")h+='<div class="panel big">📺 '+esc(v.msg)+'</div>';
  else if(v.k==="intel")h+='<div class="instructions">Your private cards for today. Share what matters with the table, but think about which sources you trust.</div>'+hand(v)+(v.read?'<p class="done">✓ Read. Now talk it through!</p>':'<div class="centre"><button onclick="send({t:\'read\',round:V.round})">✓ I\'ve read my cards</button></div>');
@@ -117,7 +117,7 @@ function render(){
    return o+'</div>'}).join("")+'<div class="centre"><button class="big" onclick="lockIn()">Lock in my actions</button></div>'}
  }else if(v.k==="vote"){
   if(v.voted)h+='<div class="panel"><p class="done">🗳️ Vote cast. Watch the TV for the reveal.</p></div>';
-  else{h+='<div class="panel"><h2>'+v.d.i+" "+esc(v.d.t)+'</h2><p>'+esc(v.d.x)+'</p><div class="opts">'+v.d.opts.map(o=>'<button '+(o.dis?"disabled":"")+' class="'+(pick.vote===o.id?"on":"")+'" onclick="pick.vote=\''+o.id+'\';render()">'+(pick.vote===o.id?"☑ ":"☐ ")+esc(o.l)+'<span class="now">⚡ '+esc(o.now)+'</span></button>').join("")+'</div>'+
+  else{h+='<div class="panel">'+(v.d.a&&/^[a-z0-9]+$/.test(v.d.a)?'<div class="ph-art" aria-hidden="true" style="background-image:url(art/'+v.d.a+'.jpg)"></div>':"")+'<h2>'+v.d.i+" "+esc(v.d.t)+'</h2><p>'+esc(v.d.x)+'</p><div class="opts">'+v.d.opts.map(o=>'<button '+(o.dis?"disabled":"")+' class="'+(pick.vote===o.id?"on":"")+'" onclick="pick.vote=\''+o.id+'\';render()">'+(pick.vote===o.id?"☑ ":"☐ ")+esc(o.l)+'<span class="now">⚡ '+esc(o.now)+'</span></button>').join("")+'</div>'+
    (v.extra&&v.extra.length?'<label class="lab">🤫 Private note (nobody sees this until the end)</label><select id="x">'+v.extra.map(x=>'<option value="'+esc(x.v)+'"'+(pick.x===x.v?" selected":"")+'>'+esc(x.l)+'</option>').join("")+'</select>':"")+
    '<div class="centre"><button class="big" '+(pick.vote?"":'disabled aria-describedby="vote-hint"')+' onclick="castVote()">Cast my secret vote</button>'+(pick.vote?"":'<p class="pick-hint" id="vote-hint">☝️ Pick an option above first</p>')+'</div></div>'}
  }else if(v.k==="accuse"){
@@ -134,4 +134,5 @@ function castVote(){const x=document.getElementById("x");pick.x=x?x.value:"";sen
 document.addEventListener("click",()=>{if(!wake&&navigator.wakeLock)navigator.wakeLock.request("screen").then(w=>wake=w).catch(()=>{})},{once:true});
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!(conn&&conn.open)&&tries>=0){tries=0;connect()}});
 connect();
-</script></body></html>
+</script>
+<script src="dz-booklet.js?v=fbd2c5de20"></script></body></html>

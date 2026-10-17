@@ -1,0 +1,32 @@
+/* Day Zero: "rules booklet" look for rules.html (loaded after dz-docs.css). */
+:root{--bk-paper:#f7f1e3;--bk-paper-hi:#fffbf1;--bk-tint:#fbeec8;--bk-ink:#1c1a17;--bk-ink-2:#4a4034;--bk-ochre:#6e4700;--bk-navy:#0b1226;--bk-gold:#ffc24a;--bk-amber-d:#e8a317;
+ --bk-serif:'Vollkorn',Georgia,serif;--bk-fell:'Fell SC','Vollkorn',Georgia,serif;--bk-canon:'Fell Canon','Vollkorn',Georgia,serif;color-scheme:light}
+html{background:var(--bk-navy)}
+body{font:400 19px/1.55 var(--bk-serif)!important;color:var(--bk-ink)!important;background:var(--bk-navy)!important;font-variant-numeric:oldstyle-nums}
+.wrap{background:var(--bk-paper);max-width:980px;margin:22px auto 56px;padding:28px clamp(18px,4vw,52px) 60px;border:1.5px solid #000;box-shadow:0 0 0 6px var(--bk-paper),0 0 0 7px var(--bk-ink),0 18px 50px #000a}
+a{color:var(--bk-ink)!important;text-decoration-color:var(--bk-amber-d)!important;text-decoration-thickness:2px;text-underline-offset:3px}
+.top{border-bottom:.75px solid var(--bk-ink);padding-bottom:6px;font:600 17px var(--bk-serif)!important;font-variant-caps:all-small-caps;letter-spacing:.12em}
+h1{font:400 clamp(40px,6vw,62px)/1 var(--bk-fell)!important;color:var(--bk-ink)!important;letter-spacing:.04em}
+h1::after{content:"";display:block;width:190px;height:12px;margin:12px auto 0;background:linear-gradient(var(--bk-ink),var(--bk-ink)) left 3px/75px .75px no-repeat,linear-gradient(var(--bk-ink),var(--bk-ink)) left 7px/75px .75px no-repeat,linear-gradient(var(--bk-ink),var(--bk-ink)) right 3px/75px .75px no-repeat,linear-gradient(var(--bk-ink),var(--bk-ink)) right 7px/75px .75px no-repeat,linear-gradient(var(--bk-gold),var(--bk-gold)) center/9px 9px no-repeat}
+.tag{color:var(--bk-ink-2)!important}
+h2{font:400 32px/1.1 var(--bk-fell)!important;color:var(--bk-ink)!important;letter-spacing:.03em;justify-content:center;text-align:center;border-bottom:.75px solid var(--bk-ink);padding-bottom:8px}
+h3{font:400 23px/1.15 var(--bk-fell)!important;color:var(--bk-ink)!important}
+.card,.paper{background:var(--bk-paper-hi)!important;color:var(--bk-ink)!important;border:1px solid var(--bk-ink)!important;border-radius:0!important;box-shadow:none!important;outline:.75px solid var(--bk-ink);outline-offset:-6px}
+.teach{background:var(--bk-tint)!important;outline:0;border:0!important;border-top:2px solid var(--bk-ink)!important;border-bottom:2px solid var(--bk-ink)!important}
+.grid .card{outline:0}
+.s{color:var(--bk-ink-2)!important}
+.toc a{background:var(--bk-paper-hi)!important;border:1px solid var(--bk-ink)!important;border-radius:0!important;color:var(--bk-ink)!important;font:600 18px/26px var(--bk-serif)!important;font-variant-caps:all-small-caps;letter-spacing:.1em;text-decoration:none!important}
+th{font:600 16px/1.2 var(--bk-serif)!important;font-variant-caps:all-small-caps;letter-spacing:.1em;text-transform:none!important;color:var(--bk-ink)!important;border-bottom:1.5px solid var(--bk-ink)!important}
+th,td{border-color:var(--bk-ink)!important}
+table{border-top:2px solid var(--bk-ink)}
+.pill{border-radius:0!important;background:transparent!important;border:1px solid var(--bk-ink);color:var(--bk-ink)!important;font:600 14px var(--bk-serif)!important;font-variant-caps:all-small-caps;letter-spacing:.1em}
+.kid{color:var(--bk-ink)!important}
+.kid b::after{content:" kid";font:italic 14px var(--bk-serif)}
+.steps>li::before{background:var(--bk-gold)!important;color:var(--bk-ink)!important;border:1.5px solid var(--bk-ink);font:400 20px/30px var(--bk-canon)!important}
+.btnlink{background:var(--bk-gold)!important;color:var(--bk-ink)!important;border:2px solid var(--bk-ink);border-radius:0!important;box-shadow:4px 4px 0 var(--bk-ink)!important;font:700 23px/1.1 var(--bk-serif)!important;font-variant-caps:all-small-caps;letter-spacing:.08em;text-decoration:none!important}
+.bk-dl{display:flex;flex-wrap:wrap;gap:12px 20px;justify-content:center;align-items:center;margin:8px 0 18px}
+.bk-dl a{font:600 19px var(--bk-serif);font-variant-caps:all-small-caps;letter-spacing:.08em}
+@media (max-width:600px){.wrap{margin:8px 6px 40px;padding:18px 14px 40px;box-shadow:0 0 0 4px var(--bk-paper),0 0 0 5px var(--bk-ink)}}
+.wrap{counter-reset:ch}
+h2{display:block!important;counter-increment:ch}
+h2::before{content:counter(ch,upper-roman);display:block;font:italic 400 21px/1 var(--bk-canon);margin-bottom:4px}

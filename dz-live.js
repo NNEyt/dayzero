@@ -119,7 +119,7 @@ function dzLiveView(i){
    opts:opts(r).filter(t=>!dzIsKid(r)||t.av()).map(t=>({id:t.id,l:t.label+ctx(cost(t)),g:Object.keys(GRP).find(g=>GRP[g].includes(t.id))||""}))}));
  }else if(ph==="vote"&&S.vt){
   const d=DL[S.dl];v.k="vote";v.voted=S.vt.b.some(b=>b.who===i);v.dl=S.dl;
-  v.d={t:d[1],i:d[2],x:d[3],opts:d[4].map((o,j)=>({id:o[0],l:"Option "+"ABC"[j]+": "+o[1],now:o[2],dis:!dzVoteOptionOk(o)}))};
+  v.d={t:d[1],i:d[2],x:d[3],a:String(S.dl||"").toLowerCase(),opts:d[4].map((o,j)=>({id:o[0],l:"Option "+"ABC"[j]+": "+o[1],now:o[2],dis:!dzVoteOptionOk(o)}))};
   v.extra=dzBallotExtras(i);
  }else if(ph==="accuse"&&S.ac){
   v.k="accuse";v.done=i in S.ac.b;v.list=S.pl.map((q,j)=>({j,n:q.n})).filter(x=>x.j!==i);v.ruled=dzExonerated().map(j=>S.pl[j].n);

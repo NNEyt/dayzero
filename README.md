@@ -10,6 +10,7 @@ It's a static site: plain HTML, CSS and JavaScript, no build step and no server.
 
 - **Latest version:** `index.html`, the site root.
 - **Rules:** [`rules.html`](rules.html), a short, player-friendly how-to-play page with a “Teach it in 2 minutes” box. It's also linked from the title screen.
+- **Rules booklet:** [`booklet.pdf`](booklet.pdf), the illustrated 12-page *Rules of Play* booklet (A5, reading order, about 3.6 MB), and [`booklet-print.pdf`](booklet-print.pdf), the same booklet imposed for printing (A4 landscape, print double-sided, fold in half). Linked from the title screen and `rules.html`.
 - **Playtest kit:** [`playtest.html`](playtest.html) prints on A4: a host checklist, one feedback card per player (`?players=6&names=Alex,Priya`) and an observer sheet.
 - **Every older version:** [`versions.html`](versions.html). The original game is now at `dayzero1.html`. 2.0–2.3 and the classic 2.4 build each keep their own path and their own save.
 - **Phones as controllers (optional):** in *TV + phone controllers* mode, each player scans a QR code and their phone becomes their controller (`play.html`): private cards, secret goal, their own actions and secret votes. Anyone without a phone plays on the TV, as usual. See [Phone controllers](#phone-controllers) below.
@@ -41,7 +42,7 @@ It's a static site: plain HTML, CSS and JavaScript, no build step and no server.
 
 ### 5–8 players and younger players
 
-With five or more names, four extra roles join in this order. If you tick 🧒 next to a name, that player gets a kid role first.
+With five or more names, four extra roles join in this order. If you tick **Kid** next to a name, that player gets a kid role first.
 
 | Role | For | What they do |
 |---|---|---|
@@ -91,7 +92,22 @@ Episode 1 is 7 Days; episodes 2 and 3 are 5 Days each, with their own headlines,
 
 Progress is saved in `localStorage` under `dz_campaign`. You can copy a campaign code from the title screen and paste it on another device.
 
-## Visual style: "Torchlight"
+## Visual style: the rules booklet
+
+The game looks like the printed *Rules of Play* booklet: warm off-white paper, black ink and the game's amber as the only accent.
+
+- **Title screen:** the booklet's cover. *DAY ZERO* is in amber with an orange offset shadow, next to a hand-drawn lightbulb, on dark navy with a thin gold double frame. Below are the Mill Lane art in a framed panel, a “1–8 Players · 40–75 Minutes · Co-op” strip and “a game by Non Native Entrepreneur”. Beside the cover, like an open booklet, sits a numbered “Setting Up” page with names, game length and Play.
+- **Inner screens:** a printed page on a navy desk, with a double-rule border, a running head (“Day Zero … Day 2 of 7 · I · Morning News”) and the story track as a chapter bar. The four beats are numbered I–IV, and the dots show each act's Days. Morning News and Night read like a printed page: an IM FELL headline, an ornament rule, a drop cap and a boxed “Today's question” with an amber label tab.
+- **Type:** [Vollkorn](https://github.com/FAlthausen/Vollkorn-Typeface) for body text (subset, weights 400–700). [IM FELL](https://iginomarini.com/fell/) English SC and French Canon for headings, numerals and drop caps; these are included unmodified because of their Reserved Font Names. Labels and buttons use true small caps. *DAY ZERO* keeps Barlow Condensed. All fonts are self-hosted under the SIL OFL; see `fonts/OFL.txt`.
+- **Art stays in colour:** every illustration is framed like a booklet panel, with a black border, an inner rule, a numbered amber corner tab and, on the big story pictures, a caption box.
+- **Pictures on every beat:** Decide shows the dilemma picture (Day 1: planning by candlelight). Every problem clock, compact ones included, is a small framed card with its threat picture. Night opens “While you slept” with a framed night panel, short story lines and the clock cards. Secret ballots show the dilemma picture, and the Chronicle has a front-page photo. Night pictures `art/n1.jpg`–`n7.jpg` are mapped by story Day in `DZ_NIGHT_ART` (`dz-views.js`); the collapse endings use `end_h.jpg` / `end_c.jpg`. “What changed” is a row of small cards (icon or item picture plus one line).
+- **Cache-busting:** every local script and stylesheet in `index.html`, `play.html`, `phone.html` and `rules.html` carries `?v=<content hash>`. Run `python3 tools/stamp-assets.py` before committing so testers never get a stale copy.
+- **Buttons:** letterpress blocks. They have small-caps serif labels, a 2 px ink border and a hard ink offset, with amber for the main action and paper for the others. They are at least 54 px tall (46 px for small ones) and press down when tapped. Disabled buttons are hatched, so they read as “not yet”.
+- **Emoji:** stripped from the interface at render time (`dz-booklet.js`) so the screens read like print; meaning is carried by the text and the SVG icons. The group-chat share text keeps its emoji.
+- **Contrast:** ink on paper is 15.6:1, ochre labels on paper 7.4:1, ink on amber 11.7:1 and amber on navy 11.5:1. On TVs 1600 px and wider the whole page still scales up for the sofa.
+- **Files:** `dz-booklet.css` and `dz-booklet.js` (game), `dz-booklet-phone.css` (`play.html`, `phone.html`), `dz-booklet-docs.css` (`rules.html`). They load last and change presentation only.
+
+## Visual style: "Torchlight" (previous theme, still underneath)
 
 The look is a UK street during a power cut: deep navy night, warm torch-amber highlights and paper-coloured cards for anything you need to read.
 
@@ -124,6 +140,8 @@ The look is a UK street during a power cut: deep navy night, warm torch-amber hi
 | `dz-roles.js` | Roles 5–8 (Kit, Bea, Dev, Grace), role assignment, kid-friendly order buttons, big-table balance |
 | `dz-campaign.js` | The three-episode campaign: episodes, carried flags, “Previously on”, the Inquiry, badges |
 | `dz-story.js`, `dz-story.css` | The Day-by-Day story: cast, acts, the per-Day headline/question/cliffhanger arc for each episode, callbacks, the story track header, “Previously…” recaps and the ending story |
+| `dz-booklet.css`, `dz-booklet.js`, `dz-booklet-phone.css`, `dz-booklet-docs.css` | The rules-booklet look: paper, ink and amber, booklet cover title screen, framed art panels, letterpress buttons (presentation only) |
+| `booklet.pdf`, `booklet-print.pdf` | The illustrated Rules of Play booklet: reading order (A5) and print-imposed (A4) |
 | `dz-live.js` | Phone controllers, TV side: PeerJS host, lobby, message checks, live panels |
 | `play.html` | Phone controllers, phone side |
 | `vendor/peerjs.min.js` | PeerJS 1.5.5 (MIT, see `vendor/peerjs-LICENSE.txt`) |

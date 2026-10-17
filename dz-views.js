@@ -17,26 +17,41 @@ function dzTip(key,html){
 function dzGo(ph){S.ph=ph;S.pi=0;S.show=false;sv();R()}
 function dzSaved(){try{return localStorage.getItem(DZ_SAVE)}catch(e){return null}}
 
-/* ---------- title: names, Play, everything else tucked away ---------- */
+/* ---------- title: the booklet cover, then a "Setting Up" page ---------- */
+const DZ_BULB='<svg class="bk-bulb" viewBox="0 0 64 84" aria-hidden="true"><g class="rays"><path d="M6 20l7 4M2 36h8M58 20l-7 4M62 36h-8M14 6l5 6M50 6l-5 6M32 0v7"/></g><path d="M32 12a19 19 0 0 0-11 34.5c3 2.3 4.5 5 4.5 8.5v3h13v-3c0-3.5 1.5-6.2 4.5-8.5A19 19 0 0 0 32 12z"/><path d="M25.5 63h13M26.5 68h11M29 73h6"/><path class="fil" d="M27.5 47V38c0-2 1.5-3 2.2-1.5l2.3 4.5 2.3-4.5c.7-1.5 2.2-.5 2.2 1.5v9"/></svg>';
+function dzOrn(){return '<div class="bk-orn" aria-hidden="true"><i></i><b></b><i></i></div>'}
 function title(){
  const saved=dzSaved(),q=new URLSearchParams(location.search),seedQ=dzCleanSeed(q.get("seed")||"");
  const prev=(()=>{try{return JSON.parse(localStorage.getItem("dz_last_setup")||"{}")}catch(e){return {}}})();
- const row=i=>'<div class="dz-namerow"><input id="n'+i+'" maxlength="16" autocomplete="off" placeholder="Player '+(i+1)+' name'+(i?" (optional)":"")+'" value="'+esc((prev.names||[])[i]||"")+'"><label class="dz-kidchk" title="Younger player"><input type="checkbox" id="k'+i+'"'+((prev.kids||[])[i]?" checked":"")+'> 🧒</label></div>';
+ const row=i=>'<div class="dz-namerow"><input id="n'+i+'" maxlength="16" autocomplete="off" aria-label="Player '+(i+1)+' name" placeholder="Player '+(i+1)+' name'+(i?" (optional)":"")+'" value="'+esc((prev.names||[])[i]||"")+'"><label class="dz-kidchk" title="Younger player (about 7–11)"><input type="checkbox" id="k'+i+'"'+((prev.kids||[])[i]?" checked":"")+'> Kid</label></div>';
  const sel=(id,opts,cur)=>'<select id="'+id+'">'+opts.map(([v,l])=>'<option value="'+v+'"'+(v===cur?" selected":"")+'>'+l+'</option>').join("")+'</select>';
- return '<h1 class="dz-title">DAY ZERO</h1><p class="c dz-tagline"><i>The lights go out. Nobody has the whole picture.</i></p>'+
- '<div class="pn dz-start"><h2>Who is playing?</h2>'+
- [0,1,2,3].map(row).join("")+'<details class="dz-more"'+((prev.names||[]).length>4?" open":"")+'><summary>➕ 5–8 players (adds Kit 👟, Bea 🫖, Dev 🔧 and Grace 🏛️)</summary>'+[4,5,6,7].map(row).join("")+'<p class="s">Tick 🧒 for younger players (about 7–11): with 5+ players they get Kit or Bea, kid-friendly roles with one simple job a Day.</p></details>'+
- '<div class="dz-len" role="radiogroup" aria-label="Game length">'+["full","quick"].map(k=>'<label class="dz-chip-radio"><input type="radio" name="dzlen" value="'+k+'"'+((prev.len||"full")===k?" checked":"")+'> <b>'+DZ_LEN[k].label+'</b><span>'+DZ_LEN[k].mins+'</span></label>').join("")+'</div>'+
- '<div class="c"><button class="btn dz-play" onclick="go()">▶ Play</button>'+(saved?'<button class="btn b" onclick="cont()">Continue saved game</button>':"")+'</div>'+
- '<p class="c dz-rules-link"><a href="rules.html">📖 New here? How to play (a 2-minute teach)</a></p>'+
- '<details class="dz-opts"'+(seedQ?" open":"")+'><summary>⚙️ Game options</summary>'+
- '<label>Screens'+sel("dz-mode",[["tv","TV only · everyone sees the role briefings"],["phones","TV + phone briefings · private briefings by QR code"],["live","📱 TV + phone controllers · phones vote and act (beta, needs internet)"]],prev.mode||"tv")+'</label>'+
- '<label>Difficulty'+sel("dz-diff",Object.keys(DZ_DIFF).map(k=>[k,DZ_DIFF[k].label+" · "+DZ_DIFF[k].blurb]),prev.diff||"normal")+'</label>'+
- '<label class="dz-check"><input type="checkbox" id="dz-goals"'+(prev.goals===false?"":" checked")+'> Personal goals: each player gets a private goal, revealed at the end</label>'+
- '<label class="dz-check"><input type="checkbox" id="dz-vote"'+(prev.vote===false?"":" checked")+'> Secret votes on big decisions (pass the device)</label>'+
- '<label class="dz-check"><input type="checkbox" id="dz-insider"'+(prev.insider?" checked":"")+'> 🕵️ The Insider: one player is secretly working against you (3+ players, ages 12+)</label>'+
- '<label>Town seed <span class="s">(leave blank for a new town; share a seed to replay the same one)</span><input id="dz-seed" maxlength="8" placeholder="e.g. K7Q2" value="'+esc(seedQ)+'"></label>'+
- '</details>'+(typeof dzCampPanel==="function"?dzCampPanel():"")+'<p class="s c">1–8 players · best with 3–6 · one player = practice mode · <a href="versions.html">older versions</a></p></div>';
+ const cover='<section class="bk-cover" aria-label="Day Zero"><div class="bk-cv-frame">'+
+  '<div class="bk-cv-top"><span>A Game of the Long Blackout</span><span>Family Edition</span></div>'+
+  '<div class="bk-logo">'+DZ_BULB+'<h1 class="dz-title"><span class="w1">DAY</span><span class="w2">ZERO</span></h1></div>'+
+  '<p class="dz-tagline">The lights go out. Nobody has the whole picture.</p>'+
+  '<figure class="bk-panel bk-cv-art"><div class="bk-img" style="background-image:url(art/t9.jpg)"></div><figcaption>Mill Lane, the night the lights went out.</figcaption></figure>'+
+  '<div class="bk-cv-bot"><div class="bk-cv-meta"><b>1&ndash;8</b><span>Players</span></div><div class="bk-cv-meta"><b>40&ndash;75</b><span>Minutes</span></div><div class="bk-cv-meta"><b>Co-op</b><span>Family</span></div>'+
+  '<div class="bk-cv-by">Day by Day<span>a game by Non Native Entrepreneur</span></div></div>'+
+ '</div></section>';
+ const setup='<section class="pn dz-start bk-page" aria-label="Setting up">'+
+  '<header class="bk-chap"><div class="bk-no">I</div><h2>Setting Up</h2>'+dzOrn()+'</header>'+
+  '<ol class="bk-setup">'+
+  '<li><h3>Who is playing?</h3>'+[0,1,2,3].map(row).join("")+
+   '<details class="dz-more"'+((prev.names||[]).length>4?" open":"")+'><summary>5–8 players <span>(adds Kit, Bea, Dev and Grace)</span></summary>'+[4,5,6,7].map(row).join("")+'<p class="s">Tick <b>Kid</b> for younger players (about 7–11): with 5+ players they get Kit or Bea, kid-friendly roles with one simple job a Day.</p></details></li>'+
+  '<li><h3>Choose a length</h3><div class="dz-len" role="radiogroup" aria-label="Game length">'+["full","quick"].map(k=>'<label class="dz-chip-radio"><input type="radio" name="dzlen" value="'+k+'"'+((prev.len||"full")===k?" checked":"")+'> <b>'+DZ_LEN[k].label+'</b><span>'+DZ_LEN[k].mins+'</span></label>').join("")+'</div></li>'+
+  '<li><h3>Press play</h3><div class="bk-go"><button class="btn dz-play" onclick="go()">Play</button>'+(saved?'<button class="btn b" onclick="cont()">Continue saved game</button>':"")+'</div></li>'+
+  '</ol>'+
+  '<p class="dz-rules-link"><a href="rules.html">New here? How to play</a><span aria-hidden="true">&#8226;</span><a href="booklet.pdf" target="_blank" rel="noopener">Rules booklet (PDF)</a></p>'+
+  '<details class="dz-opts"'+(seedQ?" open":"")+'><summary>Game options</summary>'+
+  '<label>Screens'+sel("dz-mode",[["tv","TV only · everyone sees the role briefings"],["phones","TV + phone briefings · private briefings by QR code"],["live","TV + phone controllers · phones vote and act (beta, needs internet)"]],prev.mode||"tv")+'</label>'+
+  '<label>Difficulty'+sel("dz-diff",Object.keys(DZ_DIFF).map(k=>[k,DZ_DIFF[k].label+" · "+DZ_DIFF[k].blurb]),prev.diff||"normal")+'</label>'+
+  '<label class="dz-check"><input type="checkbox" id="dz-goals"'+(prev.goals===false?"":" checked")+'> Personal goals: each player gets a private goal, revealed at the end</label>'+
+  '<label class="dz-check"><input type="checkbox" id="dz-vote"'+(prev.vote===false?"":" checked")+'> Secret votes on big decisions (pass the device)</label>'+
+  '<label class="dz-check"><input type="checkbox" id="dz-insider"'+(prev.insider?" checked":"")+'> The Insider: one player is secretly working against you (3+ players, ages 12+)</label>'+
+  '<label>Town seed <span class="s">(leave blank for a new town; share a seed to replay the same one)</span><input id="dz-seed" maxlength="8" placeholder="e.g. K7Q2" value="'+esc(seedQ)+'"></label>'+
+  '</details>'+(typeof dzCampPanel==="function"?dzCampPanel():"")+
+  '<p class="s c bk-small">1–8 players · best with 3–6 · one player = practice mode · <a href="versions.html">older versions</a></p></section>';
+ return '<div class="bk-spread">'+cover+setup+'</div>';
 }
 function go(x){
  const rows=[0,1,2,3,4,5,6,7].map(i=>({n:(document.getElementById("n"+i)||{value:""}).value.trim(),k:!!(document.getElementById("k"+i)||{}).checked})).filter(x=>x.n);
@@ -77,13 +92,17 @@ function thC(id){
 }
 function dzClockStrip(){
  const A=Object.keys(S.th).filter(id=>act(id)&&dzClock(id));if(!A.length)return "";
- return '<div class="dz-strip">'+A.map(id=>{const x=S.th[id],n=dzClock(id),hot=x.clock>=n-1;return '<div class="dz-st dz-strip-i'+(hot?" hot":"")+'" data-sfx="'+(S.lastTick&&S.lastTick[id]?"tick":"none")+'" data-wait="450">'+IC[id]+" "+TH[id][0]+'<div class="clk">'+Array.from({length:n},(_,i)=>id==="T3"?"<i>?</i>":'<i class="'+(i<x.clock?"on":"")+(S.lastTick&&S.lastTick[id]&&i===x.clock-1?" dz-newpip":"")+'"></i>').join("")+'</div></div>'}).join("")+'</div>';
+ return '<div class="dz-strip">'+A.map(id=>{const x=S.th[id],n=dzClock(id),hot=x.clock>=n-1;return '<div class="dz-st dz-strip-i'+(hot?" hot":"")+'" data-sfx="'+(S.lastTick&&S.lastTick[id]?"tick":"none")+'" data-wait="450"><span class="dz-strip-art" aria-hidden="true" style="background-image:url(art/'+(DZ_CLOCK_ART[id]||id.toLowerCase())+'.jpg)"></span><b class="dz-strip-n">'+IC[id]+" "+TH[id][0]+'</b><div class="clk">'+Array.from({length:n},(_,i)=>id==="T3"?"<i>?</i>":'<i class="'+(i<x.clock?"on":"")+(S.lastTick&&S.lastTick[id]&&i===x.clock-1?" dz-newpip":"")+'"></i>').join("")+'</div></div>'}).join("")+'</div>';
 }
+/* Every problem clock's picture (art/<key>.jpg); unknown ids fall back to their own key. */
+const DZ_CLOCK_ART={T1:"t1",T2:"t2",T3:"t3",T4:"t4",T6:"t6",T7:"t7",T8:"t8",T9:"t9",T10:"t10",O1:"o1",O2:"o2"};
+/* A framed booklet panel for an existing picture (colour art, caption box, numbered corner tab). */
+function dzFrame(key,cap,cls){return '<figure class="dz-panel'+(cls?" "+cls:"")+'">'+art(key,"").replace('class="art"','class="art"'+(cap?' data-cap="'+esc(cap)+'"':""))+'</figure>'}
 
 /* ---------- the Day: 📰 Morning News → 🗣️ Discuss → ✋ Decide → 🌙 Night ---------- */
 const DZ_ONE_LINE={SIG:"knows which rumours are true, and runs the radio desk",QM:"drives the van and spends the Fuel",MED:"keeps people alive and spots deadly mistakes",LOC:"knows everyone in town, and every back door",RUN:"kid role: runs messages and quick jobs",HST:"kid role: tea, blankets and kindness",MEC:"fixes generators, pumps and radios",LIA:"gets official answers from the council"};
 function dzTeamBox(){
- return '<div class="sec">👥 Who you are</div><div class="pn">'+S.pl.map(p=>'<div class="dz-teamline"><b>'+esc(p.n)+'</b> '+p.r.map(r=>'<span style="color:'+RL[r].c+'">'+RL[r].i+" "+RL[r].ch+'</span> <span class="s">('+RL[r].n+": "+DZ_ONE_LINE[r]+')</span>').join(" & ")+'</div>').join("")+'</div>';
+ return '<div class="sec">👥 Who you are</div><div class="pn">'+S.pl.map(p=>'<div class="dz-teamline">'+(typeof dzPortrait==="function"?dzPortrait(RL[p.r[0]].ch):"")+'<b>'+esc(p.n)+'</b> '+p.r.map(r=>'<span style="color:'+RL[r].c+'">'+RL[r].i+" "+RL[r].ch+'</span> <span class="s">('+RL[r].n+": "+DZ_ONE_LINE[r]+')</span>').join(" & ")+'</div>').join("")+'</div>';
 }
 function dzCastRow(names){
  const n=(names||[]).filter(x=>DZ_CAST[x]);if(!n.length)return "";
@@ -177,6 +196,7 @@ function vDecide(){
  const pending=!!(S.dl&&!S.dc);
  let h=dzTrack()+'<div class="dz24-lead"><div class="dz24-eyebrow">✋ Decide · '+dzDayLabel()+'</div><h2>'+esc(dzArc().q)+'</h2></div>';
  if(S.dl)h+=dzDilemmaCard();
+ else h+=dzFrame(dzRoundIdx()===0?"teach":"ev"+S.round,dzRoundIdx()===0?"Planning by candlelight at the hall.":dzArc().head+" · making the plan","dz-decide-panel");
  if(pending)return h+dzClockStrip()+'<p class="c s">Settle the big decision first. Then each role picks its actions.</p>';
  if(dzRoundIdx()===0)h+=dzTip("orders","Everything you choose happens together when night falls. If one action needs another (like unlocking the stairs before the climb), choose <b>both</b> now.");
  return h+dzClockStrip()+dz24Orders();
@@ -203,13 +223,38 @@ function dzNightStory(){
  else if(notes.some((x,i)=>/✅/.test(S.esc[i])))paras.push(notes.filter((x,i)=>/✅/.test(S.esc[i]))[0]);
  return paras;
 }
+/* "While you slept": a night picture, the night told as short story lines, then the problem clocks. */
+const DZ_TICK={T2:"Up on the 9th floor, Mr Aldous's oxygen machine beeps a little faster.",T1:"Across the river, the clinic's generator coughs through another night.",O1:"Mrs Lindqvist's freezers creep a few degrees warmer.",T4:"The tower block's upper floors go another night without water.",T6:"The queue at the petrol station grows longer, and angrier.",O2:"Somewhere in town, the hidden fuel is slowly being used up.",T8:"On Marta's street, another candle burns too close to the curtains.",T9:"The break-in rumour creeps from door to door.",T10:"The grid crew waits another night at the council point."};
+const DZ_FULL={T2:"Time ran out for Mr Aldous. An ambulance took him to hospital.",T1:"The clinic generator died in the night.",O1:"Mrs Lindqvist's freezers thawed. The food is spoiled.",T3:"The water tower ran dry.",T4:"The tower block's upper floors ran out of water.",T6:"The crowd at the petrol station boiled over.",O2:"The hidden fuel is gone.",T8:"The candle fire took hold on Marta's street.",T9:"Scared neighbours started guarding their doors against each other.",T10:"The grid crew gave up waiting."};
+/* Night pictures by story Day. S.round is the story Day, so Day 3 of a 5-Day quick game shows its own story night.
+   Campaign episodes 2 and 3 replay the same story beats (ep 2: Not Again/Frozen Stores/Running Dry/Silent Masts/Thaw;
+   ep 3: Third Time/Inspector/Sam's Secret/Cold Trail/Who Had the Key?), so the same Day-to-picture map fits them too. */
+const DZ_NIGHT_ART={1:"n1",2:"n2",3:"n3",4:"n4",5:"n5",6:"n6",7:"n7"};
+function dzNightArt(){return DZ_NIGHT_ART[S.round]||"echo"}
+function dzNightLine(x){
+ const t=String(x||""),idOf=n=>Object.keys(TH).find(k=>TH[k][0]===n);
+ let m=t.match(/^⏳\s*(.+): clock (\d+)\/(\d+)$/);
+ if(m){const id=idOf(m[1]);return {cls:"",txt:DZ_TICK[id]||m[1]+" gets worse ("+m[2]+" of "+m[3]+")."}}
+ m=t.match(/^✖\s*⏰\s*(.+): clock full! (.*)$/);
+ if(m){const id=idOf(m[1]);return {cls:"no",txt:(DZ_FULL[id]||"Time ran out: "+m[1]+".")+" "+m[2]}}
+ if(/^A quiet hour/.test(t))return {cls:"",txt:"A quiet night on Mill Lane. Nothing new went wrong."};
+ return {cls:/✖/.test(t)?"no":/✅/.test(t)?"ok":"",txt:dz22Plain(t)};
+}
+function dzSlept(){
+ const told=dzNightStory().join(" "),key=dzNightArt();
+ let L=(S.esc||[]).map(dzNightLine).filter(l=>!(l.cls!=="no"&&l.txt&&told.includes(l.txt)));
+ if(!L.length)L=[{cls:"",txt:"A quiet night on Mill Lane. Nothing new went wrong."}];
+ const clocks=dzClockStrip();
+ return '<div class="sec">⏳ While you slept</div><div class="dz-slept">'+dzFrame(key,"Night "+dzDayNo()+" on Mill Lane","dz-night-panel")+
+  '<div class="dz-slept-row'+(clocks?"":" solo")+'"><div class="dz-slept-txt">'+L.map(l=>'<p class="dz-st'+(l.cls?" "+l.cls:"")+'" data-sfx="'+(l.cls==="no"?"fail":l.cls==="ok"?"success":"tick")+'" data-wait="500">'+esc(l.txt)+'</p>').join("")+'</div>'+(clocks?'<div class="dz-slept-clocks">'+clocks+'</div>':"")+'</div></div>';
+}
 function vNight(){
  const seq=dzSeq(),i=dzRoundIdx(),nxR=seq[i+1],more=nxR&&!S.broke;
  const pd=S.prevDay&&S.prevDay.r===S.round?S.prevDay:{title:dzOutroParts().title,cliff:dzArc().cliff};
  let h=dzTrack()+'<section class="dz21-page dz-night"><div class="dz21-head"><div class="dz21-kicker">🌙 Night · '+dzDayLabel()+'</div><h2>'+esc(pd.title||"Night falls")+'</h2><span>'+esc(dzArc().head)+'</span></div>'+
   '<div class="dz21-prose"><div class="dz21-reader">'+dz21Attribution()+'</div>'+dzNightStory().map(p=>'<p>'+esc(p)+'</p>').join("")+'</div></section>';
  h+='<div class="sec">🃏 How each plan went</div>'+dz22ResultCards();
- if((S.esc||[]).length)h+='<div class="sec">⏳ While you slept</div>'+dzClockStrip()+lg(S.esc);
+ if((S.esc||[]).length)h+=dzSlept();
  h+=dif(S.pre);
  if(pd.cliff)h+='<div class="dz-cliff dz-st" data-sfx="drum" data-wait="1200"><div class="dz-kick">'+(more?"To be continued…":"And then…")+'</div><p>'+esc(pd.cliff)+'</p>'+(more?'<p class="dz-tomorrow">☀️ Tomorrow: <b>Day '+(i+2)+' · '+esc(dzArc(nxR).head)+'</b></p>':"")+'</div>';
  h+='<div class="sec">🏘️ Your town</div>'+board();
